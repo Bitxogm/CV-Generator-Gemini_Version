@@ -4,10 +4,26 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Sparkles, Loader2, FileText, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Loader2, FileText, CheckCircle2, Download, Copy, Eye, Edit2 } from 'lucide-react';
 import { CVData } from '@/types/cv';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { generateCoverLetterPDF, generateCoverLetterPreview, CoverLetterFormat } from '@/utils/pdfGenerator';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface AIAssistantProps {
   cvData: CVData;
@@ -20,6 +36,13 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
   const [adaptation, setAdaptation] = useState<any>(null);
   const [coverLetter, setCoverLetter] = useState('');
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
+  const [pdfFormat, setPdfFormat] = useState<CoverLetterFormat>('minimal');
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [isEditingLetter, setIsEditingLetter] = useState(false);
+  const [isEditingSummary, setIsEditingSummary] = useState(false);
+  const [editedSummary, setEditedSummary] = useState('');
 
   const handleAdaptCV = async () => {
     if (!jobDescription.trim()) {
@@ -37,6 +60,8 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
       if (data?.adaptation) {
         setAdaptation(data.adaptation);
+        setEditedSummary(data.adaptation.suggestions?.summary || '');
+        setIsEditingSummary(false);
         toast.success('Análisis completado');
       }
     } catch (error: any) {
@@ -63,6 +88,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
       if (data?.coverLetter) {
         setCoverLetter(data.coverLetter);
+        setIsEditingLetter(false);
         toast.success('Carta de presentación generada');
       }
     } catch (error: any) {
@@ -78,9 +104,81 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
     toast.success('Carta copiada al portapapeles');
   };
 
+  const handlePreview = () => {
+    const position = extractPosition(jobDescription);
+    const options = {
+      candidateName: cvData.personalInfo.fullName,
+      position: position,
+      format: pdfFormat,
+      email: cvData.personalInfo.email,
+      phone: cvData.personalInfo.phone,
+      location: cvData.personalInfo.location,
+      linkedin: cvData.personalInfo.linkedin,
+    };
+
+    const url = generateCoverLetterPreview(coverLetter, options);
+    if (url) {
+      setPreviewUrl(url);
+      setShowPreview(true);
+    } else {
+      toast.error('Error al generar la vista previa');
+    }
+  };
+
+  const downloadCoverLetterPDF = async () => {
+    setIsDownloadingPDF(true);
+    try {
+      const position = extractPosition(jobDescription);
+      const options = {
+        candidateName: cvData.personalInfo.fullName,
+        position: position,
+        format: pdfFormat,
+        email: cvData.personalInfo.email,
+        phone: cvData.personalInfo.phone,
+        location: cvData.personalInfo.location,
+        linkedin: cvData.personalInfo.linkedin,
+      };
+
+      const success = generateCoverLetterPDF(coverLetter, options);
+
+      if (success) {
+        toast.success('PDF descargado correctamente');
+      } else {
+        toast.error('Error al generar el PDF');
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error('Error al descargar el PDF');
+    } finally {
+      setIsDownloadingPDF(false);
+    }
+  };
+
+  const extractPosition = (description: string): string => {
+    const patterns = [
+      /puesto[:\s]+([^\n.]+)/i,
+      /posición[:\s]+([^\n.]+)/i,
+      /cargo[:\s]+([^\n.]+)/i,
+      /vacante[:\s]+([^\n.]+)/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = description.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim().substring(0, 50);
+      }
+    }
+
+    return 'Oferta';
+  };
+
   const applyAdaptation = () => {
     if (adaptation && onApplySuggestions) {
-      onApplySuggestions(adaptation.suggestions);
+      const updatedSuggestions = {
+        ...adaptation.suggestions,
+        summary: editedSummary
+      };
+      onApplySuggestions(updatedSuggestions);
       toast.success('Sugerencias aplicadas');
     }
   };
@@ -178,10 +276,28 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
               {adaptation.suggestions?.summary && (
                 <div>
-                  <h5 className="font-semibold mb-2">Resumen Sugerido</h5>
-                  <p className="text-sm bg-background p-3 rounded border">
-                    {adaptation.suggestions.summary}
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <h5 className="font-semibold">Resumen Sugerido</h5>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setIsEditingSummary(!isEditingSummary)}
+                    >
+                      <Edit2 className="w-4 h-4 mr-1" />
+                      {isEditingSummary ? 'Cancelar' : 'Editar'}
+                    </Button>
+                  </div>
+                  {isEditingSummary ? (
+                    <Textarea
+                      value={editedSummary}
+                      onChange={(e) => setEditedSummary(e.target.value)}
+                      className="min-h-[100px] text-sm"
+                    />
+                  ) : (
+                    <p className="text-sm bg-background p-3 rounded border">
+                      {editedSummary}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -242,17 +358,131 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
             <div className="space-y-3 mt-6 p-4 border rounded-lg bg-muted/20">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold">Carta de Presentación</h4>
-                <Button onClick={copyCoverLetter} size="sm" variant="outline">
-                  Copiar
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIsEditingLetter(!isEditingLetter)}
+                >
+                  <Edit2 className="w-4 h-4 mr-1" />
+                  {isEditingLetter ? 'Ver' : 'Editar'}
                 </Button>
               </div>
-              <div className="bg-background p-4 rounded border whitespace-pre-wrap text-sm">
-                {coverLetter}
+
+              {isEditingLetter ? (
+                <Textarea
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  className="min-h-[300px] text-sm font-serif"
+                />
+              ) : (
+                <div className="bg-background p-4 rounded border whitespace-pre-wrap text-sm">
+                  {coverLetter}
+                </div>
+              )}
+
+              <Separator />
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  Formato del PDF
+                </label>
+                <Select value={pdfFormat} onValueChange={(value) => setPdfFormat(value as CoverLetterFormat)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="minimal">
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">Minimalista</span>
+                        <span className="text-xs text-muted-foreground">Solo fecha y contenido</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="formal">
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">Formal</span>
+                        <span className="text-xs text-muted-foreground">Con datos de contacto completos</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  onClick={copyCoverLetter} 
+                  size="sm" 
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Copy className="w-4 h-4 mr-1" />
+                  Copiar
+                </Button>
+                <Button 
+                  onClick={handlePreview}
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Eye className="w-4 h-4 mr-1" />
+                  Vista Previa
+                </Button>
+                <Button 
+                  onClick={downloadCoverLetterPDF}
+                  disabled={isDownloadingPDF}
+                  size="sm"
+                  variant="default"
+                  className="flex-1"
+                >
+                  {isDownloadingPDF ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                      Generando...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 mr-1" />
+                      Descargar PDF
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Modal de Vista Previa */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-4xl h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Vista Previa - Carta de Presentación</DialogTitle>
+            <DialogDescription>
+              Formato: {pdfFormat === 'minimal' ? 'Minimalista' : 'Formal'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden">
+            {previewUrl && (
+              <iframe
+                src={previewUrl}
+                className="w-full h-full border rounded"
+                title="Vista previa del PDF"
+              />
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>
+              Cerrar
+            </Button>
+            <Button onClick={() => {
+              setShowPreview(false);
+              downloadCoverLetterPDF();
+            }}>
+              <Download className="w-4 h-4 mr-2" />
+              Descargar PDF
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
