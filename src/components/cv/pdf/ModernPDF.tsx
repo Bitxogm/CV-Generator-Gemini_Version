@@ -125,9 +125,34 @@ const styles = StyleSheet.create({
 
 interface ModernPDFProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function ModernPDF({ data }: ModernPDFProps) {
+const translations = {
+  es: {
+    professionalSummary: 'Resumen Profesional',
+    experience: 'Experiencia Profesional',
+    education: 'Educación',
+    skills: 'Habilidades',
+    projects: 'Proyectos',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    professionalSummary: 'Professional Summary',
+    experience: 'Work Experience',
+    education: 'Education',
+    skills: 'Skills',
+    projects: 'Projects',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
+  const t = translations[language];
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -147,7 +172,7 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Summary */}
         {data.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Resumen Profesional</Text>
+            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
             <Text style={styles.summaryText}>{data.summary}</Text>
           </View>
         )}
@@ -155,13 +180,13 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Experience */}
         {data.experience.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Experiencia Profesional</Text>
+            <Text style={styles.sectionTitle}>{t.experience}</Text>
             {data.experience.map((exp, index) => (
               <View key={index} style={styles.experienceItem}>
                 <Text style={styles.jobTitle}>{exp.position}</Text>
                 <Text style={styles.company}>{exp.company} • {exp.location}</Text>
                 <Text style={styles.dateLocation}>
-                  {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                  {exp.startDate} - {exp.current ? t.present : exp.endDate}
                 </Text>
                 <Text style={styles.description}>{exp.description}</Text>
               </View>
@@ -172,14 +197,14 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Education */}
         {data.education.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Educación</Text>
+            <Text style={styles.sectionTitle}>{t.education}</Text>
             {data.education.map((edu, index) => (
               <View key={index} style={styles.educationItem}>
                 <Text style={styles.degree}>{edu.degree}</Text>
                 <Text style={styles.institution}>{edu.institution} • {edu.field}</Text>
                 <Text style={styles.dateLocation}>
-                  {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
-                  {edu.gpa && ` • GPA: ${edu.gpa}`}
+                  {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                  {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                 </Text>
               </View>
             ))}
@@ -189,7 +214,7 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Skills */}
         {data.skills.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Habilidades</Text>
+            <Text style={styles.sectionTitle}>{t.skills}</Text>
             <View style={styles.skillsContainer}>
               {data.skills.map((skill, index) => (
                 <Text key={index} style={styles.skillPill}>{skill}</Text>
@@ -201,7 +226,7 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Projects */}
         {data.projects && data.projects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Proyectos</Text>
+            <Text style={styles.sectionTitle}>{t.projects}</Text>
             {data.projects.map((project, index) => (
               <View key={index} style={styles.projectItem}>
                 <Text style={styles.projectName}>{project.name}</Text>
@@ -216,7 +241,7 @@ export function ModernPDF({ data }: ModernPDFProps) {
         {/* Languages */}
         {data.languages && data.languages.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Idiomas</Text>
+            <Text style={styles.sectionTitle}>{t.languages}</Text>
             <View style={styles.languageContainer}>
               {data.languages.map((lang, index) => (
                 <Text key={index} style={styles.languageItem}>

@@ -3,9 +3,34 @@ import { Mail, Phone, MapPin, Linkedin, Globe, Github } from 'lucide-react';
 
 interface CreativeTemplateProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function CreativeTemplate({ data }: CreativeTemplateProps) {
+const translations = {
+  es: {
+    professionalSummary: 'Resumen Profesional',
+    experience: 'Experiencia Profesional',
+    education: 'Educación',
+    skills: 'Habilidades',
+    projects: 'Proyectos',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    professionalSummary: 'Professional Summary',
+    experience: 'Work Experience',
+    education: 'Education',
+    skills: 'Skills',
+    projects: 'Projects',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProps) {
+  const t = translations[language];
   return (
     <div className="bg-background text-foreground max-w-4xl mx-auto">
       {/* Creative Header with Gradient */}
@@ -55,7 +80,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.summary && (
           <div className="mb-8 p-6 bg-accent/10 rounded-lg border-l-4 border-accent">
             <h2 className="text-2xl font-display font-bold text-accent mb-3">
-              💼 Resumen Profesional
+              💼 {t.professionalSummary}
             </h2>
             <p className="text-foreground leading-relaxed italic">{data.summary}</p>
           </div>
@@ -65,7 +90,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.experience.length > 0 && (
           <div className="mb-8">
             <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🚀</span> Experiencia Profesional
+              <span className="text-3xl">🚀</span> {t.experience}
             </h2>
             <div className="space-y-6 border-l-2 border-primary/30 pl-6">
               {data.experience.map((exp) => (
@@ -75,7 +100,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-lg text-foreground">{exp.position}</h3>
                       <span className="text-sm text-muted-foreground bg-background px-2 py-1 rounded">
-                        {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                        {exp.startDate} - {exp.current ? t.present : exp.endDate}
                       </span>
                     </div>
                     <p className="text-primary font-semibold mb-2">
@@ -93,7 +118,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.education.length > 0 && (
           <div className="mb-8">
             <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🎓</span> Educación
+              <span className="text-3xl">🎓</span> {t.education}
             </h2>
             <div className="grid gap-4">
               {data.education.map((edu) => (
@@ -101,13 +126,13 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-bold text-lg text-foreground">{edu.degree}</h3>
                     <span className="text-sm text-muted-foreground">
-                      {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
+                      {edu.startDate} - {edu.current ? t.present : edu.endDate}
                     </span>
                   </div>
                   <p className="text-primary font-medium">
                     {edu.institution} • {edu.field}
                   </p>
-                  {edu.gpa && <p className="text-sm text-muted-foreground mt-1">GPA: {edu.gpa}</p>}
+                  {edu.gpa && <p className="text-sm text-muted-foreground mt-1">{t.gpa}: {edu.gpa}</p>}
                 </div>
               ))}
             </div>
@@ -118,7 +143,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.skills.length > 0 && (
           <div className="mb-8">
             <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">⚡</span> Habilidades
+              <span className="text-3xl">⚡</span> {t.skills}
             </h2>
             <div className="flex flex-wrap gap-3">
               {data.skills.map((skill, index) => (
@@ -137,7 +162,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.projects && data.projects.length > 0 && (
           <div className="mb-8">
             <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">💡</span> Proyectos
+              <span className="text-3xl">💡</span> {t.projects}
             </h2>
             <div className="grid gap-4">
               {data.projects.map((project) => (
@@ -169,7 +194,7 @@ export function CreativeTemplate({ data }: CreativeTemplateProps) {
         {data.languages && data.languages.length > 0 && (
           <div>
             <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🌍</span> Idiomas
+              <span className="text-3xl">🌍</span> {t.languages}
             </h2>
             <div className="grid grid-cols-2 gap-4">
               {data.languages.map((lang) => (

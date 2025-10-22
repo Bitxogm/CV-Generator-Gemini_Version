@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { FolderGit2, Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProjectsSectionProps {
   cvData: CVData;
@@ -12,6 +13,7 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
+  const { t } = useLanguage();
   const addProject = () => {
     const newProject: Project = {
       id: Date.now().toString(),
@@ -47,11 +49,11 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <FolderGit2 className="w-5 h-5 text-primary" />
-          Proyectos
+          {t('sections.projects')}
         </h3>
         <Button onClick={addProject} size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Agregar
+          {t('common.add')}
         </Button>
       </div>
 
@@ -59,7 +61,7 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
         <Card key={proj.id}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Proyecto {index + 1}
+              {t('projects.title')} {index + 1}
             </CardTitle>
             <Button
               variant="ghost"
@@ -72,36 +74,36 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Nombre del Proyecto</Label>
+                <Label>{t('projects.name')}</Label>
                 <Input
                   value={proj.name}
                   onChange={(e) => updateProject(proj.id, 'name', e.target.value)}
-                  placeholder="Mi Proyecto Increíble"
+                  placeholder={t('projects.namePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Enlace (Opcional)</Label>
+                <Label>{t('projects.url')} ({t('common.optional')})</Label>
                 <Input
                   value={proj.link || ''}
                   onChange={(e) => updateProject(proj.id, 'link', e.target.value)}
-                  placeholder="https://github.com/..."
+                  placeholder={t('projects.urlPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Descripción</Label>
+              <Label>{t('projects.description')}</Label>
               <Textarea
                 value={proj.description}
                 onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
-                placeholder="Describe el proyecto y tu rol..."
+                placeholder={t('projects.descriptionPlaceholder')}
                 rows={3}
                 className="resize-none"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Tecnologías (separadas por comas)</Label>
+              <Label>{t('projects.technologies')}</Label>
               <Input
                 value={proj.technologies.join(', ')}
                 onChange={(e) =>
@@ -111,7 +113,7 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
                     e.target.value.split(',').map((t) => t.trim()).filter(Boolean)
                   )
                 }
-                placeholder="React, Node.js, MongoDB"
+                placeholder={t('projects.technologiesPlaceholder')}
               />
             </div>
           </CardContent>
@@ -120,10 +122,10 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
 
       {(cvData.projects || []).length === 0 && (
         <Card className="p-8 text-center text-muted-foreground">
-          <p>No hay proyectos agregados</p>
+          <p>{t('projects.noProjects')}</p>
           <Button onClick={addProject} variant="outline" className="mt-4">
             <Plus className="w-4 h-4 mr-2" />
-            Agregar primer proyecto
+            {t('projects.addProject')}
           </Button>
         </Card>
       )}

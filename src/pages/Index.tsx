@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { CVData, TemplateType, ATSAnalysis } from '@/types/cv';
 import { CVForm } from '@/components/cv/CVForm';
 import { CVPreview } from '@/components/cv/preview/CVPreview';
@@ -75,6 +77,7 @@ const initialCVData: CVData = {
 
 export default function Index() {
   const { user, loading, signOut } = useAuth();
+  const { t, language } = useLanguage();
   const [cvData, setCvData] = useState<CVData>(initialCVData);
   const [templateType, setTemplateType] = useState<TemplateType>('modern');
   const [showPreview, setShowPreview] = useState(false);
@@ -105,12 +108,12 @@ export default function Index() {
 
   const handleSave = async () => {
     if (!user) {
-      toast.error('Debes iniciar sesión para guardar');
+      toast.error(t('notifications.mustSignIn'));
       return;
     }
 
     try {
-      const cvName = prompt('Nombre para este CV:');
+      const cvName = prompt(t('notifications.cvNamePrompt'));
       if (!cvName) return;
 
       const { error } = await supabase.from('cvs').insert([{
@@ -122,10 +125,10 @@ export default function Index() {
 
       if (error) throw error;
 
-      toast.success('CV guardado exitosamente');
+      toast.success(t('notifications.cvSaved'));
       loadSavedCVs();
     } catch (error: any) {
-      toast.error('Error al guardar CV');
+      toast.error(t('notifications.errorSaving'));
       console.error(error);
     }
   };
@@ -134,11 +137,11 @@ export default function Index() {
     try {
       let pdfDoc;
       if (format === 'ats') {
-        pdfDoc = <ATSPDF data={cvData} />;
+        pdfDoc = <ATSPDF data={cvData} language={language} />;
       } else {
         const templates = { modern: ModernPDF, professional: ProfessionalPDF, creative: CreativePDF };
         const Template = templates[templateType];
-        pdfDoc = <Template data={cvData} />;
+        pdfDoc = <Template data={cvData} language={language} />;
       }
       const blob = await pdf(pdfDoc).toBlob();
       const url = URL.createObjectURL(blob);
@@ -147,25 +150,26 @@ export default function Index() {
       link.download = `CV_${cvData.personalInfo.fullName || 'curriculum'}_${format}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
-      toast.success(`CV descargado en formato ${format === 'ats' ? 'ATS' : 'visual'}!`);
+      const formatLabel = format === 'ats' ? 'ATS' : 'visual';
+      toast.success(t('notifications.downloadSuccess', { format: formatLabel }));
       celebrateDownload();
     } catch (error: any) {
       console.error('Error downloading PDF:', error);
-      toast.error(`Error al descargar el CV: ${error.message || 'Error desconocido'}`);
+      toast.error(`${t('notifications.downloadError')}: ${error.message || 'Error desconocido'}`);
     }
   };
 
   const handleAnalyzeATS = async () => {
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-ats', { body: { cvData } });
+      const { data, error } = await supabase.functions.invoke('analyze-ats', { body: { cvData, language } });
       if (error) throw error;
       if (data?.analysis) {
         setAtsAnalysis(data.analysis);
-        toast.success('Análisis ATS completado');
+        toast.success(t('notifications.atsCompleted'));
       }
     } catch (error) {
-      toast.error('Error al analizar CV');
+      toast.error(t('notifications.atsError'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -175,13 +179,13 @@ export default function Index() {
     setCvData(cv.data);
     setTemplateType(cv.template_type);
     setShowHistory(false);
-    toast.success(`CV "${cv.name}" cargado`);
+    toast.success(t('notifications.cvLoaded', { name: cv.name }));
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">Cargando...</div>
+        <div className="animate-pulse">{t('common.loading')}</div>
       </div>
     );
   }
@@ -203,25 +207,26 @@ export default function Index() {
               <div>
                 <h1 className="text-2xl font-display font-bold">CV Crafter</h1>
                 <p className="text-sm text-muted-foreground">
-                  Hola, {user.email}
+                  {t('common.hello')}, {user.email}
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <LanguageSelector />
               <Button
                 variant="outline"
                 onClick={() => setShowHistory(true)}
               >
                 <History className="w-4 h-4 mr-2" />
-                Historial
+                {t('tabs.history')}
               </Button>
               <Button
                 variant="outline"
                 onClick={signOut}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Salir
+                {t('common.logout')}
               </Button>
             </div>
           </div>
@@ -232,10 +237,10 @@ export default function Index() {
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="cv" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="cv">Editor de CV</TabsTrigger>
+            <TabsTrigger value="cv">{t('tabs.editor')}</TabsTrigger>
             <TabsTrigger value="ai-assistant">
               <Sparkles className="w-4 h-4 mr-2" />
-              Asistente IA
+              {t('tabs.assistant')}
             </TabsTrigger>
           </TabsList>
 
@@ -273,23 +278,23 @@ export default function Index() {
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Vista Previa del CV</DialogTitle>
+            <DialogTitle>{t('preview.title')}</DialogTitle>
           </DialogHeader>
           <Tabs defaultValue="preview" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="preview">Vista Previa</TabsTrigger>
-              <TabsTrigger value="ats">Análisis ATS</TabsTrigger>
+              <TabsTrigger value="preview">{t('preview.preview')}</TabsTrigger>
+              <TabsTrigger value="ats">{t('preview.ats')}</TabsTrigger>
             </TabsList>
             <TabsContent value="preview" className="space-y-4">
-              <CVPreview data={cvData} template={templateType} />
+              <CVPreview data={cvData} template={templateType} language={language} />
               <div className="flex gap-2">
                 <Button onClick={() => handleDownload('visual')} className="flex-1">
                   <FileDown className="w-4 h-4 mr-2" />
-                  Descargar Visual
+                  {t('cv.downloadVisual')}
                 </Button>
                 <Button onClick={() => handleDownload('ats')} variant="outline" className="flex-1">
                   <FileDown className="w-4 h-4 mr-2" />
-                  Descargar ATS
+                  {t('cv.downloadAts')}
                 </Button>
               </div>
             </TabsContent>
@@ -299,24 +304,24 @@ export default function Index() {
                   <CardContent className="pt-6 text-center">
                     <Button onClick={handleAnalyzeATS} disabled={isAnalyzing}>
                       {isAnalyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <BarChart className="w-4 h-4 mr-2" />}
-                      Analizar con IA
+                      {t('cv.analyzeWithAI')}
                     </Button>
                   </CardContent>
                 </Card>
               ) : (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Score ATS: {atsAnalysis.score}/100</CardTitle>
+                    <CardTitle>{t('preview.atsScore')}: {atsAnalysis.score}/100</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h4 className="font-semibold mb-2">Fortalezas</h4>
+                      <h4 className="font-semibold mb-2">{t('aiAssistant.strengths')}</h4>
                       <ul className="list-disc pl-5 space-y-1">
                         {atsAnalysis.strengths.map((s, i) => <li key={i}>{s}</li>)}
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2">Sugerencias</h4>
+                      <h4 className="font-semibold mb-2">{t('aiAssistant.suggestions')}</h4>
                       <ul className="list-disc pl-5 space-y-1">
                         {atsAnalysis.suggestions.map((s, i) => <li key={i}>{s}</li>)}
                       </ul>
@@ -333,12 +338,12 @@ export default function Index() {
       <Dialog open={showHistory} onOpenChange={setShowHistory}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Historial de CVs</DialogTitle>
+            <DialogTitle>{t('history.title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
             {savedCVs.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                No tienes CVs guardados aún
+                {t('history.empty')}
               </p>
             ) : (
               savedCVs.map((cv) => (
@@ -356,7 +361,7 @@ export default function Index() {
                     size="sm"
                     onClick={() => loadCV(cv)}
                   >
-                    Cargar
+                    {t('common.load')}
                   </Button>
                 </div>
               ))

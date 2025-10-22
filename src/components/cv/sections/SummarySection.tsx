@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SummarySectionProps {
   cvData: CVData;
@@ -14,6 +15,7 @@ interface SummarySectionProps {
 }
 
 export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
+  const { t } = useLanguage();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateWithAI = async () => {
@@ -31,10 +33,10 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
       
       if (data?.summary) {
         setCvData({ ...cvData, summary: data.summary });
-        toast.success('¡Resumen generado con IA!');
+        toast.success(t('summary.generatedSuccessfully'));
       }
     } catch (error: any) {
-      toast.error('Error al generar resumen');
+      toast.error(t('summary.generateError'));
       console.error(error);
     } finally {
       setIsGenerating(false);
@@ -47,10 +49,10 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            Resumen Profesional
+            {t('sections.summary')}
           </CardTitle>
-          <Button 
-            onClick={generateWithAI} 
+          <Button
+            onClick={generateWithAI}
             disabled={isGenerating}
             variant="outline"
             size="sm"
@@ -58,12 +60,12 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
             {isGenerating ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generando...
+                {t('summary.generating')}
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                Generar con IA
+                {t('summary.generate')}
               </>
             )}
           </Button>
@@ -72,13 +74,13 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="summary">
-            Resumen profesional que destaque tu experiencia y objetivos
+            {t('summary.label')}
           </Label>
           <Textarea
             id="summary"
             value={cvData.summary}
             onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
-            placeholder="Profesional con X años de experiencia en..."
+            placeholder={t('summary.placeholder')}
             rows={6}
             className="resize-none"
           />

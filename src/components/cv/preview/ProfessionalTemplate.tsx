@@ -3,9 +3,36 @@ import { Mail, Phone, MapPin, Linkedin, Globe, Github } from 'lucide-react';
 
 interface ProfessionalTemplateProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
+const translations = {
+  es: {
+    contact: 'Contacto',
+    professionalSummary: 'Resumen Profesional',
+    experience: 'Experiencia Profesional',
+    education: 'Educación',
+    skills: 'Habilidades',
+    projects: 'Proyectos',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    contact: 'Contact',
+    professionalSummary: 'Professional Summary',
+    experience: 'Work Experience',
+    education: 'Education',
+    skills: 'Skills',
+    projects: 'Projects',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function ProfessionalTemplate({ data, language = 'es' }: ProfessionalTemplateProps) {
+  const t = translations[language];
   return (
     <div className="bg-background text-foreground max-w-4xl mx-auto">
       <div className="grid grid-cols-3 gap-0">
@@ -20,7 +47,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {/* Contact */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">
-              Contacto
+              {t.contact}
             </h3>
             <div className="space-y-2 text-sm text-foreground">
               <div className="flex items-start gap-2">
@@ -60,7 +87,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.skills.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">
-                Habilidades
+                {t.skills}
               </h3>
               <div className="space-y-1.5 text-sm text-foreground">
                 {data.skills.map((skill, index) => (
@@ -74,7 +101,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.languages && data.languages.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">
-                Idiomas
+                {t.languages}
               </h3>
               <div className="space-y-2 text-sm text-foreground">
                 {data.languages.map((lang) => (
@@ -94,7 +121,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.summary && (
             <div className="mb-6">
               <h2 className="text-xl font-display font-bold text-primary mb-3 pb-2 border-b-2 border-primary">
-                RESUMEN PROFESIONAL
+                {t.professionalSummary.toUpperCase()}
               </h2>
               <p className="text-foreground leading-relaxed">{data.summary}</p>
             </div>
@@ -104,7 +131,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.experience.length > 0 && (
             <div className="mb-6">
               <h2 className="text-xl font-display font-bold text-primary mb-3 pb-2 border-b-2 border-primary">
-                EXPERIENCIA PROFESIONAL
+                {t.experience.toUpperCase()}
               </h2>
               <div className="space-y-4">
                 {data.experience.map((exp) => (
@@ -114,7 +141,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
                       {exp.company} • {exp.location}
                     </div>
                     <div className="text-sm text-muted-foreground mb-2">
-                      {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                      {exp.startDate} - {exp.current ? t.present : exp.endDate}
                     </div>
                     <p className="text-foreground leading-relaxed text-sm">{exp.description}</p>
                   </div>
@@ -127,7 +154,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.education.length > 0 && (
             <div className="mb-6">
               <h2 className="text-xl font-display font-bold text-primary mb-3 pb-2 border-b-2 border-primary">
-                EDUCACIÓN
+                {t.education.toUpperCase()}
               </h2>
               <div className="space-y-4">
                 {data.education.map((edu) => (
@@ -137,8 +164,8 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
                       {edu.institution} • {edu.field}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
-                      {edu.gpa && ` • GPA: ${edu.gpa}`}
+                      {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                      {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                     </div>
                   </div>
                 ))}
@@ -150,7 +177,7 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
           {data.projects && data.projects.length > 0 && (
             <div>
               <h2 className="text-xl font-display font-bold text-primary mb-3 pb-2 border-b-2 border-primary">
-                PROYECTOS
+                {t.projects.toUpperCase()}
               </h2>
               <div className="space-y-4">
                 {data.projects.map((project) => (

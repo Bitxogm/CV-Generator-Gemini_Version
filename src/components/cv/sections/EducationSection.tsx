@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { GraduationCap, Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface EducationSectionProps {
   cvData: CVData;
@@ -12,6 +13,7 @@ interface EducationSectionProps {
 }
 
 export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
+  const { t } = useLanguage();
   const addEducation = () => {
     const newEducation: Education = {
       id: Date.now().toString(),
@@ -50,11 +52,11 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-primary" />
-          Educación
+          {t('sections.education')}
         </h3>
         <Button onClick={addEducation} size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Agregar
+          {t('common.add')}
         </Button>
       </div>
 
@@ -62,7 +64,7 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
         <Card key={edu.id}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Educación {index + 1}
+              {t('education.title')} {index + 1}
             </CardTitle>
             <Button
               variant="ghost"
@@ -75,20 +77,20 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Institución *</Label>
+                <Label>{t('education.institution')} *</Label>
                 <Input
                   value={edu.institution}
                   onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
-                  placeholder="Universidad Complutense de Madrid"
+                  placeholder={t('education.institutionPlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label>Título *</Label>
+                <Label>{t('education.degree')} *</Label>
                 <Input
                   value={edu.degree}
                   onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                  placeholder="Grado, Máster, Doctorado"
+                  placeholder={t('education.degreePlaceholder')}
                   required
                 />
               </div>
@@ -96,27 +98,27 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Campo de Estudio *</Label>
+                <Label>{t('education.field')} *</Label>
                 <Input
                   value={edu.field}
                   onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
-                  placeholder="Ingeniería Informática"
+                  placeholder={t('education.fieldPlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label>Nota Media (Opcional)</Label>
+                <Label>{t('education.gpa')} ({t('common.optional')})</Label>
                 <Input
                   value={edu.gpa || ''}
                   onChange={(e) => updateEducation(edu.id, 'gpa', e.target.value)}
-                  placeholder="3.8/4.0 o 8.5/10"
+                  placeholder={t('education.gpaPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Fecha Inicio *</Label>
+                <Label>{t('education.startDate')} *</Label>
                 <Input
                   type="month"
                   value={edu.startDate}
@@ -125,7 +127,7 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Fecha Fin</Label>
+                <Label>{t('education.endDate')}</Label>
                 <Input
                   type="month"
                   value={edu.endDate}
@@ -144,7 +146,7 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
                 }
               />
               <Label htmlFor={`current-edu-${edu.id}`} className="text-sm font-normal">
-                Actualmente cursando
+                {t('education.current')}
               </Label>
             </div>
           </CardContent>
@@ -153,10 +155,10 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
 
       {cvData.education.length === 0 && (
         <Card className="p-8 text-center text-muted-foreground">
-          <p>No hay educación agregada</p>
+          <p>{t('education.noEducation')}</p>
           <Button onClick={addEducation} variant="outline" className="mt-4">
             <Plus className="w-4 h-4 mr-2" />
-            Agregar primera educación
+            {t('education.addEducation')}
           </Button>
         </Card>
       )}

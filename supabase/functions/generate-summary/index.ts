@@ -11,7 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { personalInfo, experience, skills } = await req.json();
+    const { personalInfo, experience, skills, language } = await req.json();
+    // Default to Spanish if not provided
+    const lang = language || 'es';
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -21,23 +23,29 @@ serve(async (req) => {
     const experienceText = experience
       .map((exp: any) => `${exp.position} en ${exp.company}`)
       .join(", ");
-    
+
     const skillsText = skills.join(", ");
 
-    const prompt = `Genera un resumen profesional conciso y impactante para un CV en español. 
-    
+    const languageInstruction = lang === 'es'
+      ? 'IDIOMA: El resumen profesional DEBE estar completamente en ESPAÑOL.'
+      : 'LANGUAGE: The professional summary MUST be completely in ENGLISH.';
+
+    const prompt = `Genera un resumen profesional conciso y impactante para un CV.
+
     Información:
     - Nombre: ${personalInfo.fullName}
     - Experiencia: ${experienceText}
     - Habilidades: ${skillsText}
-    
+
     El resumen debe:
     - Tener entre 3-4 líneas
     - Destacar logros y experiencia relevante
     - Ser específico y cuantificable cuando sea posible
     - Usar verbos de acción
     - Estar optimizado para ATS
-    
+
+    ${languageInstruction}
+
     Devuelve solo el resumen, sin introducción ni explicaciones.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

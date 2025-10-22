@@ -121,9 +121,36 @@ const styles = StyleSheet.create({
 
 interface ProfessionalPDFProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
+const translations = {
+  es: {
+    contact: 'Contacto',
+    professionalSummary: 'RESUMEN PROFESIONAL',
+    experience: 'EXPERIENCIA PROFESIONAL',
+    education: 'EDUCACIÓN',
+    skills: 'Habilidades',
+    projects: 'PROYECTOS',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    contact: 'Contact',
+    professionalSummary: 'PROFESSIONAL SUMMARY',
+    experience: 'WORK EXPERIENCE',
+    education: 'EDUCATION',
+    skills: 'Skills',
+    projects: 'PROJECTS',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps) {
+  const t = translations[language];
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -133,7 +160,7 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
 
           {/* Contact */}
           <View style={styles.sidebarSection}>
-            <Text style={styles.sidebarTitle}>Contacto</Text>
+            <Text style={styles.sidebarTitle}>{t.contact}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.email}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
@@ -145,7 +172,7 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Skills */}
           {data.skills.length > 0 && (
             <View style={styles.sidebarSection}>
-              <Text style={styles.sidebarTitle}>Habilidades</Text>
+              <Text style={styles.sidebarTitle}>{t.skills}</Text>
               {data.skills.map((skill, index) => (
                 <Text key={index} style={styles.skillItem}>• {skill}</Text>
               ))}
@@ -155,7 +182,7 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Languages */}
           {data.languages && data.languages.length > 0 && (
             <View style={styles.sidebarSection}>
-              <Text style={styles.sidebarTitle}>Idiomas</Text>
+              <Text style={styles.sidebarTitle}>{t.languages}</Text>
               {data.languages.map((lang, index) => (
                 <View key={index} style={styles.languageItem}>
                   <Text style={styles.languageName}>{lang.name}</Text>
@@ -171,7 +198,7 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Summary */}
           {data.summary && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainTitle}>RESUMEN PROFESIONAL</Text>
+              <Text style={styles.mainTitle}>{t.professionalSummary}</Text>
               <Text style={styles.summary}>{data.summary}</Text>
             </View>
           )}
@@ -179,13 +206,13 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Experience */}
           {data.experience.length > 0 && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainTitle}>EXPERIENCIA PROFESIONAL</Text>
+              <Text style={styles.mainTitle}>{t.experience}</Text>
               {data.experience.map((exp, index) => (
                 <View key={index} style={styles.experienceItem}>
                   <Text style={styles.jobTitle}>{exp.position}</Text>
                   <Text style={styles.company}>{exp.company} • {exp.location}</Text>
                   <Text style={styles.dateLocation}>
-                    {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                    {exp.startDate} - {exp.current ? t.present : exp.endDate}
                   </Text>
                   <Text style={styles.description}>{exp.description}</Text>
                 </View>
@@ -196,14 +223,14 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Education */}
           {data.education.length > 0 && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainTitle}>EDUCACIÓN</Text>
+              <Text style={styles.mainTitle}>{t.education}</Text>
               {data.education.map((edu, index) => (
                 <View key={index} style={styles.educationItem}>
                   <Text style={styles.degree}>{edu.degree}</Text>
                   <Text style={styles.company}>{edu.institution} • {edu.field}</Text>
                   <Text style={styles.dateLocation}>
-                    {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
-                    {edu.gpa && ` • GPA: ${edu.gpa}`}
+                    {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                    {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                   </Text>
                 </View>
               ))}
@@ -213,7 +240,7 @@ export function ProfessionalPDF({ data }: ProfessionalPDFProps) {
           {/* Projects */}
           {data.projects && data.projects.length > 0 && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainTitle}>PROYECTOS</Text>
+              <Text style={styles.mainTitle}>{t.projects}</Text>
               {data.projects.map((project, index) => (
                 <View key={index} style={styles.projectItem}>
                   <Text style={styles.projectName}>{project.name}</Text>

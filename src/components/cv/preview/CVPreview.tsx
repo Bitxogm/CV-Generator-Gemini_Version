@@ -6,19 +6,20 @@ import { CreativeTemplate } from './CreativeTemplate';
 interface CVPreviewProps {
   data: CVData;
   template: TemplateType;
+  language?: 'es' | 'en';
 }
 
-export function CVPreview({ data, template }: CVPreviewProps) {
+export function CVPreview({ data, template, language = 'es' }: CVPreviewProps) {
   const renderTemplate = () => {
     switch (template) {
       case 'modern':
-        return <ModernTemplate data={data} />;
+        return <ModernTemplate data={data} language={language} />;
       case 'professional':
-        return <ProfessionalTemplate data={data} />;
+        return <ProfessionalTemplate data={data} language={language} />;
       case 'creative':
-        return <CreativeTemplate data={data} />;
+        return <CreativeTemplate data={data} language={language} />;
       default:
-        return <ModernTemplate data={data} />;
+        return <ModernTemplate data={data} language={language} />;
     }
   };
 

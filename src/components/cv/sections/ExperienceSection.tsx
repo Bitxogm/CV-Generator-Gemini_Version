@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Briefcase, Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ExperienceSectionProps {
   cvData: CVData;
@@ -13,6 +14,7 @@ interface ExperienceSectionProps {
 }
 
 export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps) {
+  const { t } = useLanguage();
   const addExperience = () => {
     const newExperience: Experience = {
       id: Date.now().toString(),
@@ -51,11 +53,11 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Briefcase className="w-5 h-5 text-primary" />
-          Experiencia Profesional
+          {t('sections.experience')}
         </h3>
         <Button onClick={addExperience} size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Agregar
+          {t('common.add')}
         </Button>
       </div>
 
@@ -63,7 +65,7 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
         <Card key={exp.id}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Experiencia {index + 1}
+              {t('experience.title')} {index + 1}
             </CardTitle>
             <Button
               variant="ghost"
@@ -76,20 +78,20 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Empresa *</Label>
+                <Label>{t('experience.company')} *</Label>
                 <Input
                   value={exp.company}
                   onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                  placeholder="Nombre de la empresa"
+                  placeholder={t('experience.companyPlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label>Cargo *</Label>
+                <Label>{t('experience.position')} *</Label>
                 <Input
                   value={exp.position}
                   onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                  placeholder="Desarrollador Senior"
+                  placeholder={t('experience.positionPlaceholder')}
                   required
                 />
               </div>
@@ -97,15 +99,15 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label>Ubicación</Label>
+                <Label>{t('experience.location')}</Label>
                 <Input
                   value={exp.location}
                   onChange={(e) => updateExperience(exp.id, 'location', e.target.value)}
-                  placeholder="Madrid, España"
+                  placeholder={t('experience.locationPlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Fecha Inicio *</Label>
+                <Label>{t('experience.startDate')} *</Label>
                 <Input
                   type="month"
                   value={exp.startDate}
@@ -114,7 +116,7 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
                 />
               </div>
               <div className="space-y-2">
-                <Label>Fecha Fin</Label>
+                <Label>{t('experience.endDate')}</Label>
                 <Input
                   type="month"
                   value={exp.endDate}
@@ -133,16 +135,16 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
                 }
               />
               <Label htmlFor={`current-${exp.id}`} className="text-sm font-normal">
-                Trabajo actual
+                {t('experience.current')}
               </Label>
             </div>
 
             <div className="space-y-2">
-              <Label>Descripción de Responsabilidades</Label>
+              <Label>{t('experience.description')}</Label>
               <Textarea
                 value={exp.description}
                 onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
-                placeholder="• Logro 1&#10;• Logro 2&#10;• Logro 3"
+                placeholder={t('experience.descriptionPlaceholder')}
                 rows={4}
                 className="resize-none"
               />
@@ -153,10 +155,10 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
 
       {cvData.experience.length === 0 && (
         <Card className="p-8 text-center text-muted-foreground">
-          <p>No hay experiencias agregadas</p>
+          <p>{t('experience.noExperience')}</p>
           <Button onClick={addExperience} variant="outline" className="mt-4">
             <Plus className="w-4 h-4 mr-2" />
-            Agregar primera experiencia
+            {t('experience.addExperience')}
           </Button>
         </Card>
       )}

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Languages, Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LanguagesSectionProps {
   cvData: CVData;
@@ -12,6 +13,7 @@ interface LanguagesSectionProps {
 }
 
 export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
+  const { t } = useLanguage();
   const addLanguage = () => {
     const newLanguage: Language = {
       id: Date.now().toString(),
@@ -45,11 +47,11 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Languages className="w-5 h-5 text-primary" />
-          Idiomas
+          {t('sections.languages')}
         </h3>
         <Button onClick={addLanguage} size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Agregar
+          {t('common.add')}
         </Button>
       </div>
 
@@ -57,7 +59,7 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
         <Card key={lang.id}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Idioma {index + 1}
+              {t('languagesSection.title')} {index + 1}
             </CardTitle>
             <Button
               variant="ghost"
@@ -70,15 +72,15 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Idioma</Label>
+                <Label>{t('languagesSection.name')}</Label>
                 <Input
                   value={lang.name}
                   onChange={(e) => updateLanguage(lang.id, 'name', e.target.value)}
-                  placeholder="Español, Inglés, Francés..."
+                  placeholder={t('languagesSection.namePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Nivel de Competencia</Label>
+                <Label>{t('languagesSection.proficiency')}</Label>
                 <Select
                   value={lang.proficiency}
                   onValueChange={(value) => updateLanguage(lang.id, 'proficiency', value)}
@@ -87,10 +89,10 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Básico">Básico</SelectItem>
-                    <SelectItem value="Intermedio">Intermedio</SelectItem>
-                    <SelectItem value="Avanzado">Avanzado</SelectItem>
-                    <SelectItem value="Nativo">Nativo</SelectItem>
+                    <SelectItem value="Básico">{t('languagesSection.basic')}</SelectItem>
+                    <SelectItem value="Intermedio">{t('languagesSection.intermediate')}</SelectItem>
+                    <SelectItem value="Avanzado">{t('languagesSection.advanced')}</SelectItem>
+                    <SelectItem value="Nativo">{t('languagesSection.native')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -101,10 +103,10 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
 
       {(cvData.languages || []).length === 0 && (
         <Card className="p-8 text-center text-muted-foreground">
-          <p>No hay idiomas agregados</p>
+          <p>{t('languagesSection.noLanguages')}</p>
           <Button onClick={addLanguage} variant="outline" className="mt-4">
             <Plus className="w-4 h-4 mr-2" />
-            Agregar primer idioma
+            {t('languagesSection.addLanguage')}
           </Button>
         </Card>
       )}
