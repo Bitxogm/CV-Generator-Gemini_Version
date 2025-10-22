@@ -26,11 +26,12 @@ serve(async (req) => {
 
     const skillsText = skills.join(", ");
 
-    const languageInstruction = lang === 'es'
-      ? 'IDIOMA: El resumen profesional DEBE estar completamente en ESPAÑOL.'
-      : 'LANGUAGE: The professional summary MUST be completely in ENGLISH.';
+    const systemMessage = lang === 'es'
+      ? "Eres un experto en redacción de CVs profesionales y optimización ATS."
+      : "You are an expert in professional CV writing and ATS optimization.";
 
-    const prompt = `Genera un resumen profesional conciso y impactante para un CV.
+    const prompt = lang === 'es'
+      ? `Genera un resumen profesional conciso y impactante para un CV.
 
     Información:
     - Nombre: ${personalInfo.fullName}
@@ -44,9 +45,26 @@ serve(async (req) => {
     - Usar verbos de acción
     - Estar optimizado para ATS
 
-    ${languageInstruction}
+    IDIOMA OBLIGATORIO: El resumen profesional DEBE estar completamente en ESPAÑOL.
 
-    Devuelve solo el resumen, sin introducción ni explicaciones.`;
+    Devuelve solo el resumen, sin introducción ni explicaciones.`
+      : `Generate a concise and impactful professional summary for a CV.
+
+    Information:
+    - Name: ${personalInfo.fullName}
+    - Experience: ${experienceText}
+    - Skills: ${skillsText}
+
+    The summary must:
+    - Be 3-4 lines long
+    - Highlight achievements and relevant experience
+    - Be specific and quantifiable when possible
+    - Use action verbs
+    - Be ATS-optimized
+
+    MANDATORY LANGUAGE: The professional summary MUST be completely in ENGLISH.
+
+    Return only the summary, without introduction or explanations.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -59,7 +77,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Eres un experto en redacción de CVs profesionales y optimización ATS.",
+            content: systemMessage,
           },
           {
             role: "user",
