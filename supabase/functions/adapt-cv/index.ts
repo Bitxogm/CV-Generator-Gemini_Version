@@ -32,11 +32,8 @@ serve(async (req: Request) => {
 
     const cvText = JSON.stringify(cvData);
 
-    const languageInstruction = lang === 'es'
-      ? 'IDIOMA: Todo el análisis, recomendaciones, habilidades y texto DEBE estar en ESPAÑOL.'
-      : 'LANGUAGE: All analysis, recommendations, skills, and text MUST be in ENGLISH.';
-
-    const prompt = `Analiza este CV en relación con la siguiente oferta de trabajo y proporciona un análisis detallado.
+    const prompt = lang === 'es'
+      ? `Analiza este CV en relación con la siguiente oferta de trabajo y proporciona un análisis detallado.
 
 CV DEL CANDIDATO:
 ${cvText}
@@ -62,7 +59,34 @@ IMPORTANTE:
 - Las habilidades deben ser específicas y relevantes.
 - El resumen sugerido debe destacar aspectos del CV que coincidan con la oferta.
 
-${languageInstruction}`;
+IDIOMA OBLIGATORIO: Todo el análisis, recomendaciones, habilidades y texto DEBE estar en ESPAÑOL. Incluso si la oferta de trabajo está en otro idioma, TÚ DEBES RESPONDER EN ESPAÑOL.`
+      : `Analyze this CV in relation to the following job posting and provide a detailed analysis.
+
+CANDIDATE'S CV:
+${cvText}
+
+JOB POSTING:
+${jobDescription}
+
+Provide the analysis in JSON format with the following exact structure:
+{
+  "compatibilityScore": number between 0-100,
+  "matchedSkills": array of strings with matching skills,
+  "missingSkills": array of strings with missing skills,
+  "overallRecommendations": array of strings with general recommendations,
+  "suggestions": {
+    "summary": string with a suggested summary adapted to the job posting (maximum 150 words)
+  }
+}
+
+IMPORTANT:
+- Return ONLY the JSON, without additional text before or after.
+- The JSON must be valid and parseable.
+- Do not use markdown code blocks (no \`\`\`json).
+- Skills must be specific and relevant.
+- The suggested summary should highlight CV aspects that match the job posting.
+
+MANDATORY LANGUAGE: All analysis, recommendations, skills, and text MUST be in ENGLISH. Even if the job posting is in another language, YOU MUST RESPOND IN ENGLISH.`;
 
     console.log("📡 Llamando a Gemini API...");
 

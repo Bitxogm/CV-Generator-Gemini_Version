@@ -26,11 +26,12 @@ serve(async (req) => {
       education: lang === 'es' ? "educación" : "education",
     };
 
-    const languageInstruction = lang === 'es'
-      ? 'IDIOMA: La descripción mejorada DEBE estar completamente en ESPAÑOL.'
-      : 'LANGUAGE: The enhanced description MUST be completely in ENGLISH.';
+    const systemMessage = lang === 'es'
+      ? "Eres un experto en redacción de CVs profesionales y optimización ATS."
+      : "You are an expert in professional CV writing and ATS optimization.";
 
-    const prompt = `Mejora esta descripción de ${contextMap[type] || type} para un CV profesional.
+    const prompt = lang === 'es'
+      ? `Mejora esta descripción de ${contextMap[type] || type} para un CV profesional.
 
 Descripción original:
 ${description}
@@ -45,9 +46,27 @@ La descripción mejorada debe:
 - Tener entre 2-4 líneas
 - Mantener el tono profesional
 
-${languageInstruction}
+IDIOMA OBLIGATORIO: La descripción mejorada DEBE estar completamente en ESPAÑOL.
 
-Devuelve solo la descripción mejorada, sin introducción ni explicaciones.`;
+Devuelve solo la descripción mejorada, sin introducción ni explicaciones.`
+      : `Improve this ${contextMap[type] || type} description for a professional CV.
+
+Original description:
+${description}
+
+${context ? `Additional context: ${context}\n` : ''}
+
+The improved description must:
+- Use impactful action verbs
+- Be specific and quantifiable when possible
+- Highlight achievements and results
+- Be ATS-optimized
+- Be 2-4 lines long
+- Maintain professional tone
+
+MANDATORY LANGUAGE: The enhanced description MUST be completely in ENGLISH.
+
+Return only the improved description, without introduction or explanations.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -60,7 +79,7 @@ Devuelve solo la descripción mejorada, sin introducción ni explicaciones.`;
         messages: [
           {
             role: "system",
-            content: "Eres un experto en redacción de CVs profesionales y optimización ATS.",
+            content: systemMessage,
           },
           {
             role: "user",

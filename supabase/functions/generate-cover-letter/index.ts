@@ -32,19 +32,9 @@ serve(async (req: Request) => {
 
     const cvText = JSON.stringify(cvData);
 
-    const languageGreeting = lang === 'es'
-      ? '"Estimado/a equipo de [Empresa]:" o "Estimado/a [Nombre]:" si se conoce el nombre'
-      : '"Dear [Company] team:" or "Dear [Name]:" if the name is known';
-
-    const languageClosing = lang === 'es'
-      ? '"Atentamente," en una línea y el nombre completo del candidato en la siguiente'
-      : '"Sincerely," on one line and the candidate\'s full name on the next';
-
-    const languageInstruction = lang === 'es'
-      ? 'IDIOMA: La carta COMPLETA debe estar escrita en ESPAÑOL. Todo el texto, desde el saludo hasta el cierre, debe ser en ESPAÑOL.'
-      : 'LANGUAGE: The COMPLETE cover letter must be written in ENGLISH. All text, from greeting to closing, must be in ENGLISH.';
-
-    const prompt = `Genera una carta de presentación profesional y personalizada basándote en este CV y la oferta de trabajo.
+    // Crear el prompt completo en el idioma seleccionado
+    const prompt = lang === 'es'
+      ? `Genera una carta de presentación profesional y personalizada basándote en este CV y la oferta de trabajo.
 
 CV DEL CANDIDATO:
 ${cvText}
@@ -63,8 +53,8 @@ REGLAS ESTRICTAS - DEBES SEGUIRLAS AL PIE DE LA LETRA:
 
 FORMATO DE SALIDA OBLIGATORIO:
 - Empezar DIRECTAMENTE con el saludo (no incluir fecha, ubicación ni datos de contacto)
-- Usar ${languageGreeting}
-- Terminar con ${languageClosing}
+- Usar "Estimado/a equipo de [Empresa]:" o "Estimado/a [Nombre]:" si se conoce el nombre
+- Terminar con "Atentamente," en una línea y el nombre completo del candidato en la siguiente
 - NO añadir nada más después del nombre
 
 ESTILO DE REDACCIÓN:
@@ -82,9 +72,50 @@ IMPORTANTE:
 - Cada frase debe aportar valor
 - Elimina toda palabra innecesaria
 
-${languageInstruction}
+IDIOMA OBLIGATORIO: La carta COMPLETA debe estar escrita en ESPAÑOL. Todo el texto, desde el saludo hasta el cierre, debe ser en ESPAÑOL. Incluso si la oferta de trabajo está en otro idioma, TÚ DEBES RESPONDER EN ESPAÑOL.
 
-Devuelve SOLO el texto de la carta de presentación, sin formato JSON ni introducción adicional.`;
+Devuelve SOLO el texto de la carta de presentación, sin formato JSON ni introducción adicional.`
+      : `Generate a professional and personalized cover letter based on this CV and job posting.
+
+CANDIDATE'S CV:
+${cvText}
+
+JOB POSTING:
+${jobDescription}
+
+STRICT RULES - YOU MUST FOLLOW THEM TO THE LETTER:
+1. The letter MUST be between 350-450 words (ABSOLUTE MAXIMUM: 500 words)
+2. The letter MUST fit on ONE A4 page when printed
+3. Structure in exactly 3-4 short paragraphs:
+   - Paragraph 1 (2-3 lines): Brief introduction and position of interest
+   - Paragraph 2 (4-5 lines): Why you are the ideal candidate - maximum 2-3 key achievements with concrete data
+   - Paragraph 3 (3-4 lines): Specific motivation for the company/position
+   - Paragraph 4 (2 lines): Brief closing with availability for interview
+
+MANDATORY OUTPUT FORMAT:
+- Start DIRECTLY with the greeting (do not include date, location, or contact details)
+- Use "Dear [Company] team:" or "Dear [Name]:" if the name is known
+- End with "Sincerely," on one line and the candidate's full name on the next
+- DO NOT add anything after the name
+
+WRITING STYLE:
+- Professional but approachable and modern tone
+- Short and direct sentences (maximum 20-25 words per sentence)
+- Avoid clichés like "I am writing to you", "I have the honor", etc.
+- ALWAYS include numbers/metrics when possible (percentages, quantities, time)
+- Mention specific technologies, tools, or methodologies from the CV that match the job posting
+- Be specific about the company: mention a project, value, or concrete aspect that attracts you
+- DO NOT repeat obvious information from the CV, highlight the most relevant
+
+IMPORTANT:
+- Prioritize QUALITY over quantity
+- Fewer words = more impact
+- Each sentence must add value
+- Eliminate all unnecessary words
+
+MANDATORY LANGUAGE: The COMPLETE cover letter must be written in ENGLISH. All text, from greeting to closing, must be in ENGLISH. Even if the job posting is in another language, YOU MUST RESPOND IN ENGLISH.
+
+Return ONLY the text of the cover letter, without JSON format or additional introduction.`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
     console.log("📡 Llamando a Gemini API...");

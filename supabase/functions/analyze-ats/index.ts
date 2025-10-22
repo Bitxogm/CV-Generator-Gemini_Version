@@ -22,11 +22,12 @@ serve(async (req) => {
 
     const cvText = JSON.stringify(cvData);
 
-    const languageInstruction = lang === 'es'
-      ? 'IDIOMA: Todas las keywords, sugerencias, fortalezas y debilidades DEBEN estar en ESPAÑOL.'
-      : 'LANGUAGE: All keywords, suggestions, strengths, and weaknesses MUST be in ENGLISH.';
+    const systemMessage = lang === 'es'
+      ? "Eres un experto en sistemas ATS y optimización de CVs. Respondes solo con JSON válido."
+      : "You are an expert in ATS systems and CV optimization. You respond only with valid JSON.";
 
-    const prompt = `Analiza este CV y proporciona un análisis detallado para sistemas ATS (Applicant Tracking System).
+    const prompt = lang === 'es'
+      ? `Analiza este CV y proporciona un análisis detallado para sistemas ATS (Applicant Tracking System).
 
 CV:
 ${cvText}
@@ -52,9 +53,38 @@ El análisis debe incluir:
 - 2-3 fortalezas principales
 - 2-3 debilidades a mejorar
 
-${languageInstruction}
+IDIOMA OBLIGATORIO: Todas las keywords, sugerencias, fortalezas y debilidades DEBEN estar en ESPAÑOL. Incluso si la oferta de trabajo está en otro idioma, TÚ DEBES RESPONDER EN ESPAÑOL.
 
-Devuelve SOLO el JSON, sin texto adicional.`;
+Devuelve SOLO el JSON, sin texto adicional.`
+      : `Analyze this CV and provide a detailed analysis for ATS (Applicant Tracking System).
+
+CV:
+${cvText}
+
+${jobDescription ? `Target job description:\n${jobDescription}\n\n` : ''}
+
+Provide the analysis in the following JSON format:
+{
+  "score": <number from 0-100>,
+  "keywords": {
+    "matched": ["keyword1", "keyword2"],
+    "missing": ["keyword3", "keyword4"]
+  },
+  "suggestions": ["suggestion1", "suggestion2"],
+  "strengths": ["strength1", "strength2"],
+  "weaknesses": ["weakness1", "weakness2"]
+}
+
+The analysis should include:
+- ATS Score (0-100) based on structure, keywords, and format
+- Keywords found vs missing
+- 3-5 specific improvement suggestions
+- 2-3 main strengths
+- 2-3 weaknesses to improve
+
+MANDATORY LANGUAGE: All keywords, suggestions, strengths, and weaknesses MUST be in ENGLISH. Even if the job description is in another language, YOU MUST RESPOND IN ENGLISH.
+
+Return ONLY the JSON, without additional text.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -67,7 +97,7 @@ Devuelve SOLO el JSON, sin texto adicional.`;
         messages: [
           {
             role: "system",
-            content: "Eres un experto en sistemas ATS y optimización de CVs. Respondes solo con JSON válido.",
+            content: systemMessage,
           },
           {
             role: "user",
