@@ -1,3 +1,4 @@
+// @ts-ignore - Deno types
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -5,114 +6,120 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+// @ts-ignore - Deno serve
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cvData, jobDescription } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    console.log("🚀 Iniciando análisis de CV...");
     
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const { cvData, jobDescription } = await req.json();
+    console.log("✅ Datos recibidos correctamente");
+    
+    // @ts-ignore - Deno env
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    
+    if (!GEMINI_API_KEY) {
+      console.error("❌ GEMINI_API_KEY no configurada");
+      throw new Error("GEMINI_API_KEY is not configured");
     }
+    
+    console.log("✅ GEMINI_API_KEY encontrada");
 
     const cvText = JSON.stringify(cvData);
     
-    const prompt = `Analiza este CV en relación con la siguiente oferta de trabajo y proporciona sugerencias específicas de adaptación.
+    const prompt = `Analiza este CV en relación con la siguiente oferta de trabajo y proporciona un análisis detallado.
 
-CV ACTUAL:
+CV DEL CANDIDATO:
 ${cvText}
 
 OFERTA DE TRABAJO:
 ${jobDescription}
 
-Proporciona el análisis en el siguiente formato JSON:
+Proporciona el análisis en formato JSON con la siguiente estructura exacta:
 {
-  "compatibilityScore": <número del 0-100>,
-  "matchedSkills": ["skill1", "skill2"],
-  "missingSkills": ["skill3", "skill4"],
+  "compatibilityScore": número entre 0-100,
+  "matchedSkills": array de strings con habilidades que coinciden,
+  "missingSkills": array de strings con habilidades que faltan,
+  "overallRecommendations": array de strings con recomendaciones generales,
   "suggestions": {
-    "summary": "Sugerencia mejorada para el resumen profesional adaptado a esta oferta",
-    "skills": ["skill adicional 1", "skill adicional 2"],
-    "experience": [
-      {
-        "position": "nombre del puesto existente",
-        "suggestedDescription": "descripción mejorada enfocada en esta oferta"
-      }
-    ]
-  },
-  "overallRecommendations": ["recomendación 1", "recomendación 2"]
+    "summary": string con un resumen sugerido adaptado a la oferta (máximo 150 palabras)
+  }
 }
 
-El análisis debe:
-- Calcular una puntuación de compatibilidad (0-100)
-- Identificar habilidades que coinciden con la oferta
-- Señalar habilidades faltantes que pide la oferta
-- Sugerir un resumen profesional adaptado
-- Sugerir habilidades adicionales relevantes
-- Mejorar descripciones de experiencia para resaltar lo relevante
-- Dar recomendaciones generales
+IMPORTANTE: 
+- Devuelve SOLO el JSON, sin texto adicional antes o después.
+- El JSON debe ser válido y parseable.
+- No uses markdown code blocks (no \`\`\`json).
+- Las habilidades deben ser específicas y relevantes.
+- El resumen sugerido debe destacar aspectos del CV que coincidan con la oferta.`;
 
-Devuelve SOLO el JSON, sin texto adicional.`;
+    console.log("📡 Llamando a Gemini API...");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: "Eres un experto en recursos humanos y adaptación de CVs. Respondes solo con JSON válido.",
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1500,
           },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      }),
-    });
+        }),
+      }
+    );
+
+    console.log("📥 Respuesta recibida. Status:", response.status);
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Límite de solicitudes excedido. Por favor intenta más tarde." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Fondos insuficientes. Por favor agrega créditos." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      throw new Error("Error del servicio de IA");
+      console.error("❌ Error de Gemini API:", response.status, errorText);
+      throw new Error(`Error del servicio de IA: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const analysisText = data.choices[0].message.content.trim();
+    console.log("✅ Respuesta parseada correctamente");
     
-    const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("No se pudo extraer JSON de la respuesta");
+    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+      console.error("❌ Formato de respuesta inválido:", JSON.stringify(data));
+      throw new Error("Respuesta inválida de la IA");
     }
     
-    const adaptation = JSON.parse(jsonMatch[0]);
+    let responseText = data.candidates[0].content.parts[0].text.trim();
+    console.log("✅ Texto recibido. Longitud:", responseText.length);
+    
+    // Limpiar posibles backticks de markdown
+    responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    console.log("🔧 Parseando JSON...");
+    const adaptation = JSON.parse(responseText);
+    console.log("✅ JSON parseado correctamente");
 
     return new Response(JSON.stringify({ adaptation }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Error adapting CV:", error);
+    console.error("💥 ERROR CRÍTICO:", error);
+    console.error("💥 Stack:", error.stack);
     return new Response(
-      JSON.stringify({ error: error.message || "Error desconocido" }),
+      JSON.stringify({ 
+        error: error.message || "Error desconocido",
+        details: error.stack 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

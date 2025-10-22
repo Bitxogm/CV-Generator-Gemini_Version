@@ -1,3 +1,4 @@
+// @ts-ignore - Deno types
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -5,18 +6,27 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+// @ts-ignore - Deno serve
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cvData, jobDescription } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    console.log("🚀 Iniciando generación de carta...");
     
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const { cvData, jobDescription } = await req.json();
+    console.log("✅ Datos recibidos correctamente");
+    
+    // @ts-ignore - Deno env
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    
+    if (!GEMINI_API_KEY) {
+      console.error("❌ GEMINI_API_KEY no configurada");
+      throw new Error("GEMINI_API_KEY is not configured");
     }
+    
+    console.log("✅ GEMINI_API_KEY encontrada:", GEMINI_API_KEY.substring(0, 10) + "...");
 
     const cvText = JSON.stringify(cvData);
     
@@ -60,55 +70,58 @@ IMPORTANTE:
 
 Devuelve SOLO el texto de la carta de presentación, sin formato JSON ni introducción adicional.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
+    console.log("📡 Llamando a Gemini API...");
+    
+    const requestBody = {
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 800,
+      },
+    };
+    
+    console.log("📦 Request body preparado");
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: "Eres un experto en redacción de cartas de presentación profesionales. SIEMPRE generas cartas concisas de máximo 450 palabras que caben perfectamente en una página A4. Priorizas calidad sobre cantidad y cada palabra cuenta.",
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        max_tokens: 800, // Limitar tokens para forzar brevedad
-        temperature: 0.7,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
+    console.log("📥 Respuesta recibida. Status:", response.status);
+
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Límite de solicitudes excedido. Por favor intenta más tarde." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Fondos insuficientes. Por favor agrega créditos." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      throw new Error("Error del servicio de IA");
+      console.error("❌ Error de Gemini API:", response.status, errorText);
+      throw new Error(`Error del servicio de IA: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    let coverLetter = data.choices[0].message.content.trim();
+    console.log("✅ Respuesta parseada correctamente");
+    
+    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+      console.error("❌ Formato de respuesta inválido:", JSON.stringify(data));
+      throw new Error("Respuesta inválida de la IA");
+    }
+    
+    let coverLetter = data.candidates[0].content.parts[0].text.trim();
+    console.log("✅ Carta generada. Longitud:", coverLetter.length);
 
     // Validación de longitud
     const wordCount = coverLetter.split(/\s+/).length;
-    console.log(`Carta generada con ${wordCount} palabras`);
+    console.log(`✅ Carta generada con ${wordCount} palabras`);
 
-    // Si la carta es demasiado larga, alertar (opcional: podrías regenerar automáticamente)
     if (wordCount > 500) {
       console.warn(`⚠️ Carta generada con ${wordCount} palabras, excede el límite de 500`);
     }
@@ -117,9 +130,13 @@ Devuelve SOLO el texto de la carta de presentación, sin formato JSON ni introdu
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Error generating cover letter:", error);
+    console.error("💥 ERROR CRÍTICO:", error);
+    console.error("💥 Stack:", error.stack);
     return new Response(
-      JSON.stringify({ error: error.message || "Error desconocido" }),
+      JSON.stringify({ 
+        error: error.message || "Error desconocido",
+        details: error.stack 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
