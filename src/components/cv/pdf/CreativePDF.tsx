@@ -169,9 +169,34 @@ const styles = StyleSheet.create({
 
 interface CreativePDFProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function CreativePDF({ data }: CreativePDFProps) {
+const translations = {
+  es: {
+    professionalSummary: 'Resumen Profesional',
+    experience: 'Experiencia Profesional',
+    education: 'Educación',
+    skills: 'Habilidades',
+    projects: 'Proyectos',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    professionalSummary: 'Professional Summary',
+    experience: 'Work Experience',
+    education: 'Education',
+    skills: 'Skills',
+    projects: 'Projects',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
+  const t = translations[language];
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -193,7 +218,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {data.summary && (
             <View style={styles.summaryBox}>
               <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 6, color: '#8B5CF6' }}>
-                💼 Resumen Profesional
+                💼 {t.professionalSummary}
               </Text>
               <Text style={{ fontSize: 9, lineHeight: 1.5 }}>{data.summary}</Text>
             </View>
@@ -202,7 +227,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {/* Experience */}
           {data.experience.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🚀 Experiencia Profesional</Text>
+              <Text style={styles.sectionTitle}>🚀 {t.experience}</Text>
               <View style={styles.experienceTimeline}>
                 {data.experience.map((exp, index) => (
                   <View key={index} style={styles.experienceItem}>
@@ -210,7 +235,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
                       <Text style={styles.jobTitle}>{exp.position}</Text>
                       <Text style={styles.company}>{exp.company} • {exp.location}</Text>
                       <Text style={styles.dateBox}>
-                        {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                        {exp.startDate} - {exp.current ? t.present : exp.endDate}
                       </Text>
                       <Text style={styles.description}>{exp.description}</Text>
                     </View>
@@ -223,15 +248,15 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {/* Education */}
           {data.education.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🎓 Educación</Text>
+              <Text style={styles.sectionTitle}>🎓 {t.education}</Text>
               <View style={styles.educationGrid}>
                 {data.education.map((edu, index) => (
                   <View key={index} style={styles.educationBox}>
                     <Text style={styles.degree}>{edu.degree}</Text>
                     <Text style={styles.institution}>{edu.institution} • {edu.field}</Text>
                     <Text style={{ fontSize: 8, color: '#6b7280', marginTop: 3 }}>
-                      {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
-                      {edu.gpa && ` • GPA: ${edu.gpa}`}
+                      {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                      {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                     </Text>
                   </View>
                 ))}
@@ -242,7 +267,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {/* Skills */}
           {data.skills.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>⚡ Habilidades</Text>
+              <Text style={styles.sectionTitle}>⚡ {t.skills}</Text>
               <View style={styles.skillsContainer}>
                 {data.skills.map((skill, index) => (
                   <Text key={index} style={styles.skillPill}>{skill}</Text>
@@ -254,7 +279,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {/* Projects */}
           {data.projects && data.projects.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>💡 Proyectos</Text>
+              <Text style={styles.sectionTitle}>💡 {t.projects}</Text>
               {data.projects.map((project, index) => (
                 <View key={index} style={styles.projectBox}>
                   <Text style={styles.projectName}>{project.name}</Text>
@@ -277,7 +302,7 @@ export function CreativePDF({ data }: CreativePDFProps) {
           {/* Languages */}
           {data.languages && data.languages.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🌍 Idiomas</Text>
+              <Text style={styles.sectionTitle}>🌍 {t.languages}</Text>
               <View style={styles.languageGrid}>
                 {data.languages.map((lang, index) => (
                   <View key={index} style={styles.languageBox}>

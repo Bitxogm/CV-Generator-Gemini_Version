@@ -14,9 +14,11 @@ serve(async (req: Request) => {
 
   try {
     console.log("🚀 Iniciando análisis de CV...");
-    
-    const { cvData, jobDescription } = await req.json();
-    console.log("✅ Datos recibidos correctamente");
+
+    const { cvData, jobDescription, language } = await req.json();
+    // Default to Spanish if not provided
+    const lang = language || 'es';
+    console.log("✅ Datos recibidos correctamente. Idioma:", lang);
     
     // @ts-ignore - Deno env
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
@@ -29,7 +31,11 @@ serve(async (req: Request) => {
     console.log("✅ GEMINI_API_KEY encontrada");
 
     const cvText = JSON.stringify(cvData);
-    
+
+    const languageInstruction = lang === 'es'
+      ? 'IDIOMA: Todo el análisis, recomendaciones, habilidades y texto DEBE estar en ESPAÑOL.'
+      : 'LANGUAGE: All analysis, recommendations, skills, and text MUST be in ENGLISH.';
+
     const prompt = `Analiza este CV en relación con la siguiente oferta de trabajo y proporciona un análisis detallado.
 
 CV DEL CANDIDATO:
@@ -49,12 +55,14 @@ Proporciona el análisis en formato JSON con la siguiente estructura exacta:
   }
 }
 
-IMPORTANTE: 
+IMPORTANTE:
 - Devuelve SOLO el JSON, sin texto adicional antes o después.
 - El JSON debe ser válido y parseable.
 - No uses markdown code blocks (no \`\`\`json).
 - Las habilidades deben ser específicas y relevantes.
-- El resumen sugerido debe destacar aspectos del CV que coincidan con la oferta.`;
+- El resumen sugerido debe destacar aspectos del CV que coincidan con la oferta.
+
+${languageInstruction}`;
 
     console.log("📡 Llamando a Gemini API...");
 

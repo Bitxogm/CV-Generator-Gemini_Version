@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Zap, Plus, X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SkillsSectionProps {
   cvData: CVData;
@@ -12,6 +13,7 @@ interface SkillsSectionProps {
 }
 
 export function SkillsSection({ cvData, setCvData }: SkillsSectionProps) {
+  const { t } = useLanguage();
   const [newSkill, setNewSkill] = useState('');
 
   const addSkill = () => {
@@ -43,7 +45,7 @@ export function SkillsSection({ cvData, setCvData }: SkillsSectionProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-primary" />
-          Habilidades
+          {t('sections.skills')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -52,7 +54,7 @@ export function SkillsSection({ cvData, setCvData }: SkillsSectionProps) {
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ej: React, Python, Gestión de proyectos..."
+            placeholder={t('skills.skillPlaceholder')}
           />
           <Button onClick={addSkill} size="icon">
             <Plus className="w-4 h-4" />
@@ -79,7 +81,7 @@ export function SkillsSection({ cvData, setCvData }: SkillsSectionProps) {
 
         {cvData.skills.length === 0 && (
           <p className="text-center text-muted-foreground py-4">
-            No hay habilidades agregadas. Añade tus habilidades clave.
+            {t('skills.noSkills')}
           </p>
         )}
       </CardContent>

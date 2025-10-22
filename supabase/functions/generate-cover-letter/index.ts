@@ -14,9 +14,11 @@ serve(async (req: Request) => {
 
   try {
     console.log("🚀 Iniciando generación de carta...");
-    
-    const { cvData, jobDescription } = await req.json();
-    console.log("✅ Datos recibidos correctamente");
+
+    const { cvData, jobDescription, language } = await req.json();
+    // Default to Spanish if not provided
+    const lang = language || 'es';
+    console.log("✅ Datos recibidos correctamente. Idioma:", lang);
     
     // @ts-ignore - Deno env
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
@@ -29,7 +31,19 @@ serve(async (req: Request) => {
     console.log("✅ GEMINI_API_KEY encontrada:", GEMINI_API_KEY.substring(0, 10) + "...");
 
     const cvText = JSON.stringify(cvData);
-    
+
+    const languageGreeting = lang === 'es'
+      ? '"Estimado/a equipo de [Empresa]:" o "Estimado/a [Nombre]:" si se conoce el nombre'
+      : '"Dear [Company] team:" or "Dear [Name]:" if the name is known';
+
+    const languageClosing = lang === 'es'
+      ? '"Atentamente," en una línea y el nombre completo del candidato en la siguiente'
+      : '"Sincerely," on one line and the candidate\'s full name on the next';
+
+    const languageInstruction = lang === 'es'
+      ? 'IDIOMA: La carta COMPLETA debe estar escrita en ESPAÑOL. Todo el texto, desde el saludo hasta el cierre, debe ser en ESPAÑOL.'
+      : 'LANGUAGE: The COMPLETE cover letter must be written in ENGLISH. All text, from greeting to closing, must be in ENGLISH.';
+
     const prompt = `Genera una carta de presentación profesional y personalizada basándote en este CV y la oferta de trabajo.
 
 CV DEL CANDIDATO:
@@ -49,8 +63,8 @@ REGLAS ESTRICTAS - DEBES SEGUIRLAS AL PIE DE LA LETRA:
 
 FORMATO DE SALIDA OBLIGATORIO:
 - Empezar DIRECTAMENTE con el saludo (no incluir fecha, ubicación ni datos de contacto)
-- Usar "Estimado/a equipo de [Empresa]:" o "Estimado/a [Nombre]:" si se conoce el nombre
-- Terminar con "Atentamente," en una línea y el nombre completo del candidato en la siguiente
+- Usar ${languageGreeting}
+- Terminar con ${languageClosing}
 - NO añadir nada más después del nombre
 
 ESTILO DE REDACCIÓN:
@@ -62,11 +76,13 @@ ESTILO DE REDACCIÓN:
 - Ser específico sobre la empresa: mencionar un proyecto, valor, o aspecto concreto que atraiga
 - NO repetir información obvia del CV, sino destacar lo más relevante
 
-IMPORTANTE: 
+IMPORTANTE:
 - Prioriza CALIDAD sobre cantidad
 - Menos palabras = más impacto
 - Cada frase debe aportar valor
 - Elimina toda palabra innecesaria
+
+${languageInstruction}
 
 Devuelve SOLO el texto de la carta de presentación, sin formato JSON ni introducción adicional.`;
 

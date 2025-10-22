@@ -11,7 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { cvData, jobDescription } = await req.json();
+    const { cvData, jobDescription, language } = await req.json();
+    // Default to Spanish if not provided
+    const lang = language || 'es';
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -19,7 +21,11 @@ serve(async (req) => {
     }
 
     const cvText = JSON.stringify(cvData);
-    
+
+    const languageInstruction = lang === 'es'
+      ? 'IDIOMA: Todas las keywords, sugerencias, fortalezas y debilidades DEBEN estar en ESPAÑOL.'
+      : 'LANGUAGE: All keywords, suggestions, strengths, and weaknesses MUST be in ENGLISH.';
+
     const prompt = `Analiza este CV y proporciona un análisis detallado para sistemas ATS (Applicant Tracking System).
 
 CV:
@@ -45,6 +51,8 @@ El análisis debe incluir:
 - 3-5 sugerencias específicas de mejora
 - 2-3 fortalezas principales
 - 2-3 debilidades a mejorar
+
+${languageInstruction}
 
 Devuelve SOLO el JSON, sin texto adicional.`;
 

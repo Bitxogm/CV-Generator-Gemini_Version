@@ -59,9 +59,34 @@ const styles = StyleSheet.create({
 
 interface ATSPDFProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function ATSPDF({ data }: ATSPDFProps) {
+const translations = {
+  es: {
+    professionalSummary: 'RESUMEN PROFESIONAL',
+    experience: 'EXPERIENCIA PROFESIONAL',
+    education: 'EDUCACIÓN',
+    skills: 'HABILIDADES',
+    projects: 'PROYECTOS',
+    languages: 'IDIOMAS',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    professionalSummary: 'PROFESSIONAL SUMMARY',
+    experience: 'WORK EXPERIENCE',
+    education: 'EDUCATION',
+    skills: 'SKILLS',
+    projects: 'PROJECTS',
+    languages: 'LANGUAGES',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
+  const t = translations[language];
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -83,7 +108,7 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Summary */}
         {data.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>PROFESSIONAL SUMMARY</Text>
+            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
             <Text style={styles.text}>{data.summary}</Text>
           </View>
         )}
@@ -91,12 +116,12 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Experience */}
         {data.experience.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>WORK EXPERIENCE</Text>
+            <Text style={styles.sectionTitle}>{t.experience}</Text>
             {data.experience.map((exp, index) => (
               <View key={index} style={styles.subsection}>
                 <Text style={[styles.text, styles.bold]}>{exp.position}</Text>
                 <Text style={styles.text}>
-                  {exp.company}, {exp.location} | {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                  {exp.company}, {exp.location} | {exp.startDate} - {exp.current ? t.present : exp.endDate}
                 </Text>
                 <Text style={styles.text}>{exp.description}</Text>
               </View>
@@ -107,13 +132,13 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Education */}
         {data.education.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>EDUCATION</Text>
+            <Text style={styles.sectionTitle}>{t.education}</Text>
             {data.education.map((edu, index) => (
               <View key={index} style={styles.subsection}>
                 <Text style={[styles.text, styles.bold]}>{edu.degree} in {edu.field}</Text>
                 <Text style={styles.text}>
-                  {edu.institution} | {edu.startDate} - {edu.current ? 'Present' : edu.endDate}
-                  {edu.gpa && ` | GPA: ${edu.gpa}`}
+                  {edu.institution} | {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                  {edu.gpa && ` | ${t.gpa}: ${edu.gpa}`}
                 </Text>
               </View>
             ))}
@@ -123,7 +148,7 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Skills */}
         {data.skills.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>SKILLS</Text>
+            <Text style={styles.sectionTitle}>{t.skills}</Text>
             <Text style={styles.text}>{data.skills.join(', ')}</Text>
           </View>
         )}
@@ -131,7 +156,7 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Projects */}
         {data.projects && data.projects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>PROJECTS</Text>
+            <Text style={styles.sectionTitle}>{t.projects}</Text>
             {data.projects.map((project, index) => (
               <View key={index} style={styles.subsection}>
                 <Text style={[styles.text, styles.bold]}>{project.name}</Text>
@@ -146,7 +171,7 @@ export function ATSPDF({ data }: ATSPDFProps) {
         {/* Languages */}
         {data.languages && data.languages.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>LANGUAGES</Text>
+            <Text style={styles.sectionTitle}>{t.languages}</Text>
             <Text style={styles.text}>
               {data.languages.map(lang => `${lang.name} (${lang.proficiency})`).join(', ')}
             </Text>

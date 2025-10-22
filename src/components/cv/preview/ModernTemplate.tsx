@@ -3,9 +3,34 @@ import { Mail, Phone, MapPin, Linkedin, Globe, Github } from 'lucide-react';
 
 interface ModernTemplateProps {
   data: CVData;
+  language?: 'es' | 'en';
 }
 
-export function ModernTemplate({ data }: ModernTemplateProps) {
+const translations = {
+  es: {
+    professionalSummary: 'Resumen Profesional',
+    experience: 'Experiencia Profesional',
+    education: 'Educación',
+    skills: 'Habilidades',
+    projects: 'Proyectos',
+    languages: 'Idiomas',
+    present: 'Presente',
+    gpa: 'GPA',
+  },
+  en: {
+    professionalSummary: 'Professional Summary',
+    experience: 'Work Experience',
+    education: 'Education',
+    skills: 'Skills',
+    projects: 'Projects',
+    languages: 'Languages',
+    present: 'Present',
+    gpa: 'GPA',
+  },
+};
+
+export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
+  const t = translations[language];
   return (
     <div className="bg-background text-foreground p-8 max-w-4xl mx-auto shadow-elegant">
       {/* Header */}
@@ -51,7 +76,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.summary && (
         <div className="mb-6">
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Resumen Profesional
+            {t.professionalSummary}
           </h2>
           <p className="text-foreground leading-relaxed">{data.summary}</p>
         </div>
@@ -61,7 +86,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.experience.length > 0 && (
         <div className="mb-6">
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Experiencia Profesional
+            {t.experience}
           </h2>
           <div className="space-y-4">
             {data.experience.map((exp) => (
@@ -69,7 +94,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
                 <div className="flex justify-between items-start mb-1">
                   <h3 className="font-semibold text-lg text-foreground">{exp.position}</h3>
                   <span className="text-sm text-muted-foreground">
-                    {exp.startDate} - {exp.current ? 'Presente' : exp.endDate}
+                    {exp.startDate} - {exp.current ? t.present : exp.endDate}
                   </span>
                 </div>
                 <p className="text-primary font-medium mb-2">
@@ -86,7 +111,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.education.length > 0 && (
         <div className="mb-6">
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Educación
+            {t.education}
           </h2>
           <div className="space-y-4">
             {data.education.map((edu) => (
@@ -94,13 +119,13 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
                 <div className="flex justify-between items-start mb-1">
                   <h3 className="font-semibold text-lg text-foreground">{edu.degree}</h3>
                   <span className="text-sm text-muted-foreground">
-                    {edu.startDate} - {edu.current ? 'Presente' : edu.endDate}
+                    {edu.startDate} - {edu.current ? t.present : edu.endDate}
                   </span>
                 </div>
                 <p className="text-primary font-medium">
                   {edu.institution} • {edu.field}
                 </p>
-                {edu.gpa && <p className="text-sm text-muted-foreground">GPA: {edu.gpa}</p>}
+                {edu.gpa && <p className="text-sm text-muted-foreground">{t.gpa}: {edu.gpa}</p>}
               </div>
             ))}
           </div>
@@ -111,7 +136,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.skills.length > 0 && (
         <div className="mb-6">
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Habilidades
+            {t.skills}
           </h2>
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill, index) => (
@@ -130,7 +155,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.projects && data.projects.length > 0 && (
         <div className="mb-6">
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Proyectos
+            {t.projects}
           </h2>
           <div className="space-y-4">
             {data.projects.map((project) => (
@@ -162,7 +187,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
       {data.languages && data.languages.length > 0 && (
         <div>
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
-            Idiomas
+            {t.languages}
           </h2>
           <div className="flex flex-wrap gap-4">
             {data.languages.map((lang) => (

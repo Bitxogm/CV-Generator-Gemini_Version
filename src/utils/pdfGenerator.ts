@@ -11,6 +11,7 @@ interface PDFOptions {
   phone?: string;
   location?: string;
   linkedin?: string;
+  language?: 'es' | 'en';
 }
 
 export const generateCoverLetterPDF = (
@@ -89,13 +90,15 @@ const generateMinimalPDF = (
   // Fecha arriba a la derecha
   doc.setFontSize(9);
   doc.setTextColor(100);
-  const currentDate = new Date().toLocaleDateString('es-ES', {
+  const locale = options?.language === 'en' ? 'en-US' : 'es-ES';
+  const currentDate = new Date().toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   });
-  
-  const location = options?.location ? options.location.split(',')[0] : 'Madrid';
+
+  const defaultCity = options?.language === 'en' ? 'New York' : 'Madrid';
+  const location = options?.location ? options.location.split(',')[0] : defaultCity;
   const dateText = `${location}, ${currentDate}`;
   doc.text(dateText, pageWidth - marginRight, marginTop, { align: 'right' });
 
@@ -157,12 +160,14 @@ const generateFormalPDF = (
   // Fecha
   doc.setFontSize(9);
   doc.setTextColor(100);
-  const currentDate = new Date().toLocaleDateString('es-ES', {
+  const locale = options?.language === 'en' ? 'en-US' : 'es-ES';
+  const currentDate = new Date().toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   });
-  const location = options?.location ? options.location.split(',')[0] : 'Madrid';
+  const defaultCity = options?.language === 'en' ? 'New York' : 'Madrid';
+  const location = options?.location ? options.location.split(',')[0] : defaultCity;
   doc.text(`${location}, ${currentDate}`, marginLeft, yPosition);
   
   yPosition += 10;
@@ -269,22 +274,23 @@ const calculateTextHeight = (
 // Generar nombre de archivo
 const generateFileName = (options?: PDFOptions): string => {
   const date = new Date().toISOString().split('T')[0];
-  
+  const prefix = options?.language === 'en' ? 'cover_letter' : 'carta_presentacion';
+
   if (options?.position) {
     const cleanPosition = options.position
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_')
       .substring(0, 30);
-    return `carta_presentacion_${cleanPosition}_${date}.pdf`;
+    return `${prefix}_${cleanPosition}_${date}.pdf`;
   }
-  
+
   if (options?.companyName) {
     const cleanCompany = options.companyName
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_')
       .substring(0, 30);
-    return `carta_presentacion_${cleanCompany}_${date}.pdf`;
+    return `${prefix}_${cleanCompany}_${date}.pdf`;
   }
-  
-  return `carta_presentacion_${date}.pdf`;
+
+  return `${prefix}_${date}.pdf`;
 };

@@ -11,7 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { description, context, type } = await req.json();
+    const { description, context, type, language } = await req.json();
+    // Default to Spanish if not provided
+    const lang = language || 'es';
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -19,12 +21,16 @@ serve(async (req) => {
     }
 
     const contextMap: { [key: string]: string } = {
-      experience: "experiencia laboral",
-      project: "proyecto",
-      education: "educación",
+      experience: lang === 'es' ? "experiencia laboral" : "work experience",
+      project: lang === 'es' ? "proyecto" : "project",
+      education: lang === 'es' ? "educación" : "education",
     };
 
-    const prompt = `Mejora esta descripción de ${contextMap[type] || type} para un CV profesional en español.
+    const languageInstruction = lang === 'es'
+      ? 'IDIOMA: La descripción mejorada DEBE estar completamente en ESPAÑOL.'
+      : 'LANGUAGE: The enhanced description MUST be completely in ENGLISH.';
+
+    const prompt = `Mejora esta descripción de ${contextMap[type] || type} para un CV profesional.
 
 Descripción original:
 ${description}
@@ -38,6 +44,8 @@ La descripción mejorada debe:
 - Estar optimizada para ATS
 - Tener entre 2-4 líneas
 - Mantener el tono profesional
+
+${languageInstruction}
 
 Devuelve solo la descripción mejorada, sin introducción ni explicaciones.`;
 

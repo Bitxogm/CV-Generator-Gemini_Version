@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AIAssistantProps {
   cvData: CVData;
@@ -31,6 +32,7 @@ interface AIAssistantProps {
 }
 
 export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
+  const { t, language, setLanguage } = useLanguage();
   const [jobDescription, setJobDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
@@ -43,11 +45,10 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [isEditingLetter, setIsEditingLetter] = useState(false);
   const [isEditingSummary, setIsEditingSummary] = useState(false);
   const [editedSummary, setEditedSummary] = useState('');
-  const [language, setLanguage] = useState<'es' | 'en'>('es');
 
   const handleAdaptCV = async () => {
     if (!jobDescription.trim()) {
-      toast.error('Por favor pega la descripción de la oferta');
+      toast.error(t('aiAssistant.pleaseJobDescription'));
       return;
     }
 
@@ -63,11 +64,11 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         setAdaptation(data.adaptation);
         setEditedSummary(data.adaptation.suggestions?.summary || '');
         setIsEditingSummary(false);
-        toast.success('Análisis completado');
+        toast.success(t('aiAssistant.analysisCompleted'));
       }
     } catch (error: any) {
       console.error('Error adapting CV:', error);
-      toast.error('Error al analizar la oferta');
+      toast.error(t('aiAssistant.errorAnalyzing'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -75,7 +76,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
   const handleGenerateCoverLetter = async () => {
     if (!jobDescription.trim()) {
-      toast.error(language === 'es' ? 'Por favor pega la descripción de la oferta' : 'Please paste the job description');
+      toast.error(t('aiAssistant.pleaseJobDescription'));
       return;
     }
 
@@ -90,17 +91,17 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       if (data?.coverLetter) {
         setCoverLetter(data.coverLetter);
         setIsEditingLetter(false);
-        
+
         const wordCount = data.wordCount || data.coverLetter.split(/\s+/).length;
         if (wordCount > 450) {
-          toast.success(`${language === 'es' ? 'Carta generada' : 'Cover letter generated'} (${wordCount} ${language === 'es' ? 'palabras' : 'words'} - ${language === 'es' ? 'considera acortarla' : 'consider shortening it'})`);
+          toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} - ${t('aiAssistant.considerShortening')}`);
         } else {
-          toast.success(`${language === 'es' ? 'Carta generada' : 'Cover letter generated'} (${wordCount} ${language === 'es' ? 'palabras' : 'words'}) ✓`);
+          toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} ✓`);
         }
       }
     } catch (error: any) {
       console.error('Error generating cover letter:', error);
-      toast.error(language === 'es' ? 'Error al generar la carta' : 'Error generating cover letter');
+      toast.error(t('aiAssistant.coverLetterError'));
     } finally {
       setIsGeneratingLetter(false);
     }
@@ -108,7 +109,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
   const copyCoverLetter = () => {
     navigator.clipboard.writeText(coverLetter);
-    toast.success(language === 'es' ? 'Carta copiada al portapapeles' : 'Cover letter copied to clipboard');
+    toast.success(t('aiAssistant.copiedToClipboard'));
   };
 
   const handlePreview = () => {
@@ -121,6 +122,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       phone: cvData.personalInfo.phone,
       location: cvData.personalInfo.location,
       linkedin: cvData.personalInfo.linkedin,
+      language: language,
     };
 
     const url = generateCoverLetterPreview(coverLetter, options);
@@ -128,7 +130,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       setPreviewUrl(url);
       setShowPreview(true);
     } else {
-      toast.error(language === 'es' ? 'Error al generar la vista previa' : 'Error generating preview');
+      toast.error(t('aiAssistant.errorPreview'));
     }
   };
 
@@ -144,18 +146,19 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         phone: cvData.personalInfo.phone,
         location: cvData.personalInfo.location,
         linkedin: cvData.personalInfo.linkedin,
+        language: language,
       };
 
       const success = generateCoverLetterPDF(coverLetter, options);
 
       if (success) {
-        toast.success(language === 'es' ? 'PDF descargado correctamente' : 'PDF downloaded successfully');
+        toast.success(t('aiAssistant.pdfDownloaded'));
       } else {
-        toast.error(language === 'es' ? 'Error al generar el PDF' : 'Error generating PDF');
+        toast.error(t('aiAssistant.errorPdf'));
       }
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      toast.error(language === 'es' ? 'Error al descargar el PDF' : 'Error downloading PDF');
+      toast.error(t('aiAssistant.errorDownloadPdf'));
     } finally {
       setIsDownloadingPDF(false);
     }
@@ -178,7 +181,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       }
     }
 
-    return language === 'es' ? 'Oferta' : 'Job Offer';
+    return t('aiAssistant.jobOffer');
   };
 
   const applyAdaptation = () => {
@@ -188,7 +191,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         summary: editedSummary
       };
       onApplySuggestions(updatedSuggestions);
-      toast.success(language === 'es' ? 'Sugerencias aplicadas' : 'Suggestions applied');
+      toast.success(t('aiAssistant.suggestionsApplied'));
     }
   };
 
@@ -198,7 +201,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            🌍 {language === 'es' ? 'Idioma' : 'Language'}
+            🌍 {t('common.language')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -210,13 +213,13 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               <SelectItem value="es">
                 <div className="flex items-center gap-2">
                   <span>🇪🇸</span>
-                  <span>Español</span>
+                  <span>{t('common.spanish')}</span>
                 </div>
               </SelectItem>
               <SelectItem value="en">
                 <div className="flex items-center gap-2">
                   <span>🇬🇧</span>
-                  <span>English</span>
+                  <span>{t('common.english')}</span>
                 </div>
               </SelectItem>
             </SelectContent>
@@ -229,21 +232,19 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            {language === 'es' ? 'Asistente de Adaptación de CV con IA' : 'AI CV Adaptation Assistant'}
+            {t('aiAssistant.cvAdaptationTitle')}
           </CardTitle>
           <CardDescription>
-            {language === 'es' 
-              ? 'Pega una oferta de trabajo para analizar tu CV, obtener una puntuación de compatibilidad y recibir sugerencias de la IA para adaptar tu perfil al puesto.'
-              : 'Paste a job offer to analyze your CV, get a compatibility score and receive AI suggestions to adapt your profile to the position.'}
+            {t('aiAssistant.cvAdaptationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="text-sm font-medium mb-2 block">
-              {language === 'es' ? 'Descripción de la Oferta' : 'Job Description'}
+              {t('aiAssistant.jobDescription')}
             </label>
             <Textarea
-              placeholder={language === 'es' ? 'Pega aquí la descripción completa de la oferta de trabajo...' : 'Paste the complete job description here...'}
+              placeholder={t('aiAssistant.jobDescriptionFullPlaceholder')}
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               className="min-h-[150px]"
@@ -258,12 +259,12 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
             {isAnalyzing ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {language === 'es' ? 'Analizando...' : 'Analyzing...'}
+                {t('aiAssistant.analyzing')}
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                {language === 'es' ? 'Analizar con IA' : 'Analyze with AI'}
+                {t('aiAssistant.analyzeWithAI')}
               </>
             )}
           </Button>
@@ -272,7 +273,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
             <div className="space-y-4 mt-6 p-4 border rounded-lg bg-muted/20">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold text-lg">
-                  {language === 'es' ? 'Puntuación de Compatibilidad' : 'Compatibility Score'}
+                  {t('aiAssistant.compatibilityScore')}
                 </h4>
                 <Badge variant={adaptation.compatibilityScore >= 70 ? "default" : "secondary"} className="text-lg px-4 py-1">
                   {adaptation.compatibilityScore}/100
@@ -284,7 +285,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               <div>
                 <h5 className="font-semibold mb-2 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  {language === 'es' ? 'Habilidades Coincidentes' : 'Matched Skills'}
+                  {t('aiAssistant.matchedSkills')}
                 </h5>
                 <div className="flex flex-wrap gap-2">
                   {adaptation.matchedSkills?.map((skill: string, i: number) => (
@@ -298,7 +299,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               {adaptation.missingSkills?.length > 0 && (
                 <div>
                   <h5 className="font-semibold mb-2">
-                    {language === 'es' ? 'Habilidades Faltantes' : 'Missing Skills'}
+                    {t('aiAssistant.missingSkills')}
                   </h5>
                   <div className="flex flex-wrap gap-2">
                     {adaptation.missingSkills.map((skill: string, i: number) => (
@@ -312,7 +313,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
               <div>
                 <h5 className="font-semibold mb-2">
-                  {language === 'es' ? 'Recomendaciones Generales' : 'General Recommendations'}
+                  {t('aiAssistant.generalRecommendations')}
                 </h5>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
                   {adaptation.overallRecommendations?.map((rec: string, i: number) => (
@@ -325,7 +326,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h5 className="font-semibold">
-                      {language === 'es' ? 'Resumen Sugerido' : 'Suggested Summary'}
+                      {t('aiAssistant.suggestedSummary')}
                     </h5>
                     <Button
                       size="sm"
@@ -333,7 +334,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                       onClick={() => setIsEditingSummary(!isEditingSummary)}
                     >
                       <Edit2 className="w-4 h-4 mr-1" />
-                      {isEditingSummary ? (language === 'es' ? 'Cancelar' : 'Cancel') : (language === 'es' ? 'Editar' : 'Edit')}
+                      {isEditingSummary ? t('common.cancel') : t('common.edit')}
                     </Button>
                   </div>
                   {isEditingSummary ? (
@@ -353,7 +354,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               {onApplySuggestions && (
                 <Button onClick={applyAdaptation} className="w-full" variant="secondary">
                   <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {language === 'es' ? 'Aplicar Sugerencias al CV' : 'Apply Suggestions to CV'}
+                  {t('aiAssistant.applySuggestions')}
                 </Button>
               )}
             </div>
@@ -366,21 +367,19 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-primary" />
-            {language === 'es' ? 'Generador de Carta de Presentación' : 'Cover Letter Generator'}
+            {t('aiAssistant.coverLetterGenerator')}
           </CardTitle>
           <CardDescription>
-            {language === 'es'
-              ? 'Pega la descripción de una oferta de trabajo para generar una carta de presentación profesional y personalizada.'
-              : 'Paste a job description to generate a professional and personalized cover letter.'}
+            {t('aiAssistant.coverLetterDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="text-sm font-medium mb-2 block">
-              {language === 'es' ? 'Descripción de la Oferta' : 'Job Description'}
+              {t('aiAssistant.jobDescription')}
             </label>
             <Textarea
-              placeholder={language === 'es' ? 'Pega aquí la descripción completa de la oferta...' : 'Paste the complete job description here...'}
+              placeholder={t('aiAssistant.jobDescriptionCompletePlaceholder')}
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               className="min-h-[120px]"
@@ -395,12 +394,12 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
             {isGeneratingLetter ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {language === 'es' ? 'Generando...' : 'Generating...'}
+                {t('aiAssistant.generating')}
               </>
             ) : (
               <>
                 <FileText className="w-4 h-4 mr-2" />
-                {language === 'es' ? 'Generar Carta con IA' : 'Generate Letter with AI'}
+                {t('aiAssistant.generateWithAI')}
               </>
             )}
           </Button>
@@ -409,7 +408,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
             <div className="space-y-3 mt-6 p-4 border rounded-lg bg-muted/20">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold">
-                  {language === 'es' ? 'Carta de Presentación' : 'Cover Letter'}
+                  {t('aiAssistant.coverLetter')}
                 </h4>
                 <Button
                   size="sm"
@@ -417,7 +416,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                   onClick={() => setIsEditingLetter(!isEditingLetter)}
                 >
                   <Edit2 className="w-4 h-4 mr-1" />
-                  {isEditingLetter ? (language === 'es' ? 'Ver' : 'View') : (language === 'es' ? 'Editar' : 'Edit')}
+                  {isEditingLetter ? t('common.view') : t('common.edit')}
                 </Button>
               </div>
 
@@ -426,12 +425,10 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                   <span>⚠️</span>
                   <div>
                     <div className="font-semibold">
-                      {language === 'es' ? 'Carta un poco larga' : 'Letter a bit long'}
+                      {t('aiAssistant.letterTooLong')}
                     </div>
                     <div>
-                      {language === 'es'
-                        ? `Actualmente: ${coverLetter.split(/\s+/).length} palabras. Ideal: 350-450 palabras para caber perfectamente en 1 página.`
-                        : `Currently: ${coverLetter.split(/\s+/).length} words. Ideal: 350-450 words to fit perfectly on 1 page.`}
+                      {t('aiAssistant.letterLengthWarning', { count: coverLetter.split(/\s+/).length })}
                     </div>
                   </div>
                 </div>
@@ -453,7 +450,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  {language === 'es' ? 'Formato del PDF' : 'PDF Format'}
+                  {t('aiAssistant.pdfFormat')}
                 </label>
                 <Select value={pdfFormat} onValueChange={(value) => setPdfFormat(value as CoverLetterFormat)}>
                   <SelectTrigger className="w-full">
@@ -463,20 +460,20 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                     <SelectItem value="minimal">
                       <div className="flex flex-col items-start">
                         <span className="font-medium">
-                          {language === 'es' ? 'Minimalista' : 'Minimal'}
+                          {t('aiAssistant.minimal')}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {language === 'es' ? 'Solo fecha y contenido' : 'Date and content only'}
+                          {t('aiAssistant.minimalDescription')}
                         </span>
                       </div>
                     </SelectItem>
                     <SelectItem value="formal">
                       <div className="flex flex-col items-start">
                         <span className="font-medium">
-                          {language === 'es' ? 'Formal' : 'Formal'}
+                          {t('aiAssistant.formal')}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {language === 'es' ? 'Con datos de contacto completos' : 'With full contact details'}
+                          {t('aiAssistant.formalDescription')}
                         </span>
                       </div>
                     </SelectItem>
@@ -485,25 +482,25 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               </div>
 
               <div className="flex gap-2">
-                <Button 
-                  onClick={copyCoverLetter} 
-                  size="sm" 
+                <Button
+                  onClick={copyCoverLetter}
+                  size="sm"
                   variant="outline"
                   className="flex-1"
                 >
                   <Copy className="w-4 h-4 mr-1" />
-                  {language === 'es' ? 'Copiar' : 'Copy'}
+                  {t('common.copy')}
                 </Button>
-                <Button 
+                <Button
                   onClick={handlePreview}
                   size="sm"
                   variant="outline"
                   className="flex-1"
                 >
                   <Eye className="w-4 h-4 mr-1" />
-                  {language === 'es' ? 'Vista Previa' : 'Preview'}
+                  {t('common.preview')}
                 </Button>
-                <Button 
+                <Button
                   onClick={downloadCoverLetterPDF}
                   disabled={isDownloadingPDF}
                   size="sm"
@@ -513,12 +510,12 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
                   {isDownloadingPDF ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                      {language === 'es' ? 'Generando...' : 'Generating...'}
+                      {t('aiAssistant.generating')}
                     </>
                   ) : (
                     <>
                       <Download className="w-4 h-4 mr-1" />
-                      {language === 'es' ? 'Descargar PDF' : 'Download PDF'}
+                      {t('common.download')} PDF
                     </>
                   )}
                 </Button>
@@ -533,10 +530,10 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         <DialogContent className="max-w-4xl h-[90vh]">
           <DialogHeader>
             <DialogTitle>
-              {language === 'es' ? 'Vista Previa - Carta de Presentación' : 'Preview - Cover Letter'}
+              {t('aiAssistant.previewCoverLetter')}
             </DialogTitle>
             <DialogDescription>
-              {language === 'es' ? 'Formato:' : 'Format:'} {pdfFormat === 'minimal' ? (language === 'es' ? 'Minimalista' : 'Minimal') : (language === 'es' ? 'Formal' : 'Formal')}
+              {t('aiAssistant.format')} {pdfFormat === 'minimal' ? t('aiAssistant.minimal') : t('aiAssistant.formal')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-hidden">
@@ -544,20 +541,20 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
               <iframe
                 src={previewUrl}
                 className="w-full h-full border rounded"
-                title={language === 'es' ? 'Vista previa del PDF' : 'PDF preview'}
+                title={t('aiAssistant.pdfPreview')}
               />
             )}
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShowPreview(false)}>
-              {language === 'es' ? 'Cerrar' : 'Close'}
+              {t('common.close')}
             </Button>
             <Button onClick={() => {
               setShowPreview(false);
               downloadCoverLetterPDF();
             }}>
               <Download className="w-4 h-4 mr-2" />
-              {language === 'es' ? 'Descargar PDF' : 'Download PDF'}
+              {t('common.download')} PDF
             </Button>
           </DialogFooter>
         </DialogContent>

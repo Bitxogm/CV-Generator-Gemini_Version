@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +12,7 @@ import { FileText, Sparkles } from 'lucide-react';
 
 export default function AuthPage() {
   const { user, loading, signIn, signUp } = useAuth();
+  const { t } = useLanguage();
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
@@ -20,7 +23,7 @@ export default function AuthPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="animate-pulse">Cargando...</div>
+        <div className="animate-pulse">{t('common.loading')}</div>
       </div>
     );
   }
@@ -46,6 +49,9 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
       <div className="w-full max-w-md">
+        <div className="flex justify-end mb-4">
+          <LanguageSelector />
+        </div>
         <div className="text-center mb-8 animate-fade-in">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="p-3 bg-primary/10 rounded-xl">
@@ -57,7 +63,7 @@ export default function AuthPage() {
             CV Crafter
           </h1>
           <p className="text-muted-foreground mt-2">
-            Crea CVs profesionales con IA
+            {t('auth.subtitle')}
           </p>
         </div>
 
@@ -65,31 +71,31 @@ export default function AuthPage() {
           <Tabs defaultValue="signin" className="w-full">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
-                <TabsTrigger value="signup">Registrarse</TabsTrigger>
+                <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+                <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
               </TabsList>
             </CardHeader>
 
             <TabsContent value="signin">
               <form onSubmit={handleSignIn}>
                 <CardContent className="space-y-4">
-                  <CardTitle>Bienvenido de vuelta</CardTitle>
+                  <CardTitle>{t('auth.welcomeBack')}</CardTitle>
                   <CardDescription>
-                    Ingresa tus credenciales para continuar
+                    {t('auth.signInDescription')}
                   </CardDescription>
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
+                    <Label htmlFor="signin-email">{t('auth.email')}</Label>
                     <Input
                       id="signin-email"
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       value={signInEmail}
                       onChange={(e) => setSignInEmail(e.target.value)}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signin-password">Contraseña</Label>
+                    <Label htmlFor="signin-password">{t('auth.password')}</Label>
                     <Input
                       id="signin-password"
                       type="password"
@@ -101,12 +107,12 @@ export default function AuthPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    {isSubmitting ? t('auth.signingIn') : t('auth.signIn')}
                   </Button>
                 </CardFooter>
               </form>
@@ -115,34 +121,34 @@ export default function AuthPage() {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp}>
                 <CardContent className="space-y-4">
-                  <CardTitle>Crea tu cuenta</CardTitle>
+                  <CardTitle>{t('auth.createAccount')}</CardTitle>
                   <CardDescription>
-                    Únete y comienza a crear CVs profesionales
+                    {t('auth.signUpDescription')}
                   </CardDescription>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Nombre completo</Label>
+                    <Label htmlFor="signup-name">{t('auth.fullName')}</Label>
                     <Input
                       id="signup-name"
                       type="text"
-                      placeholder="Juan Pérez"
+                      placeholder={t('auth.namePlaceholder')}
                       value={signUpName}
                       onChange={(e) => setSignUpName(e.target.value)}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">{t('auth.email')}</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       value={signUpEmail}
                       onChange={(e) => setSignUpEmail(e.target.value)}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Contraseña</Label>
+                    <Label htmlFor="signup-password">{t('auth.password')}</Label>
                     <Input
                       id="signup-password"
                       type="password"
@@ -155,12 +161,12 @@ export default function AuthPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}
+                    {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccount')}
                   </Button>
                 </CardFooter>
               </form>
