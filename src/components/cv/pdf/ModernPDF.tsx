@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   header: {
-    borderBottom: '2pt solid #3B82F6',
+    borderBottom: '1pt solid #000000',
     paddingBottom: 15,
     marginBottom: 20,
   },
@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#1a1a1a',
+    color: '#000000',
   },
   contactInfo: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
     fontSize: 9,
-    color: '#6b7280',
+    color: '#000000',
   },
   contactItem: {
     flexDirection: 'row',
@@ -37,10 +37,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#3B82F6',
+    color: '#000000',
     marginBottom: 10,
+    textTransform: 'uppercase',
+    borderBottom: '1pt solid #000000',
+    paddingBottom: 3,
   },
   summaryText: {
     lineHeight: 1.5,
@@ -52,37 +55,31 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#000000',
     marginBottom: 3,
   },
   company: {
     fontSize: 10,
-    color: '#3B82F6',
+    color: '#000000',
     fontWeight: 'bold',
     marginBottom: 2,
   },
   dateLocation: {
     fontSize: 9,
-    color: '#6b7280',
+    color: '#000000',
     marginBottom: 5,
   },
   description: {
     fontSize: 10,
     lineHeight: 1.4,
-    color: '#1a1a1a',
+    color: '#000000',
   },
   skillsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
+    fontSize: 10,
   },
   skillPill: {
-    backgroundColor: '#EEF2FF',
-    color: '#3B82F6',
-    padding: '4pt 10pt',
-    borderRadius: 12,
-    fontSize: 9,
-    fontWeight: 'bold',
+    fontSize: 10,
+    color: '#000000',
   },
   educationItem: {
     marginBottom: 10,
@@ -90,12 +87,12 @@ const styles = StyleSheet.create({
   degree: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#000000',
     marginBottom: 3,
   },
   institution: {
     fontSize: 10,
-    color: '#3B82F6',
+    color: '#000000',
     fontWeight: 'bold',
     marginBottom: 2,
   },
@@ -105,12 +102,12 @@ const styles = StyleSheet.create({
   projectName: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#000000',
     marginBottom: 3,
   },
   techStack: {
-    fontSize: 8,
-    color: '#6b7280',
+    fontSize: 9,
+    color: '#000000',
     marginTop: 3,
   },
   languageContainer: {
@@ -217,11 +214,7 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
         {data.skills.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t.skills}</Text>
-            <View style={styles.skillsContainer}>
-              {data.skills.map((skill, index) => (
-                <Text key={index} style={styles.skillPill}>{skill}</Text>
-              ))}
-            </View>
+            <Text style={styles.skillsContainer}>{data.skills.join(', ')}</Text>
           </View>
         )}
 
@@ -229,11 +222,7 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
         {data.softSkills && data.softSkills.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t.softSkills}</Text>
-            <View style={styles.skillsContainer}>
-              {data.softSkills.map((skill, index) => (
-                <Text key={index} style={styles.skillPill}>{skill}</Text>
-              ))}
-            </View>
+            <Text style={styles.skillsContainer}>{data.softSkills.join(', ')}</Text>
           </View>
         )}
 
