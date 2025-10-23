@@ -8,6 +8,7 @@ import { SummarySection } from './sections/SummarySection';
 import { ExperienceSection } from './sections/ExperienceSection';
 import { EducationSection } from './sections/EducationSection';
 import { SkillsSection } from './sections/SkillsSection';
+import { SoftSkillsSection } from './sections/SoftSkillsSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import { LanguagesSection } from './sections/LanguagesSection';
 import { FileText, Eye, Save, Layout } from 'lucide-react';
@@ -109,7 +110,10 @@ export function CVForm({
         </TabsContent>
 
         <TabsContent value="skills" className="mt-6">
-          <SkillsSection cvData={cvData} setCvData={setCvData} />
+          <div className="space-y-6">
+            <SkillsSection cvData={cvData} setCvData={setCvData} />
+            <SoftSkillsSection cvData={cvData} setCvData={setCvData} />
+          </div>
         </TabsContent>
 
         <TabsContent value="projects" className="mt-6">

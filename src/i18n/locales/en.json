@@ -88,7 +88,8 @@
     "summary": "Professional Summary",
     "experience": "Work Experience",
     "education": "Education",
-    "skills": "Skills",
+    "skills": "Technical Skills",
+    "softSkills": "Soft Skills",
     "projects": "Projects",
     "awards": "Awards and Recognition",
     "languages": "Languages",
@@ -162,12 +163,18 @@
     "noEducation": "No education added"
   },
   "skills": {
-    "title": "Skills",
+    "title": "Technical Skills",
     "addSkill": "Add Skill",
-    "skillPlaceholder": "JavaScript, Python, React...",
+    "skillPlaceholder": "React, JavaScript, TypeScript, Python...",
     "technical": "Technical Skills",
     "soft": "Soft Skills",
-    "noSkills": "No skills added"
+    "noSkills": "No technical skills added"
+  },
+  "softSkills": {
+    "title": "Soft Skills",
+    "addSkill": "Add Soft Skill",
+    "skillPlaceholder": "Team leadership, Effective communication...",
+    "noSkills": "No soft skills added"
   },
   "projects": {
     "title": "Projects",

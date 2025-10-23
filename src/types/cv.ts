@@ -4,6 +4,7 @@ export interface CVData {
   experience: Experience[];
   education: Education[];
   skills: string[];
+  softSkills?: string[];
   projects?: Project[];
   awards?: Award[];
   languages?: Language[];

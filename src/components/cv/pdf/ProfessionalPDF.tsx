@@ -130,7 +130,8 @@ const translations = {
     professionalSummary: 'RESUMEN PROFESIONAL',
     experience: 'EXPERIENCIA PROFESIONAL',
     education: 'EDUCACIÓN',
-    skills: 'Habilidades',
+    skills: 'Habilidades Técnicas',
+    softSkills: 'Competencias',
     projects: 'PROYECTOS',
     languages: 'Idiomas',
     present: 'Presente',
@@ -141,7 +142,8 @@ const translations = {
     professionalSummary: 'PROFESSIONAL SUMMARY',
     experience: 'WORK EXPERIENCE',
     education: 'EDUCATION',
-    skills: 'Skills',
+    skills: 'Technical Skills',
+    softSkills: 'Soft Skills',
     projects: 'PROJECTS',
     languages: 'Languages',
     present: 'Present',
@@ -174,6 +176,16 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarTitle}>{t.skills}</Text>
               {data.skills.map((skill, index) => (
+                <Text key={index} style={styles.skillItem}>• {skill}</Text>
+              ))}
+            </View>
+          )}
+
+          {/* Soft Skills */}
+          {data.softSkills && data.softSkills.length > 0 && (
+            <View style={styles.sidebarSection}>
+              <Text style={styles.sidebarTitle}>{t.softSkills}</Text>
+              {data.softSkills.map((skill, index) => (
                 <Text key={index} style={styles.skillItem}>• {skill}</Text>
               ))}
             </View>

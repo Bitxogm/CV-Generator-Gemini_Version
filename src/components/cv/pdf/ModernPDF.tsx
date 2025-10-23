@@ -133,7 +133,8 @@ const translations = {
     professionalSummary: 'Resumen Profesional',
     experience: 'Experiencia Profesional',
     education: 'Educación',
-    skills: 'Habilidades',
+    skills: 'Habilidades Técnicas',
+    softSkills: 'Competencias',
     projects: 'Proyectos',
     languages: 'Idiomas',
     present: 'Presente',
@@ -143,7 +144,8 @@ const translations = {
     professionalSummary: 'Professional Summary',
     experience: 'Work Experience',
     education: 'Education',
-    skills: 'Skills',
+    skills: 'Technical Skills',
+    softSkills: 'Soft Skills',
     projects: 'Projects',
     languages: 'Languages',
     present: 'Present',
@@ -217,6 +219,18 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
             <Text style={styles.sectionTitle}>{t.skills}</Text>
             <View style={styles.skillsContainer}>
               {data.skills.map((skill, index) => (
+                <Text key={index} style={styles.skillPill}>{skill}</Text>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Soft Skills */}
+        {data.softSkills && data.softSkills.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t.softSkills}</Text>
+            <View style={styles.skillsContainer}>
+              {data.softSkills.map((skill, index) => (
                 <Text key={index} style={styles.skillPill}>{skill}</Text>
               ))}
             </View>
