@@ -97,7 +97,7 @@ const generateMinimalPDF = (
     year: 'numeric'
   });
 
-  const defaultCity = options?.language === 'en' ? 'New York' : 'Madrid';
+  const defaultCity = options?.language === 'en' ? 'New York' : 'Cantabria';
   const location = options?.location ? options.location.split(',')[0] : defaultCity;
   const dateText = `${location}, ${currentDate}`;
   doc.text(dateText, pageWidth - marginRight, marginTop, { align: 'right' });
@@ -166,7 +166,7 @@ const generateFormalPDF = (
     month: 'long',
     year: 'numeric'
   });
-  const defaultCity = options?.language === 'en' ? 'New York' : 'Madrid';
+  const defaultCity = options?.language === 'en' ? 'New York' : 'Cantabria';
   const location = options?.location ? options.location.split(',')[0] : defaultCity;
   doc.text(`${location}, ${currentDate}`, marginLeft, yPosition);
   

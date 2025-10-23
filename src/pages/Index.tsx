@@ -37,7 +37,7 @@ const initialCVData: CVData = {
       id: '1',
       company: 'KeepCoding Web Bootcamp',
       position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
-      location: 'Madrid',
+      location: 'Cantabria',
       startDate: '2024',
       endDate: 'Actualidad',
       current: true,
@@ -55,7 +55,8 @@ const initialCVData: CVData = {
     },
   ],
   education: [],
-  skills: ['React', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Node.js', 'HTML5', 'CSS3', 'SQL', 'Liderazgo de equipos', 'Resolución de problemas complejos', 'Gestión de proyectos', 'Colaboración en equipo'],
+  skills: ['React', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Node.js', 'HTML5', 'CSS3'],
+  softSkills: ['Liderazgo de equipos', 'Comunicación efectiva', 'Gestión de proyectos', 'Colaboración en equipo'],
   projects: [
     {
       id: '1',

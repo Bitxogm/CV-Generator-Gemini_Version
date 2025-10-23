@@ -67,7 +67,8 @@ const translations = {
     professionalSummary: 'RESUMEN PROFESIONAL',
     experience: 'EXPERIENCIA PROFESIONAL',
     education: 'EDUCACIÓN',
-    skills: 'HABILIDADES',
+    skills: 'HABILIDADES TÉCNICAS',
+    softSkills: 'COMPETENCIAS',
     projects: 'PROYECTOS',
     languages: 'IDIOMAS',
     present: 'Presente',
@@ -77,7 +78,8 @@ const translations = {
     professionalSummary: 'PROFESSIONAL SUMMARY',
     experience: 'WORK EXPERIENCE',
     education: 'EDUCATION',
-    skills: 'SKILLS',
+    skills: 'TECHNICAL SKILLS',
+    softSkills: 'SOFT SKILLS',
     projects: 'PROJECTS',
     languages: 'LANGUAGES',
     present: 'Present',
@@ -150,6 +152,14 @@ export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t.skills}</Text>
             <Text style={styles.text}>{data.skills.join(', ')}</Text>
+          </View>
+        )}
+
+        {/* Soft Skills */}
+        {data.softSkills && data.softSkills.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t.softSkills}</Text>
+            <Text style={styles.text}>{data.softSkills.join(', ')}</Text>
           </View>
         )}
 

@@ -11,7 +11,8 @@ const translations = {
     professionalSummary: 'Resumen Profesional',
     experience: 'Experiencia Profesional',
     education: 'Educación',
-    skills: 'Habilidades',
+    skills: 'Habilidades Técnicas',
+    softSkills: 'Competencias',
     projects: 'Proyectos',
     languages: 'Idiomas',
     present: 'Presente',
@@ -21,7 +22,8 @@ const translations = {
     professionalSummary: 'Professional Summary',
     experience: 'Work Experience',
     education: 'Education',
-    skills: 'Skills',
+    skills: 'Technical Skills',
+    softSkills: 'Soft Skills',
     projects: 'Projects',
     languages: 'Languages',
     present: 'Present',
@@ -140,6 +142,25 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
           </h2>
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Soft Skills */}
+      {data.softSkills && data.softSkills.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-display font-semibold text-primary mb-3">
+            {t.softSkills}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {data.softSkills.map((skill, index) => (
               <span
                 key={index}
                 className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"

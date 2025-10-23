@@ -11,7 +11,8 @@ const translations = {
     professionalSummary: 'Resumen Profesional',
     experience: 'Experiencia Profesional',
     education: 'Educación',
-    skills: 'Habilidades',
+    skills: 'Habilidades Técnicas',
+    softSkills: 'Competencias',
     projects: 'Proyectos',
     languages: 'Idiomas',
     present: 'Presente',
@@ -21,7 +22,8 @@ const translations = {
     professionalSummary: 'Professional Summary',
     experience: 'Work Experience',
     education: 'Education',
-    skills: 'Skills',
+    skills: 'Technical Skills',
+    softSkills: 'Soft Skills',
     projects: 'Projects',
     languages: 'Languages',
     present: 'Present',
@@ -147,6 +149,25 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
             </h2>
             <div className="flex flex-wrap gap-3">
               {data.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="px-4 py-2 bg-gradient-primary text-white rounded-full font-medium shadow-sm hover-scale"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Soft Skills */}
+        {data.softSkills && data.softSkills.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
+              <span className="text-3xl">⚡</span> {t.softSkills}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {data.softSkills.map((skill, index) => (
                 <span
                   key={index}
                   className="px-4 py-2 bg-gradient-primary text-white rounded-full font-medium shadow-sm hover-scale"

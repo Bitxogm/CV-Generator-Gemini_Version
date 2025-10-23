@@ -88,7 +88,8 @@
     "summary": "Resumen Profesional",
     "experience": "Experiencia Laboral",
     "education": "Educación",
-    "skills": "Habilidades",
+    "skills": "Habilidades Técnicas",
+    "softSkills": "Competencias",
     "projects": "Proyectos",
     "awards": "Premios y Reconocimientos",
     "languages": "Idiomas",
@@ -162,12 +163,18 @@
     "noEducation": "No hay educación agregada"
   },
   "skills": {
-    "title": "Habilidades",
+    "title": "Habilidades Técnicas",
     "addSkill": "Agregar Habilidad",
-    "skillPlaceholder": "JavaScript, Python, React...",
+    "skillPlaceholder": "React, JavaScript, TypeScript, Python...",
     "technical": "Habilidades Técnicas",
     "soft": "Habilidades Blandas",
-    "noSkills": "No hay habilidades agregadas"
+    "noSkills": "No hay habilidades técnicas agregadas"
+  },
+  "softSkills": {
+    "title": "Competencias",
+    "addSkill": "Agregar Competencia",
+    "skillPlaceholder": "Liderazgo de equipos, Comunicación efectiva...",
+    "noSkills": "No hay competencias agregadas"
   },
   "projects": {
     "title": "Proyectos",

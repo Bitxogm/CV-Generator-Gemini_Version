@@ -12,7 +12,8 @@ const translations = {
     professionalSummary: 'Resumen Profesional',
     experience: 'Experiencia Profesional',
     education: 'Educación',
-    skills: 'Habilidades',
+    skills: 'Habilidades Técnicas',
+    softSkills: 'Competencias',
     projects: 'Proyectos',
     languages: 'Idiomas',
     present: 'Presente',
@@ -23,7 +24,8 @@ const translations = {
     professionalSummary: 'Professional Summary',
     experience: 'Work Experience',
     education: 'Education',
-    skills: 'Skills',
+    skills: 'Technical Skills',
+    softSkills: 'Soft Skills',
     projects: 'Projects',
     languages: 'Languages',
     present: 'Present',
@@ -91,6 +93,20 @@ export function ProfessionalTemplate({ data, language = 'es' }: ProfessionalTemp
               </h3>
               <div className="space-y-1.5 text-sm text-foreground">
                 {data.skills.map((skill, index) => (
+                  <div key={index}>• {skill}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Soft Skills */}
+          {data.softSkills && data.softSkills.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">
+                {t.softSkills}
+              </h3>
+              <div className="space-y-1.5 text-sm text-foreground">
+                {data.softSkills.map((skill, index) => (
                   <div key={index}>• {skill}</div>
                 ))}
               </div>
