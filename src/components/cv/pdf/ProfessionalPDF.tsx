@@ -6,85 +6,90 @@ import { CVData } from '@/types/cv';
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    flexDirection: 'row',
     fontFamily: 'Helvetica',
-    fontSize: 10,
-    color: '#000000',
+    fontSize: 9,
+    color: '#1a1a1a',
   },
-  header: {
-    marginBottom: 20,
-    paddingBottom: 15,
-    borderBottom: '1pt solid #000000',
+  sidebar: {
+    width: '35%',
+    backgroundColor: '#f3f4f6',
+    padding: 25,
+  },
+  main: {
+    width: '65%',
+    padding: 25,
   },
   name: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000000',
-    textAlign: 'center',
+    marginBottom: 20,
+    color: '#1a1a1a',
   },
-  contactInfo: {
+  sidebarSection: {
+    marginBottom: 20,
+  },
+  sidebarTitle: {
     fontSize: 10,
-    textAlign: 'center',
-    marginBottom: 5,
-  },
-  section: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 13,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 8,
+    color: '#3B82F6',
+    marginBottom: 10,
     textTransform: 'uppercase',
-    borderBottom: '1pt solid #000000',
-    paddingBottom: 3,
+    letterSpacing: 0.5,
   },
   contactItem: {
-    fontSize: 10,
-    marginBottom: 3,
+    fontSize: 8,
+    marginBottom: 6,
+    lineHeight: 1.3,
   },
-  skillText: {
-    fontSize: 10,
-    marginBottom: 8,
+  skillItem: {
+    fontSize: 8,
+    marginBottom: 4,
   },
-  text: {
-    fontSize: 10,
-    marginBottom: 8,
+  mainSection: {
+    marginBottom: 12,
+  },
+  mainTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#3B82F6',
+    marginBottom: 10,
+    paddingBottom: 5,
+    borderBottom: '2pt solid #3B82F6',
   },
   summary: {
-    fontSize: 10,
+    fontSize: 9,
     lineHeight: 1.5,
   },
   experienceItem: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   jobTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#1a1a1a',
     marginBottom: 2,
   },
   company: {
-    fontSize: 10,
-    color: '#000000',
+    fontSize: 9,
+    color: '#3B82F6',
     fontWeight: 'bold',
     marginBottom: 2,
   },
   dateLocation: {
-    fontSize: 9,
-    color: '#000000',
+    fontSize: 8,
+    color: '#6b7280',
     marginBottom: 4,
   },
   description: {
-    fontSize: 10,
+    fontSize: 9,
     lineHeight: 1.4,
   },
   educationItem: {
     marginBottom: 10,
   },
   degree: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'bold',
     marginBottom: 2,
   },
@@ -92,14 +97,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   projectName: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'bold',
     marginBottom: 2,
   },
   techStack: {
-    fontSize: 9,
-    color: '#000000',
+    fontSize: 8,
+    color: '#6b7280',
     marginTop: 2,
+  },
+  languageItem: {
+    marginBottom: 6,
+  },
+  languageName: {
+    fontSize: 9,
+    fontWeight: 'bold',
+  },
+  languageLevel: {
+    fontSize: 8,
+    color: '#6b7280',
   },
 });
 
@@ -140,99 +156,114 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.name}>{data.personalInfo.fullName.toUpperCase()}</Text>
-          <View style={styles.contactInfo}>
-            <Text>{data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}</Text>
-            {(data.personalInfo.linkedin || data.personalInfo.website || data.personalInfo.github) && (
-              <Text>
-                {[data.personalInfo.linkedin, data.personalInfo.website, data.personalInfo.github]
-                  .filter(Boolean)
-                  .join(' | ')}
-              </Text>
-            )}
+        {/* Sidebar */}
+        <View style={styles.sidebar}>
+          <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+
+          {/* Contact */}
+          <View style={styles.sidebarSection}>
+            <Text style={styles.sidebarTitle}>{t.contact}</Text>
+            <Text style={styles.contactItem}>{data.personalInfo.email}</Text>
+            <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
+            <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
+            {data.personalInfo.linkedin && <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>}
+            {data.personalInfo.website && <Text style={styles.contactItem}>{data.personalInfo.website}</Text>}
+            {data.personalInfo.github && <Text style={styles.contactItem}>{data.personalInfo.github}</Text>}
           </View>
+
+          {/* Skills */}
+          {data.skills.length > 0 && (
+            <View style={styles.sidebarSection}>
+              <Text style={styles.sidebarTitle}>{t.skills}</Text>
+              {data.skills.map((skill, index) => (
+                <Text key={index} style={styles.skillItem}>• {skill}</Text>
+              ))}
+            </View>
+          )}
+
+          {/* Soft Skills */}
+          {data.softSkills && data.softSkills.length > 0 && (
+            <View style={styles.sidebarSection}>
+              <Text style={styles.sidebarTitle}>{t.softSkills}</Text>
+              {data.softSkills.map((skill, index) => (
+                <Text key={index} style={styles.skillItem}>• {skill}</Text>
+              ))}
+            </View>
+          )}
+
+          {/* Languages */}
+          {data.languages && data.languages.length > 0 && (
+            <View style={styles.sidebarSection}>
+              <Text style={styles.sidebarTitle}>{t.languages}</Text>
+              {data.languages.map((lang, index) => (
+                <View key={index} style={styles.languageItem}>
+                  <Text style={styles.languageName}>{lang.name}</Text>
+                  <Text style={styles.languageLevel}>{lang.proficiency}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
-        {/* Summary */}
-        {data.summary && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
-            <Text style={styles.summary}>{data.summary}</Text>
-          </View>
-        )}
+        {/* Main Content */}
+        <View style={styles.main}>
+          {/* Summary */}
+          {data.summary && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>{t.professionalSummary}</Text>
+              <Text style={styles.summary}>{data.summary}</Text>
+            </View>
+          )}
 
-        {/* Experience */}
-        {data.experience.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.experience}</Text>
-            {data.experience.map((exp, index) => (
-              <View key={index} style={styles.experienceItem}>
-                <Text style={styles.jobTitle}>{exp.position}</Text>
-                <Text style={styles.company}>{exp.company}, {exp.location} | {exp.startDate} - {exp.current ? t.present : exp.endDate}</Text>
-                <Text style={styles.description}>{exp.description}</Text>
-              </View>
-            ))}
-          </View>
-        )}
+          {/* Experience */}
+          {data.experience.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>{t.experience}</Text>
+              {data.experience.map((exp, index) => (
+                <View key={index} style={styles.experienceItem}>
+                  <Text style={styles.jobTitle}>{exp.position}</Text>
+                  <Text style={styles.company}>{exp.company} • {exp.location}</Text>
+                  <Text style={styles.dateLocation}>
+                    {exp.startDate} - {exp.current ? t.present : exp.endDate}
+                  </Text>
+                  <Text style={styles.description}>{exp.description}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-        {/* Education */}
-        {data.education.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.education}</Text>
-            {data.education.map((edu, index) => (
-              <View key={index} style={styles.educationItem}>
-                <Text style={styles.degree}>{edu.degree} in {edu.field}</Text>
-                <Text style={styles.company}>
-                  {edu.institution} | {edu.startDate} - {edu.current ? t.present : edu.endDate}
-                  {edu.gpa && ` | ${t.gpa}: ${edu.gpa}`}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+          {/* Education */}
+          {data.education.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>{t.education}</Text>
+              {data.education.map((edu, index) => (
+                <View key={index} style={styles.educationItem}>
+                  <Text style={styles.degree}>{edu.degree}</Text>
+                  <Text style={styles.company}>{edu.institution} • {edu.field}</Text>
+                  <Text style={styles.dateLocation}>
+                    {edu.startDate} - {edu.current ? t.present : edu.endDate}
+                    {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-        {/* Skills */}
-        {data.skills.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.skills}</Text>
-            <Text style={styles.skillText}>{data.skills.join(', ')}</Text>
-          </View>
-        )}
-
-        {/* Soft Skills */}
-        {data.softSkills && data.softSkills.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.softSkills}</Text>
-            <Text style={styles.skillText}>{data.softSkills.join(', ')}</Text>
-          </View>
-        )}
-
-        {/* Projects */}
-        {data.projects && data.projects.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.projects}</Text>
-            {data.projects.map((project, index) => (
-              <View key={index} style={styles.projectItem}>
-                <Text style={styles.projectName}>{project.name}</Text>
-                <Text style={styles.description}>{project.description}</Text>
-                <Text style={styles.techStack}>Technologies: {project.technologies.join(', ')}</Text>
-                {project.link && <Text style={styles.techStack}>{project.link}</Text>}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Languages */}
-        {data.languages && data.languages.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.languages}</Text>
-            <Text style={styles.text}>
-              {data.languages.map(lang => `${lang.name} (${lang.proficiency})`).join(', ')}
-            </Text>
-          </View>
-        )}
+          {/* Projects */}
+          {data.projects && data.projects.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>{t.projects}</Text>
+              {data.projects.map((project, index) => (
+                <View key={index} style={styles.projectItem}>
+                  <Text style={styles.projectName}>{project.name}</Text>
+                  <Text style={styles.description}>{project.description}</Text>
+                  <Text style={styles.techStack}>{project.technologies.join(' • ')}</Text>
+                  {project.link && <Text style={styles.techStack}>{project.link}</Text>}
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </Page>
     </Document>
   );

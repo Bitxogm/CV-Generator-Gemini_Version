@@ -220,7 +220,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {data.summary && (
             <View style={styles.summaryBox}>
               <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 6, color: '#8B5CF6' }}>
-                💼 {t.professionalSummary}
+                {t.professionalSummary}
               </Text>
               <Text style={{ fontSize: 9, lineHeight: 1.5 }}>{data.summary}</Text>
             </View>
@@ -229,7 +229,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Experience */}
           {data.experience.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🚀 {t.experience}</Text>
+              <Text style={styles.sectionTitle}>{t.experience}</Text>
               <View style={styles.experienceTimeline}>
                 {data.experience.map((exp, index) => (
                   <View key={index} style={styles.experienceItem}>
@@ -250,7 +250,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Education */}
           {data.education.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🎓 {t.education}</Text>
+              <Text style={styles.sectionTitle}>{t.education}</Text>
               <View style={styles.educationGrid}>
                 {data.education.map((edu, index) => (
                   <View key={index} style={styles.educationBox}>
@@ -269,7 +269,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Skills */}
           {data.skills.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>⚡ {t.skills}</Text>
+              <Text style={styles.sectionTitle}>{t.skills}</Text>
               <View style={styles.skillsContainer}>
                 {data.skills.map((skill, index) => (
                   <Text key={index} style={styles.skillPill}>{skill}</Text>
@@ -281,7 +281,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Soft Skills */}
           {data.softSkills && data.softSkills.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>⚡ {t.softSkills}</Text>
+              <Text style={styles.sectionTitle}>{t.softSkills}</Text>
               <View style={styles.skillsContainer}>
                 {data.softSkills.map((skill, index) => (
                   <Text key={index} style={styles.skillPill}>{skill}</Text>
@@ -293,7 +293,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Projects */}
           {data.projects && data.projects.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>💡 {t.projects}</Text>
+              <Text style={styles.sectionTitle}>{t.projects}</Text>
               {data.projects.map((project, index) => (
                 <View key={index} style={styles.projectBox}>
                   <Text style={styles.projectName}>{project.name}</Text>
@@ -305,7 +305,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                   </View>
                   {project.link && (
                     <Text style={{ fontSize: 8, color: '#3B82F6', marginTop: 4 }}>
-                      🔗 {project.link}
+                      {project.link}
                     </Text>
                   )}
                 </View>
@@ -316,7 +316,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Languages */}
           {data.languages && data.languages.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🌍 {t.languages}</Text>
+              <Text style={styles.sectionTitle}>{t.languages}</Text>
               <View style={styles.languageGrid}>
                 {data.languages.map((lang, index) => (
                   <View key={index} style={styles.languageBox}>

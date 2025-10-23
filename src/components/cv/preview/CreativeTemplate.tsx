@@ -82,7 +82,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {data.summary && (
           <div className="mb-8 p-6 bg-accent/10 rounded-lg border-l-4 border-accent">
             <h2 className="text-2xl font-display font-bold text-accent mb-3">
-              💼 {t.professionalSummary}
+              {t.professionalSummary}
             </h2>
             <p className="text-foreground leading-relaxed italic">{data.summary}</p>
           </div>
@@ -91,8 +91,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Experience with Timeline */}
         {data.experience.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🚀</span> {t.experience}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.experience}
             </h2>
             <div className="space-y-6 border-l-2 border-primary/30 pl-6">
               {data.experience.map((exp) => (
@@ -119,8 +119,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Education */}
         {data.education.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🎓</span> {t.education}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.education}
             </h2>
             <div className="grid gap-4">
               {data.education.map((edu) => (
@@ -144,8 +144,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Skills with Pills */}
         {data.skills.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">⚡</span> {t.skills}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.skills}
             </h2>
             <div className="flex flex-wrap gap-3">
               {data.skills.map((skill, index) => (
@@ -163,8 +163,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Soft Skills */}
         {data.softSkills && data.softSkills.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">⚡</span> {t.softSkills}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.softSkills}
             </h2>
             <div className="flex flex-wrap gap-3">
               {data.softSkills.map((skill, index) => (
@@ -182,8 +182,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Projects */}
         {data.projects && data.projects.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">💡</span> {t.projects}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.projects}
             </h2>
             <div className="grid gap-4">
               {data.projects.map((project) => (
@@ -202,7 +202,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
                   </div>
                   {project.link && (
                     <a href={project.link} className="text-primary hover:underline text-sm">
-                      🔗 {project.link}
+                      {project.link}
                     </a>
                   )}
                 </div>
@@ -214,8 +214,8 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Languages */}
         {data.languages && data.languages.length > 0 && (
           <div>
-            <h2 className="text-2xl font-display font-bold text-primary mb-6 flex items-center gap-2">
-              <span className="text-3xl">🌍</span> {t.languages}
+            <h2 className="text-2xl font-display font-bold text-primary mb-6">
+              {t.languages}
             </h2>
             <div className="grid grid-cols-2 gap-4">
               {data.languages.map((lang) => (

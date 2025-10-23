@@ -144,7 +144,7 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
             {data.skills.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium"
               >
                 {skill}
               </span>
@@ -163,7 +163,7 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
             {data.softSkills.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm font-medium"
               >
                 {skill}
               </span>
