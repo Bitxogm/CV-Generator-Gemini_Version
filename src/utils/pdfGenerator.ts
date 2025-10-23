@@ -26,7 +26,7 @@ export const generateCoverLetterPDF = (
     });
 
     const format = options?.format || 'minimal';
-    
+
     if (format === 'formal') {
       generateFormalPDF(doc, coverLetterText, options);
     } else {
@@ -35,7 +35,7 @@ export const generateCoverLetterPDF = (
 
     const fileName = generateFileName(options);
     doc.save(fileName);
-    
+
     return true;
   } catch (error) {
     console.error('Error al generar el PDF:', error);
@@ -56,7 +56,7 @@ export const generateCoverLetterPreview = (
     });
 
     const format = options?.format || 'minimal';
-    
+
     if (format === 'formal') {
       generateFormalPDF(doc, coverLetterText, options);
     } else {
@@ -127,27 +127,27 @@ const generateFormalPDF = (
   // Datos del remitente (arriba a la derecha) - más compacto
   doc.setFontSize(8.5);
   doc.setTextColor(60);
-  
+
   if (options?.candidateName) {
     doc.text(options.candidateName, pageWidth - marginRight, yPosition, { align: 'right' });
     yPosition += 4;
   }
-  
+
   if (options?.email) {
     doc.text(options.email, pageWidth - marginRight, yPosition, { align: 'right' });
     yPosition += 4;
   }
-  
+
   if (options?.phone) {
     doc.text(options.phone, pageWidth - marginRight, yPosition, { align: 'right' });
     yPosition += 4;
   }
-  
+
   if (options?.location) {
     doc.text(options.location, pageWidth - marginRight, yPosition, { align: 'right' });
     yPosition += 4;
   }
-  
+
   if (options?.linkedin) {
     const linkedinText = options.linkedin.replace('https://', '').replace('http://', '');
     doc.text(linkedinText, pageWidth - marginRight, yPosition, { align: 'right' });
@@ -169,12 +169,12 @@ const generateFormalPDF = (
   const defaultCity = options?.language === 'en' ? 'New York' : 'Madrid';
   const location = options?.location ? options.location.split(',')[0] : defaultCity;
   doc.text(`${location}, ${currentDate}`, marginLeft, yPosition);
-  
+
   yPosition += 10;
 
   // Calcular espacio disponible para el contenido
   const maxContentHeight = pageHeight - yPosition - marginBottom;
-  
+
   // Renderizar contenido ajustado
   renderContentInOnePage(doc, coverLetterText, marginLeft, yPosition, contentWidth, maxContentHeight, yPosition);
 };
@@ -192,29 +192,29 @@ const renderContentInOnePage = (
   // Intentar con diferentes tamaños de fuente hasta que quepa
   const fontSizes = [10.5, 10, 9.5, 9, 8.5, 8];
   const lineSpacings = [5.5, 5.2, 5, 4.8, 4.5, 4.2];
-  
+
   let fittingConfig = null;
-  
+
   for (let i = 0; i < fontSizes.length; i++) {
     const fontSize = fontSizes[i];
     const lineSpacing = lineSpacings[i];
-    
+
     const testHeight = calculateTextHeight(doc, text, contentWidth, fontSize, lineSpacing);
-    
+
     if (testHeight <= maxHeight) {
       fittingConfig = { fontSize, lineSpacing };
       break;
     }
   }
-  
+
   // Si no cabe ni con el tamaño más pequeño, usar el más pequeño de todos modos
   if (!fittingConfig) {
-    fittingConfig = { 
-      fontSize: fontSizes[fontSizes.length - 1], 
-      lineSpacing: lineSpacings[lineSpacings.length - 1] 
+    fittingConfig = {
+      fontSize: fontSizes[fontSizes.length - 1],
+      lineSpacing: lineSpacings[lineSpacings.length - 1]
     };
   }
-  
+
   // Renderizar el texto con la configuración que cabe
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(fittingConfig.fontSize);
@@ -251,7 +251,7 @@ const calculateTextHeight = (
   lineSpacing: number
 ): number => {
   doc.setFontSize(fontSize);
-  
+
   const lines = text.split('\n');
   let totalHeight = 0;
 
