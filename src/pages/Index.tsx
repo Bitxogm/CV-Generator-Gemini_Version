@@ -31,7 +31,7 @@ const initialCVData: CVData = {
     github: 'https://github.com/Bitxogm',
     website: 'https://myreactportfolio1944.web.app/',
   },
-  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript.',
+  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript. Enfocado en la integración de Inteligencia Artificial y LLMs (Claude, Gemini) en aplicaciones web, aplicando Prompt Engineering, Google AI Studio y RAG para crear experiencias inteligentes y escalables.',
   experience: [
     {
       id: '1',
