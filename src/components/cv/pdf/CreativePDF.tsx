@@ -7,162 +7,162 @@ import { CVData } from '@/types/cv';
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
-    fontSize: 10,
+    fontSize: 9,
     color: '#1a1a1a',
   },
   header: {
     backgroundColor: '#3B82F6',
-    padding: 30,
+    padding: 20,
     color: 'white',
   },
   name: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 6,
   },
   contactInfo: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    fontSize: 9,
+    gap: 8,
+    fontSize: 8,
   },
   content: {
-    padding: 25,
+    padding: 15,
   },
   summaryBox: {
     backgroundColor: '#EEF2FF',
-    padding: 15,
-    borderLeft: '4pt solid #8B5CF6',
-    marginBottom: 20,
-    borderRadius: 4,
+    padding: 10,
+    borderLeft: '3pt solid #8B5CF6',
+    marginBottom: 10,
+    borderRadius: 3,
   },
   section: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#3B82F6',
-    marginBottom: 12,
+    marginBottom: 6,
   },
   experienceTimeline: {
     borderLeft: '2pt solid #D1D5DB',
-    paddingLeft: 20,
+    paddingLeft: 15,
   },
   experienceItem: {
-    marginBottom: 15,
+    marginBottom: 8,
     position: 'relative',
   },
   timelineDot: {
     position: 'absolute',
-    left: -25,
+    left: -20,
     top: 0,
-    width: 10,
-    height: 10,
+    width: 8,
+    height: 8,
     backgroundColor: '#3B82F6',
     borderRadius: '50%',
   },
   experienceBox: {
     backgroundColor: '#F9FAFB',
-    padding: 12,
-    borderRadius: 4,
+    padding: 8,
+    borderRadius: 3,
   },
   jobTitle: {
-    fontSize: 12,
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginBottom: 3,
+  },
+  company: {
+    fontSize: 9,
+    color: '#3B82F6',
     fontWeight: 'bold',
     marginBottom: 4,
   },
-  company: {
-    fontSize: 10,
-    color: '#3B82F6',
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
   dateBox: {
-    fontSize: 8,
+    fontSize: 7,
     backgroundColor: 'white',
-    padding: '3pt 8pt',
-    borderRadius: 3,
+    padding: '2pt 6pt',
+    borderRadius: 2,
     color: '#6b7280',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   description: {
-    fontSize: 9,
-    lineHeight: 1.4,
+    fontSize: 8,
+    lineHeight: 1.3,
   },
   educationGrid: {
-    gap: 10,
+    gap: 6,
   },
   educationBox: {
     backgroundColor: '#F9FAFB',
-    padding: 12,
-    borderRadius: 4,
-    marginBottom: 10,
+    padding: 8,
+    borderRadius: 3,
+    marginBottom: 6,
   },
   degree: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  institution: {
     fontSize: 10,
-    color: '#3B82F6',
     fontWeight: 'bold',
     marginBottom: 3,
+  },
+  institution: {
+    fontSize: 9,
+    color: '#3B82F6',
+    fontWeight: 'bold',
+    marginBottom: 2,
   },
   skillsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 5,
   },
   skillPill: {
     backgroundColor: '#3B82F6',
     color: 'white',
-    padding: '6pt 12pt',
-    borderRadius: 12,
-    fontSize: 9,
+    padding: '4pt 8pt',
+    borderRadius: 10,
+    fontSize: 8,
     fontWeight: 'bold',
   },
   projectBox: {
     backgroundColor: '#F9FAFB',
-    padding: 12,
-    borderRadius: 4,
-    borderLeft: '4pt solid #8B5CF6',
-    marginBottom: 10,
+    padding: 8,
+    borderRadius: 3,
+    borderLeft: '3pt solid #8B5CF6',
+    marginBottom: 6,
   },
   projectName: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 3,
   },
   techPill: {
     backgroundColor: '#EEF2FF',
     color: '#8B5CF6',
-    padding: '3pt 8pt',
-    borderRadius: 8,
-    fontSize: 8,
+    padding: '2pt 6pt',
+    borderRadius: 6,
+    fontSize: 7,
     fontWeight: 'bold',
-    marginRight: 4,
-    marginTop: 4,
+    marginRight: 3,
+    marginTop: 3,
   },
   languageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 8,
   },
   languageBox: {
     backgroundColor: '#F9FAFB',
-    padding: 10,
-    borderRadius: 4,
+    padding: 6,
+    borderRadius: 3,
     minWidth: '45%',
   },
   languageName: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
-    marginBottom: 2,
+    marginBottom: 1,
   },
   languageLevel: {
-    fontSize: 8,
+    fontSize: 7,
     color: '#3B82F6',
   },
 });
@@ -219,10 +219,10 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Summary */}
           {data.summary && (
             <View style={styles.summaryBox}>
-              <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 6, color: '#8B5CF6' }}>
+              <Text style={{ fontSize: 10, fontWeight: 'bold', marginBottom: 4, color: '#8B5CF6' }}>
                 {t.professionalSummary}
               </Text>
-              <Text style={{ fontSize: 9, lineHeight: 1.5 }}>{data.summary}</Text>
+              <Text style={{ fontSize: 8, lineHeight: 1.3 }}>{data.summary}</Text>
             </View>
           )}
 
@@ -256,7 +256,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                   <View key={index} style={styles.educationBox}>
                     <Text style={styles.degree}>{edu.degree}</Text>
                     <Text style={styles.institution}>{edu.institution} • {edu.field}</Text>
-                    <Text style={{ fontSize: 8, color: '#6b7280', marginTop: 3 }}>
+                    <Text style={{ fontSize: 7, color: '#6b7280', marginTop: 2 }}>
                       {edu.startDate} - {edu.current ? t.present : edu.endDate}
                       {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                     </Text>
@@ -298,13 +298,13 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                 <View key={index} style={styles.projectBox}>
                   <Text style={styles.projectName}>{project.name}</Text>
                   <Text style={styles.description}>{project.description}</Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
                     {project.technologies.map((tech, i) => (
                       <Text key={i} style={styles.techPill}>{tech}</Text>
                     ))}
                   </View>
                   {project.link && (
-                    <Text style={{ fontSize: 8, color: '#3B82F6', marginTop: 4 }}>
+                    <Text style={{ fontSize: 7, color: '#3B82F6', marginTop: 3 }}>
                       {project.link}
                     </Text>
                   )}
