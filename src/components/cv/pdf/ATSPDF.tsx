@@ -11,45 +11,46 @@ Font.register({
 // ATS-optimized PDF with simple, machine-readable format
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    padding: 30,
     fontFamily: 'Helvetica',
-    fontSize: 10,
-    lineHeight: 1.3,
+    fontSize: 9,
+    lineHeight: 1.2,
     color: '#000000',
   },
   name: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 6,
     textAlign: 'center',
   },
   contactInfo: {
-    fontSize: 10,
+    fontSize: 9,
     textAlign: 'center',
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 12,
+    paddingBottom: 8,
     borderBottom: '1pt solid #000000',
   },
   section: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    marginBottom: 8,
-    paddingBottom: 3,
+    marginBottom: 5,
+    paddingBottom: 2,
     borderBottom: '1pt solid #000000',
   },
   text: {
-    fontSize: 11,
-    marginBottom: 8,
+    fontSize: 9,
+    marginBottom: 4,
+    lineHeight: 1.3,
   },
   bold: {
     fontWeight: 'bold',
   },
   subsection: {
-    marginBottom: 10,
+    marginBottom: 6,
   },
   bulletPoint: {
     marginLeft: 15,

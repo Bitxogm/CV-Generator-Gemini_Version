@@ -41,33 +41,33 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
           {data.personalInfo.fullName}
         </h1>
         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Mail className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 flex-shrink-0" />
             <span>{data.personalInfo.email}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Phone className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 flex-shrink-0" />
             <span>{data.personalInfo.phone}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 flex-shrink-0" />
             <span>{data.personalInfo.location}</span>
           </div>
           {data.personalInfo.linkedin && (
-            <div className="flex items-center gap-1">
-              <Linkedin className="w-4 h-4" />
+            <div className="flex items-center gap-2">
+              <Linkedin className="w-4 h-4 flex-shrink-0" />
               <span>{data.personalInfo.linkedin}</span>
             </div>
           )}
           {data.personalInfo.website && (
-            <div className="flex items-center gap-1">
-              <Globe className="w-4 h-4" />
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 flex-shrink-0" />
               <span>{data.personalInfo.website}</span>
             </div>
           )}
           {data.personalInfo.github && (
-            <div className="flex items-center gap-1">
-              <Github className="w-4 h-4" />
+            <div className="flex items-center gap-2">
+              <Github className="w-4 h-4 flex-shrink-0" />
               <span>{data.personalInfo.github}</span>
             </div>
           )}

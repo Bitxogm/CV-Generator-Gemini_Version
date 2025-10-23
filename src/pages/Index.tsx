@@ -291,7 +291,7 @@ export default function Index() {
               <div className="flex gap-2">
                 <Button onClick={() => handleDownload('visual')} className="flex-1">
                   <FileDown className="w-4 h-4 mr-2" />
-                  {t('cv.downloadVisual')}
+                  {t(`cv.download${templateType.charAt(0).toUpperCase() + templateType.slice(1)}`)}
                 </Button>
                 <Button onClick={() => handleDownload('ats')} variant="outline" className="flex-1">
                   <FileDown className="w-4 h-4 mr-2" />

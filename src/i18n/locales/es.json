@@ -73,6 +73,9 @@
     "downloadATS": "Descargar PDF ATS",
     "downloadVisual": "Descargar Visual",
     "downloadAts": "Descargar ATS",
+    "downloadModern": "Descargar Moderno",
+    "downloadProfessional": "Descargar Profesional",
+    "downloadCreative": "Descargar Creativo",
     "analyzeWithAI": "Analizar con IA"
   },
   "templates": {

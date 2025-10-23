@@ -46,8 +46,9 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
   },
   summaryText: {
-    lineHeight: 1.5,
-    color: '#1a1a1a',
+    lineHeight: 1.3,
+    fontSize: 10,
+    color: '#000000',
   },
   experienceItem: {
     marginBottom: 12,
