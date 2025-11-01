@@ -31,14 +31,14 @@ const initialCVData: CVData = {
     github: 'https://github.com/Bitxogm',
     website: 'https://myreactportfolio1944.web.app/',
   },
-  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript.',
+  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript. Enfocado en la integración de Inteligencia Artificial y LLMs (Claude, Gemini) en aplicaciones web, aplicando Prompt Engineering y RAG para crear experiencias inteligentes y escalables.',
   experience: [
     {
       id: '1',
       company: 'KeepCoding Web Bootcamp',
       position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
       location: 'Cantabria',
-      startDate: '2024',
+      startDate: '2025',
       endDate: 'Actualidad',
       current: true,
       description: 'Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas. Desarrollo de proyectos con React, Python, JavaScript, Node.js, HTML5/CSS3 y SQL. Colaboración en equipo mediante Pair Programming y metodologías ágiles para un proyecto final.',
