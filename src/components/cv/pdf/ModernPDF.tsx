@@ -199,30 +199,8 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
         {/* Summary */}
         {data.summary && (
           <View style={styles.section}>
-            {data.summary.split('\n').map((line, index) => {
-              const trimmedLine = line.trim();
-
-              // Skip empty lines
-              if (!trimmedLine) return null;
-
-              // First line is the title (all caps)
-              if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
-                return <Text key={index} style={styles.summaryTitle}>{trimmedLine}</Text>;
-              }
-
-              // Bullet items (lines starting with •)
-              if (trimmedLine.startsWith('•')) {
-                return <Text key={index} style={styles.bulletItem}>{trimmedLine}</Text>;
-              }
-
-              // Bullet header (ends with ":")
-              if (trimmedLine.endsWith(':')) {
-                return <Text key={index} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
-              }
-
-              // Regular intro text
-              return <Text key={index} style={styles.summaryIntro}>{trimmedLine}</Text>;
-            })}
+            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
+            <Text style={styles.summaryText}>{data.summary}</Text>
           </View>
         )}
 
@@ -237,7 +215,23 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
                 <Text style={styles.dateLocation}>
                   {exp.startDate} - {exp.current ? t.present : exp.endDate}
                 </Text>
-                <Text style={styles.description}>{exp.description}</Text>
+                {exp.description.split('\n').map((line, lineIndex) => {
+                  const trimmedLine = line.trim();
+                  if (!trimmedLine) return null;
+
+                  // Bullet items
+                  if (trimmedLine.startsWith('•')) {
+                    return <Text key={lineIndex} style={styles.bulletItem}>{trimmedLine}</Text>;
+                  }
+
+                  // Bullet header (ends with ":")
+                  if (trimmedLine.endsWith(':')) {
+                    return <Text key={lineIndex} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                  }
+
+                  // Regular text
+                  return <Text key={lineIndex} style={styles.description}>{trimmedLine}</Text>;
+                })}
               </View>
             ))}
           </View>

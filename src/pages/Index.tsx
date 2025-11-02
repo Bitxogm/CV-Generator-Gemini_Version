@@ -31,9 +31,17 @@ const initialCVData: CVData = {
     github: 'https://github.com/Bitxogm',
     website: 'https://myreactportfolio1944.web.app/',
   },
-  summary: `DESARROLLADOR WEB FULL-STACK
-
-Desarrollador en transición con 8+ años de experiencia en liderazgo de equipos y gestión de proyectos.
+  summary: 'Profesional en transición hacia desarrollo web con 8+ años de experiencia comprobada en liderazgo de equipos, gestión de proyectos complejos y resolución de problemas bajo presión. Especializado en desarrollo full-stack con enfoque en integración de Inteligencia Artificial (Claude, Gemini) aplicando técnicas de Prompt Engineering y RAG. Apasionado por crear soluciones web escalables, innovadoras y centradas en el usuario.',
+  experience: [
+    {
+      id: '1',
+      company: 'KeepCoding Web Bootcamp',
+      position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
+      location: 'Cantabria',
+      startDate: '2024',
+      endDate: 'Actualidad',
+      current: true,
+      description: `Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas.
 
 Experiencia en:
 • Desarrollo de interfaces dinámicas y responsivas con React, TypeScript y TailwindCSS
@@ -44,16 +52,6 @@ Experiencia en:
 • Control de versiones con Git/GitHub y flujos CI/CD
 • Despliegue de aplicaciones en Firebase, Render y Vercel
 • Python para scripting y automatización`,
-  experience: [
-    {
-      id: '1',
-      company: 'KeepCoding Web Bootcamp',
-      position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
-      location: 'Cantabria',
-      startDate: '2024',
-      endDate: 'Actualidad',
-      current: true,
-      description: 'Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas. Desarrollo de proyectos con React, Python, JavaScript, Node.js, HTML5/CSS3 y SQL. Colaboración en equipo mediante Pair Programming y metodologías ágiles para un proyecto final.',
     },
     {
       id: '2',

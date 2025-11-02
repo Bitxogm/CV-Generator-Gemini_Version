@@ -81,46 +81,10 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
         {/* Summary with Accent */}
         {data.summary && (
           <div className="mb-8 p-6 bg-accent/10 rounded-lg border-l-4 border-accent">
-            {data.summary.split('\n').map((line, index) => {
-              const trimmedLine = line.trim();
-
-              // Skip empty lines
-              if (!trimmedLine) return null;
-
-              // First line is the title (all caps)
-              if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
-                return (
-                  <h2 key={index} className="text-2xl font-display font-bold text-center text-accent mb-4">
-                    {trimmedLine}
-                  </h2>
-                );
-              }
-
-              // Bullet items (lines starting with •)
-              if (trimmedLine.startsWith('•')) {
-                return (
-                  <p key={index} className="text-foreground text-sm ml-4 mb-1">
-                    {trimmedLine}
-                  </p>
-                );
-              }
-
-              // Bullet header (ends with ":")
-              if (trimmedLine.endsWith(':')) {
-                return (
-                  <p key={index} className="text-foreground font-semibold text-sm mt-2 mb-1">
-                    {trimmedLine}
-                  </p>
-                );
-              }
-
-              // Regular intro text
-              return (
-                <p key={index} className="text-foreground leading-relaxed text-sm mb-2 italic">
-                  {trimmedLine}
-                </p>
-              );
-            })}
+            <h2 className="text-2xl font-display font-bold text-accent mb-3">
+              {t.professionalSummary}
+            </h2>
+            <p className="text-foreground leading-relaxed italic">{data.summary}</p>
           </div>
         )}
 
@@ -144,7 +108,25 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
                     <p className="text-primary font-semibold mb-2">
                       {exp.company} • {exp.location}
                     </p>
-                    <p className="text-foreground leading-relaxed">{exp.description}</p>
+                    <div className="text-foreground leading-relaxed">
+                      {exp.description.split('\n').map((line, index) => {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine) return null;
+
+                        // Bullet items
+                        if (trimmedLine.startsWith('•')) {
+                          return <p key={index} className="ml-4 mb-1">{trimmedLine}</p>;
+                        }
+
+                        // Bullet header (ends with ":")
+                        if (trimmedLine.endsWith(':')) {
+                          return <p key={index} className="font-semibold mt-2 mb-1">{trimmedLine}</p>;
+                        }
+
+                        // Regular text
+                        return <p key={index} className="mb-1">{trimmedLine}</p>;
+                      })}
+                    </div>
                   </div>
                 </div>
               ))}
