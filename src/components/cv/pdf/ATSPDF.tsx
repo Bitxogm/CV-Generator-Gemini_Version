@@ -56,6 +56,29 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 3,
   },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 9,
+    lineHeight: 1.3,
+    marginBottom: 4,
+  },
+  summaryBulletHeader: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 9,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    marginLeft: 10,
+  },
 });
 
 interface ATSPDFProps {
@@ -111,8 +134,30 @@ export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
         {/* Summary */}
         {data.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
-            <Text style={styles.text}>{data.summary}</Text>
+            {data.summary.split('\n').map((line, index) => {
+              const trimmedLine = line.trim();
+
+              // Skip empty lines
+              if (!trimmedLine) return null;
+
+              // First line is the title (all caps) - skip it for ATS, already have section title
+              if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
+                return null;
+              }
+
+              // Bullet items (lines starting with •)
+              if (trimmedLine.startsWith('•')) {
+                return <Text key={index} style={styles.bulletItem}>{trimmedLine}</Text>;
+              }
+
+              // Bullet header (ends with ":")
+              if (trimmedLine.endsWith(':')) {
+                return <Text key={index} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+              }
+
+              // Regular intro text
+              return <Text key={index} style={styles.summaryIntro}>{trimmedLine}</Text>;
+            })}
           </View>
         )}
 

@@ -119,6 +119,33 @@ const styles = StyleSheet.create({
   languageItem: {
     fontSize: 10,
   },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 10,
+    lineHeight: 1.3,
+    color: '#000000',
+    marginBottom: 6,
+  },
+  summaryBulletHeader: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
+    marginTop: 3,
+  },
+  bulletItem: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#000000',
+    marginBottom: 3,
+    paddingLeft: 10,
+  },
 });
 
 interface ModernPDFProps {
@@ -172,8 +199,30 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
         {/* Summary */}
         {data.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
-            <Text style={styles.summaryText}>{data.summary}</Text>
+            {data.summary.split('\n').map((line, index) => {
+              const trimmedLine = line.trim();
+
+              // Skip empty lines
+              if (!trimmedLine) return null;
+
+              // First line is the title (all caps)
+              if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
+                return <Text key={index} style={styles.summaryTitle}>{trimmedLine}</Text>;
+              }
+
+              // Bullet items (lines starting with •)
+              if (trimmedLine.startsWith('•')) {
+                return <Text key={index} style={styles.bulletItem}>{trimmedLine}</Text>;
+              }
+
+              // Bullet header (ends with ":")
+              if (trimmedLine.endsWith(':')) {
+                return <Text key={index} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+              }
+
+              // Regular intro text
+              return <Text key={index} style={styles.summaryIntro}>{trimmedLine}</Text>;
+            })}
           </View>
         )}
 

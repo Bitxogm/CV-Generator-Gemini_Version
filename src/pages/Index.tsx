@@ -31,7 +31,19 @@ const initialCVData: CVData = {
     github: 'https://github.com/Bitxogm',
     website: 'https://myreactportfolio1944.web.app/',
   },
-  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript. Enfocado en la integración de Inteligencia Artificial y LLMs (Claude, Gemini) en aplicaciones web, aplicando Prompt Engineering, Google AI Studio y RAG para crear experiencias inteligentes y escalables.',
+  summary: `DESARROLLADOR WEB FULL-STACK
+
+Desarrollador en transición con 8+ años de experiencia en liderazgo de equipos y gestión de proyectos.
+
+Experiencia en:
+• Desarrollo de interfaces dinámicas y responsivas con React, TypeScript y TailwindCSS
+• Implementación de APIs RESTful con Node.js y Express
+• Gestión de bases de datos relacionales (PostgreSQL) y no relacionales (MongoDB)
+• Integración de IA: Claude API, Gemini API, Google AI Studio, Prompt Engineering y RAG
+• Testing automatizado con Vitest (frontend) y Jest (backend)
+• Control de versiones con Git/GitHub y flujos CI/CD
+• Despliegue de aplicaciones en Firebase, Render y Vercel
+• Python para scripting y automatización`,
   experience: [
     {
       id: '1',

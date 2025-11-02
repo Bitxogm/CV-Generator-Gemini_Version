@@ -117,6 +117,31 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: '#6b7280',
   },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#3B82F6',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    marginBottom: 5,
+  },
+  summaryBulletHeader: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    paddingLeft: 8,
+  },
 });
 
 interface ProfessionalPDFProps {
@@ -210,8 +235,30 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
           {/* Summary */}
           {data.summary && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainTitle}>{t.professionalSummary}</Text>
-              <Text style={styles.summary}>{data.summary}</Text>
+              {data.summary.split('\n').map((line, index) => {
+                const trimmedLine = line.trim();
+
+                // Skip empty lines
+                if (!trimmedLine) return null;
+
+                // First line is the title (all caps)
+                if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
+                  return <Text key={index} style={styles.summaryTitle}>{trimmedLine}</Text>;
+                }
+
+                // Bullet items (lines starting with •)
+                if (trimmedLine.startsWith('•')) {
+                  return <Text key={index} style={styles.bulletItem}>{trimmedLine}</Text>;
+                }
+
+                // Bullet header (ends with ":")
+                if (trimmedLine.endsWith(':')) {
+                  return <Text key={index} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                }
+
+                // Regular intro text
+                return <Text key={index} style={styles.summaryIntro}>{trimmedLine}</Text>;
+              })}
             </View>
           )}
 

@@ -165,6 +165,31 @@ const styles = StyleSheet.create({
     fontSize: 7,
     color: '#3B82F6',
   },
+  summaryTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#8B5CF6',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    marginBottom: 4,
+  },
+  summaryBulletHeader: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 7,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    paddingLeft: 8,
+  },
 });
 
 interface CreativePDFProps {
@@ -219,10 +244,30 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Summary */}
           {data.summary && (
             <View style={styles.summaryBox}>
-              <Text style={{ fontSize: 10, fontWeight: 'bold', marginBottom: 4, color: '#8B5CF6' }}>
-                {t.professionalSummary}
-              </Text>
-              <Text style={{ fontSize: 8, lineHeight: 1.3 }}>{data.summary}</Text>
+              {data.summary.split('\n').map((line, index) => {
+                const trimmedLine = line.trim();
+
+                // Skip empty lines
+                if (!trimmedLine) return null;
+
+                // First line is the title (all caps)
+                if (index === 0 && trimmedLine === trimmedLine.toUpperCase()) {
+                  return <Text key={index} style={styles.summaryTitle}>{trimmedLine}</Text>;
+                }
+
+                // Bullet items (lines starting with •)
+                if (trimmedLine.startsWith('•')) {
+                  return <Text key={index} style={styles.bulletItem}>{trimmedLine}</Text>;
+                }
+
+                // Bullet header (ends with ":")
+                if (trimmedLine.endsWith(':')) {
+                  return <Text key={index} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                }
+
+                // Regular intro text
+                return <Text key={index} style={styles.summaryIntro}>{trimmedLine}</Text>;
+              })}
             </View>
           )}
 
