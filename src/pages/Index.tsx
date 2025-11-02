@@ -38,7 +38,7 @@ const initialCVData: CVData = {
       company: 'KeepCoding Web Bootcamp',
       position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
       location: 'Cantabria',
-      startDate: '2024',
+      startDate: '2025',
       endDate: 'Actualidad',
       current: true,
       description: `Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas.
