@@ -117,6 +117,31 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: '#6b7280',
   },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#3B82F6',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    marginBottom: 5,
+  },
+  summaryBulletHeader: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    paddingLeft: 8,
+  },
 });
 
 interface ProfessionalPDFProps {
@@ -226,7 +251,23 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
                   <Text style={styles.dateLocation}>
                     {exp.startDate} - {exp.current ? t.present : exp.endDate}
                   </Text>
-                  <Text style={styles.description}>{exp.description}</Text>
+                  {exp.description.split('\n').map((line, lineIndex) => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null;
+
+                    // Bullet items
+                    if (trimmedLine.startsWith('•')) {
+                      return <Text key={lineIndex} style={styles.bulletItem}>{trimmedLine}</Text>;
+                    }
+
+                    // Bullet header (ends with ":")
+                    if (trimmedLine.endsWith(':')) {
+                      return <Text key={lineIndex} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                    }
+
+                    // Regular text
+                    return <Text key={lineIndex} style={styles.description}>{trimmedLine}</Text>;
+                  })}
                 </View>
               ))}
             </View>

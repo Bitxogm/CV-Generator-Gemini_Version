@@ -31,7 +31,7 @@ const initialCVData: CVData = {
     github: 'https://github.com/Bitxogm',
     website: 'https://myreactportfolio1944.web.app/',
   },
-  summary: 'Desarrollador en transición con una sólida experiencia de más de 8 años en liderazgo de equipos y gestión de proyectos. Apasionado por crear soluciones web innovadoras y centradas en el usuario con tecnologías modernas, especializándome en el desarrollo full-stack con React, Node.js y TypeScript. Enfocado en la integración de Inteligencia Artificial y LLMs (Claude, Gemini) en aplicaciones web, aplicando Prompt Engineering y RAG para crear experiencias inteligentes y escalables.',
+  summary: 'Profesional en transición hacia desarrollo web con 8+ años de experiencia comprobada en liderazgo de equipos, gestión de proyectos complejos y resolución de problemas bajo presión. Especializado en desarrollo full-stack con enfoque en integración de Inteligencia Artificial (Claude, Gemini) aplicando técnicas de Prompt Engineering y RAG. Apasionado por crear soluciones web escalables, innovadoras y centradas en el usuario.',
   experience: [
     {
       id: '1',
@@ -41,7 +41,17 @@ const initialCVData: CVData = {
       startDate: '2025',
       endDate: 'Actualidad',
       current: true,
-      description: 'Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas. Desarrollo de proyectos con React, Python, JavaScript, Node.js, HTML5/CSS3 y SQL. Colaboración en equipo mediante Pair Programming y metodologías ágiles para un proyecto final.',
+      description: `Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas.
+
+Experiencia en:
+• Desarrollo de interfaces dinámicas y responsivas con React, TypeScript y TailwindCSS
+• Implementación de APIs RESTful con Node.js y Express
+• Gestión de bases de datos relacionales (PostgreSQL) y no relacionales (MongoDB)
+• Integración de IA: Claude API, Gemini API, Google AI Studio, Prompt Engineering y RAG
+• Testing automatizado con Vitest (frontend) y Jest (backend)
+• Control de versiones con Git/GitHub y flujos CI/CD
+• Despliegue de aplicaciones en Firebase, Render y Vercel
+• Python para scripting y automatización`,
     },
     {
       id: '2',

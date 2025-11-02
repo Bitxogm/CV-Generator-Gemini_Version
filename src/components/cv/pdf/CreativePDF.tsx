@@ -165,6 +165,31 @@ const styles = StyleSheet.create({
     fontSize: 7,
     color: '#3B82F6',
   },
+  summaryTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#8B5CF6',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    marginBottom: 4,
+  },
+  summaryBulletHeader: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 7,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    paddingLeft: 8,
+  },
 });
 
 interface CreativePDFProps {
@@ -239,7 +264,23 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                       <Text style={styles.dateBox}>
                         {exp.startDate} - {exp.current ? t.present : exp.endDate}
                       </Text>
-                      <Text style={styles.description}>{exp.description}</Text>
+                      {exp.description.split('\n').map((line, lineIndex) => {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine) return null;
+
+                        // Bullet items
+                        if (trimmedLine.startsWith('•')) {
+                          return <Text key={lineIndex} style={styles.bulletItem}>{trimmedLine}</Text>;
+                        }
+
+                        // Bullet header (ends with ":")
+                        if (trimmedLine.endsWith(':')) {
+                          return <Text key={lineIndex} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                        }
+
+                        // Regular text
+                        return <Text key={lineIndex} style={styles.description}>{trimmedLine}</Text>;
+                      })}
                     </View>
                   </View>
                 ))}

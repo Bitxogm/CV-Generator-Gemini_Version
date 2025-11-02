@@ -56,6 +56,29 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 3,
   },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 9,
+    lineHeight: 1.3,
+    marginBottom: 4,
+  },
+  summaryBulletHeader: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    marginBottom: 3,
+    marginTop: 2,
+  },
+  bulletItem: {
+    fontSize: 9,
+    lineHeight: 1.3,
+    marginBottom: 2,
+    marginLeft: 10,
+  },
 });
 
 interface ATSPDFProps {
@@ -126,7 +149,23 @@ export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
                 <Text style={styles.text}>
                   {exp.company}, {exp.location} | {exp.startDate} - {exp.current ? t.present : exp.endDate}
                 </Text>
-                <Text style={styles.text}>{exp.description}</Text>
+                {exp.description.split('\n').map((line, lineIndex) => {
+                  const trimmedLine = line.trim();
+                  if (!trimmedLine) return null;
+
+                  // Bullet items
+                  if (trimmedLine.startsWith('•')) {
+                    return <Text key={lineIndex} style={styles.bulletItem}>{trimmedLine}</Text>;
+                  }
+
+                  // Bullet header (ends with ":")
+                  if (trimmedLine.endsWith(':')) {
+                    return <Text key={lineIndex} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                  }
+
+                  // Regular text
+                  return <Text key={lineIndex} style={styles.text}>{trimmedLine}</Text>;
+                })}
               </View>
             ))}
           </View>

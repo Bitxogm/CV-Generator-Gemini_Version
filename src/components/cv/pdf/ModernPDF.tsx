@@ -119,6 +119,33 @@ const styles = StyleSheet.create({
   languageItem: {
     fontSize: 10,
   },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  summaryIntro: {
+    fontSize: 10,
+    lineHeight: 1.3,
+    color: '#000000',
+    marginBottom: 6,
+  },
+  summaryBulletHeader: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
+    marginTop: 3,
+  },
+  bulletItem: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#000000',
+    marginBottom: 3,
+    paddingLeft: 10,
+  },
 });
 
 interface ModernPDFProps {
@@ -188,7 +215,23 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
                 <Text style={styles.dateLocation}>
                   {exp.startDate} - {exp.current ? t.present : exp.endDate}
                 </Text>
-                <Text style={styles.description}>{exp.description}</Text>
+                {exp.description.split('\n').map((line, lineIndex) => {
+                  const trimmedLine = line.trim();
+                  if (!trimmedLine) return null;
+
+                  // Bullet items
+                  if (trimmedLine.startsWith('•')) {
+                    return <Text key={lineIndex} style={styles.bulletItem}>{trimmedLine}</Text>;
+                  }
+
+                  // Bullet header (ends with ":")
+                  if (trimmedLine.endsWith(':')) {
+                    return <Text key={lineIndex} style={styles.summaryBulletHeader}>{trimmedLine}</Text>;
+                  }
+
+                  // Regular text
+                  return <Text key={lineIndex} style={styles.description}>{trimmedLine}</Text>;
+                })}
               </View>
             ))}
           </View>
