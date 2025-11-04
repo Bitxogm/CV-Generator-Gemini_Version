@@ -56,16 +56,29 @@ Experiencia en:
     {
       id: '2',
       company: 'Gestamp Try Out',
-      position: 'Responsable de Turno y Sección',
+      position: 'Team Leader / Responsable de Turno y Sección',
       location: 'Barakaldo',
       startDate: '2016',
-      endDate: '2024',
+      endDate: 'Diciembre 2024',
       current: false,
-      description: 'Lideré equipos multidisciplinares, gestioné proyectos técnicos, optimicé procesos y coordiné operaciones a nivel internacional. Experiencia en la resolución de problemas complejos y en la entrega de soluciones bajo presión.',
+      description: `Team Leader en try-out de troqueles de automoción con gestión de equipos técnicos (10-15 personas) en proyectos internacionales para OEMs premium.
+
+Proyectos destacados:
+- Try-out de piezas Clase A (body-side, fender, roof, doors) para Mercedes-Benz, BMW, Audi y Volkswagen
+- Campañas en plantas de España, Alemania e India
+- Coordinación con ingeniería de cliente bajo deadlines críticos
+- Gestión de líneas de producción con cero margen de error
+
+Responsabilidades clave:
+- Liderazgo de equipos multidisciplinares bajo presión extrema
+- Resolución de problemas técnicos complejos en tiempo real
+- Comunicación directa con stakeholders de OEMs premium
+- Optimización de procesos y mejora continua
+- Coordinación internacional en plantas de cliente`,
     },
   ],
   education: [],
-  skills: ['React', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Node.js', 'HTML5', 'CSS3'],
+  skills: ['React', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Node.js', 'HTML5', 'CSS3', 'MongoDB'],
   softSkills: ['Liderazgo de equipos', 'Comunicación efectiva', 'Gestión de proyectos', 'Colaboración en equipo'],
   projects: [
     {
@@ -73,14 +86,14 @@ Experiencia en:
       name: 'AgentLogic AI - Tutor Inteligente de Programación',
       description: 'Plataforma educativa full-stack con múltiples módulos: generación automática de código con IA, chat interactivo para tutorías personalizadas, visualización de algoritmos con diagramas de flujo, y sistema de gestión de ejercicios.',
       technologies: ['Firebase v2', 'MongoDB Atlas', 'Gemini AI', 'TypeScript'],
-      link: 'https://github.com/Bitxogm/New-Logic-Agent',
+      link:  'https://new-logic-agent-git-dev-bitxejos-projects.vercel.app/',
     },
     {
       id: '2',
       name: 'Asistente de Refactorización con IA',
       description: 'Herramienta que analiza código multilenguaje y sugiere mejoras utilizando la API de Gemini, ayudando a los desarrolladores a escribir código más limpio y mantenible.',
       technologies: ['Node.js', 'React + TypeScript', 'Gemini API', 'REST'],
-      link: 'https://github.com/Bitxogm/new-code-ai-assistant',
+      link: 'https://new-code-ai-assistant.vercel.app/',
     },
   ],
   languages: [],
@@ -267,7 +280,7 @@ export default function Index() {
           </TabsContent>
 
           <TabsContent value="ai-assistant">
-            <AIAssistant 
+            <AIAssistant
               cvData={cvData}
               onApplySuggestions={(suggestions) => {
                 if (suggestions.summary) {

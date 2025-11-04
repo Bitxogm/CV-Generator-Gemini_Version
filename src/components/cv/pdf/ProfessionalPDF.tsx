@@ -191,9 +191,21 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
             <Text style={styles.contactItem}>{data.personalInfo.email}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
-            {data.personalInfo.linkedin && <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>}
-            {data.personalInfo.website && <Text style={styles.contactItem}>{data.personalInfo.website}</Text>}
-            {data.personalInfo.github && <Text style={styles.contactItem}>{data.personalInfo.github}</Text>}
+            {data.personalInfo.linkedin && (
+              <Text style={styles.contactItem}>
+                https://www.linkedin.com/in/victor-manuel-gonzalez-moreno/
+              </Text>
+            )}
+            {data.personalInfo.website && (
+              <Text style={styles.contactItem}>
+                https://myreactportfolio1944.web.app/
+              </Text>
+            )}
+            {data.personalInfo.github && (
+              <Text style={styles.contactItem}>
+                https://github.com/Bitxogm
+              </Text>
+            )}
           </View>
 
           {/* Skills */}
