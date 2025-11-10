@@ -12,7 +12,7 @@
 
 ## Descripción
 
-CV Crafter es una aplicación web moderna que utiliza la API de **Google Gemini 2.0-flash** para ayudar a los usuarios a crear, optimizar y personalizar currículums profesionales. La aplicación ofrece análisis ATS, adaptación de CV según ofertas de trabajo, generación de cartas de presentación y múltiples plantillas de exportación.
+CV Crafter es una aplicación web moderna que utiliza la API de **Google Gemini 2.5-flash** para ayudar a los usuarios a crear, optimizar y personalizar currículums profesionales. La aplicación ofrece análisis ATS, adaptación de CV según ofertas de trabajo, generación de cartas de presentación y múltiples plantillas de exportación.
 
 ## Características
 
@@ -90,7 +90,7 @@ CV Crafter es una aplicación web moderna que utiliza la API de **Google Gemini 
 ### Backend & Base de Datos
 - **Supabase** - Base de datos PostgreSQL y autenticación
 - **Supabase Edge Functions** - Funciones serverless
-- **Google Gemini API** (2.0-flash) - Inteligencia artificial
+- **Google Gemini API** (2.5-flash) - Inteligencia artificial
 
 ### Generación de PDFs
 - **@react-pdf/renderer** 4.3.1 - Generación de PDFs en React
@@ -240,7 +240,7 @@ Este proyecto utiliza **Gemini 2.0-flash-exp** para todas las funcionalidades de
 
 ### Endpoint
 ```
-https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
+https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
 ```
 
 ### Funciones que usan Gemini

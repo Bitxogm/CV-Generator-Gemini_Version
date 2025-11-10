@@ -117,7 +117,7 @@ MANDATORY LANGUAGE: The COMPLETE cover letter must be written in ENGLISH. All te
 
 Return ONLY the text of the cover letter, without JSON format or additional introduction.`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     console.log("📡 Llamando a Gemini API...");
     
     const requestBody = {
