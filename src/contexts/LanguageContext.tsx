@@ -1,3 +1,5 @@
+// src/contexts/LanguageContext.tsx - CORREGIDO
+
 import React, { createContext, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,12 +23,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const language = (i18n.language as Language) || 'es';
 
+  // ✅ CORREGIDO: Ejecutar SOLO UNA VEZ al montar
   useEffect(() => {
     const savedLanguage = localStorage.getItem('i18nextLng') as Language;
     if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
       i18n.changeLanguage(savedLanguage);
     }
-  }, [i18n]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ⬅️ Array vacío = solo se ejecuta al montar
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>

@@ -2,115 +2,132 @@
 
 <div align="center">
 
-**Un generador de CV profesional potenciado por Google Gemini AI**
+**Un generador de CV profesional potenciado por Google Gemini 2.5 Flash**
 
 [Características](#características) • [Instalación](#instalación) • [Uso](#uso) • [Tecnologías](#tecnologías)
+
+[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)
+[![Gemini](https://img.shields.io/badge/Gemini-2.5--Flash-orange.svg)](https://ai.google.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
 
 ---
 
-## Descripción
+## 🎯 Descripción
 
-CV Crafter es una aplicación web moderna que utiliza la API de **Google Gemini 2.5-flash** para ayudar a los usuarios a crear, optimizar y personalizar currículums profesionales. La aplicación ofrece análisis ATS, adaptación de CV según ofertas de trabajo, generación de cartas de presentación y múltiples plantillas de exportación.
+CV Crafter es una aplicación web moderna y **sin servidor** que utiliza la API de **Google Gemini 2.5-flash** directamente desde el cliente para ayudarte a crear, optimizar y personalizar currículums profesionales. 
 
-## Características
+Con **persistencia local mediante localStorage**, auto-guardado automático, y análisis de IA en tiempo real, puedes crear CVs profesionales sin necesidad de crear cuentas o depender de servicios externos.
 
-### Gestión de CV
-- ✅ **Editor completo de CV** con secciones personalizables:
-  - Información personal y contacto
-  - Resumen profesional
-  - Experiencia laboral
-  - Educación
-  - Habilidades técnicas
-  - Proyectos destacados
-  - Idiomas
+## ✨ Características
 
-- 💾 **Guardado múltiple** - Gestiona diferentes versiones de tu CV
-- 📚 **Historial** - Accede a CVs guardados previamente
+### 📝 Gestión de CV
+
+- ✅ **Editor completo** con secciones personalizables:
+  - 👤 Información personal y contacto
+  - 📄 Resumen profesional
+  - 💼 Experiencia laboral
+  - 🎓 Educación
+  - 🛠️ Habilidades técnicas y blandas
+  - 🚀 Proyectos destacados
+  - 🌍 Idiomas
+
+- 💾 **Auto-guardado automático** - Tus cambios se guardan cada 2 segundos
+- 📚 **Historial de versiones** - Guarda hasta 10 versiones con nombre
+- 📥 **Exportar/Importar** - Descarga backups en JSON
 - 🎨 **3 plantillas profesionales**:
-  - Moderna (diseño contemporáneo)
-  - Profesional (formato tradicional)
-  - Creativa (visualmente mejorada)
+  - 🎨 Moderna (diseño contemporáneo)
+  - 📋 Profesional (formato tradicional)  
+  - 🌈 Creativa (visualmente mejorada)
 
-### Funcionalidades con IA (Gemini)
+### 🤖 Funcionalidades con IA (Gemini 2.5 Flash)
 
-#### 🎯 Adaptación de CV
+#### 🎯 Adaptación Inteligente de CV
 - Analiza tu CV contra descripciones de trabajo específicas
-- Proporciona puntuación de compatibilidad (0-100)
-- Identifica habilidades coincidentes y faltantes
-- Genera resumen optimizado para la oferta
-- Ofrece recomendaciones personalizadas
+- Proporciona **puntuación de compatibilidad** (0-100)
+- Identifica **habilidades coincidentes y faltantes**
+- Genera **resumen optimizado** para la oferta
+- Ofrece **recomendaciones personalizadas**
 
 #### ✉️ Generación de Cartas de Presentación
-- Genera cartas profesionales basadas en tu CV y la oferta de trabajo
-- Optimizadas para una página A4 (350-450 palabras)
-- Soporte bilingüe (español e inglés)
-- Editable antes de descargar
-- Dos formatos de exportación: Minimal y Formal
+- Genera cartas profesionales basadas en tu CV y la oferta
+- Optimizadas para **una página A4** (350-450 palabras)
+- Soporte **bilingüe** (español e inglés)
+- **Editable** antes de descargar
+- **Dos formatos** de exportación: Minimal y Formal
 
 #### 📊 Análisis ATS
-- Evalúa compatibilidad con sistemas de seguimiento de candidatos
-- Proporciona puntuación ATS
-- Identifica palabras clave presentes y faltantes
-- Ofrece sugerencias de mejora
-- Detecta fortalezas y debilidades
+- Evalúa compatibilidad con **Applicant Tracking Systems**
+- Proporciona **puntuación ATS** detallada
+- Identifica **palabras clave** presentes y faltantes
+- Ofrece **sugerencias de mejora** específicas
+- Detecta **fortalezas y debilidades**
 
-#### 🚀 Mejora con IA
-- Generación de resúmenes profesionales optimizados
-- Mejora de descripciones de puestos y proyectos
-- Uso de verbos de acción y métricas cuantificables
+#### 🚀 Mejora Automática
+- Generación de **resúmenes profesionales** optimizados
+- Mejora de descripciones con **verbos de acción**
+- Incorporación de **métricas cuantificables**
 
-### Exportación y Descarga
+### 📄 Exportación y Descarga
 
 - 📄 **PDF Visual** - CVs estilizados con las plantillas seleccionadas
 - 🤖 **PDF ATS** - Versión optimizada para parsing automático
 - 📬 **Cartas en PDF** - Formatos minimal y formal
+- 💾 **Backup JSON** - Exporta todos tus datos
 
-### Otros
+### 🎨 Otros
 
-- 🌍 **Soporte multiidioma** - Español e inglés
-- 🔐 **Autenticación segura** - Sistema de usuarios con Supabase Auth
+- 🌍 **Soporte multiidioma** - Español e inglés (react-i18next)
 - 📱 **Diseño responsive** - Funciona en todos los dispositivos
-- 🎉 **Feedback visual** - Notificaciones y animaciones
+- 🎉 **Feedback visual** - Notificaciones toast y animaciones
+- 🔒 **100% privado** - Todos los datos en tu navegador
+- ⚡ **Súper rápido** - Sin latencia de red
 
-## Tecnologías
+---
+
+## 🛠️ Tecnologías
 
 ### Frontend
-- **Vite** 5.4.19 - Build tool y servidor de desarrollo
+- **Vite** 5.4.19 - Build tool ultra-rápido
 - **React** 18.3.1 - Biblioteca UI
 - **TypeScript** 5.8.3 - Tipado estático
-- **Tailwind CSS** 3.4.17 - Framework CSS
+- **Tailwind CSS** 3.4.17 - Framework CSS utility-first
 - **shadcn/ui** - Componentes UI (Radix UI)
-- **React Router** 6.30.1 - Enrutamiento
+- **React Router** 6.30.1 - Enrutamiento SPA
 - **React Hook Form** 7.61.1 - Gestión de formularios
-- **TanStack Query** 5.83.0 - Gestión de estado del servidor
 - **Zod** 3.25.76 - Validación de esquemas
 
-### Backend & Base de Datos
-- **Supabase** - Base de datos PostgreSQL y autenticación
-- **Supabase Edge Functions** - Funciones serverless
-- **Google Gemini API** (2.5-flash) - Inteligencia artificial
+### IA & APIs
+- **Google Gemini API** 2.5-flash - Inteligencia artificial
+- **@google/generative-ai** - Cliente oficial de Gemini
+
+### Persistencia
+- **localStorage** - Almacenamiento local del navegador
+- **JSON** - Formato de datos
 
 ### Generación de PDFs
-- **@react-pdf/renderer** 4.3.1 - Generación de PDFs en React
-- **jsPDF** 3.0.3 - Biblioteca PDF para cartas
+- **@react-pdf/renderer** 4.3.1 - PDFs en React
+- **jsPDF** 3.0.3 - Generación de PDFs de cartas
 
 ### UI/UX
-- **Lucide React** - Iconos
-- **Sonner** - Notificaciones toast
+- **Lucide React** - Sistema de iconos
+- **Sonner** - Notificaciones toast elegantes
 - **canvas-confetti** - Animaciones de celebración
-- **Recharts** - Gráficos
-- **next-themes** - Gestión de temas
+- **react-i18next** - Internacionalización
+- **next-themes** - Gestión de temas claro/oscuro
 
-## Requisitos Previos
+---
 
-- **Node.js** 18+ y npm/yarn/pnpm
-- **Cuenta de Supabase** (gratuita)
-- **API Key de Google Gemini** ([Obtener aquí](https://ai.google.dev/))
-- **Supabase CLI** (para funciones edge)
+## 📋 Requisitos Previos
 
-## Instalación
+- **Node.js** 18+ y npm
+- **API Key de Google Gemini** ([Obtener gratis aquí](https://ai.google.dev/))
+
+---
+
+## 🚀 Instalación
 
 ### 1. Clonar el repositorio
 
@@ -130,229 +147,401 @@ npm install
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-VITE_SUPABASE_URL=tu_supabase_url
-VITE_SUPABASE_PUBLISHABLE_KEY=tu_supabase_anon_key
+VITE_GEMINI_API_KEY=tu_api_key_de_gemini_aqui
 ```
 
-### 4. Configurar Supabase
+**¿Dónde obtener tu API key?**
+1. Ve a [Google AI Studio](https://ai.google.dev/)
+2. Inicia sesión con tu cuenta de Google
+3. Crea una nueva API key
+4. Cópiala al archivo `.env`
 
-#### a) Crear proyecto en Supabase
-1. Ve a [supabase.com](https://supabase.com)
-2. Crea un nuevo proyecto
-3. Copia la URL y la Anon Key a tu `.env`
-
-#### b) Ejecutar migraciones
-```bash
-# Instalar Supabase CLI si no lo tienes
-npm install -g supabase
-
-# Iniciar sesión
-supabase login
-
-# Vincular proyecto
-supabase link --project-ref tu_project_id
-
-# Ejecutar migraciones
-supabase db push
-```
-
-#### c) Desplegar funciones Edge
-```bash
-# Configurar secretos
-supabase secrets set GEMINI_API_KEY=tu_gemini_api_key
-supabase secrets set LOVABLE_API_KEY=tu_lovable_api_key  # Opcional
-
-# Desplegar todas las funciones
-supabase functions deploy adapt-cv
-supabase functions deploy generate-cover-letter
-supabase functions deploy analyze-ats
-supabase functions deploy generate-summary
-supabase functions deploy enhance-description
-```
-
-### 5. Configurar Git Hooks (Seguridad)
-
-```bash
-chmod +x scripts/setup-hooks.sh
-./scripts/setup-hooks.sh
-```
-
-Esto configurará un hook pre-commit que detecta credenciales expuestas.
-
-## Uso
-
-### Desarrollo
+### 4. Iniciar la aplicación
 
 ```bash
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:8080`
+La aplicación estará disponible en `http://localhost:8080` 🎉
 
-### Construcción para producción
+---
 
-```bash
-npm run build
+## 📖 Uso
+
+### Creación de CV
+
+1. **Completa tu información** en las secciones del formulario
+2. **Auto-guardado** - Tus cambios se guardan automáticamente cada 2 segundos
+3. **Vista previa** - Haz clic en "Vista previa" para ver tu CV
+4. **Selecciona plantilla** - Elige entre Moderna, Profesional o Creativa
+5. **Descarga** - Exporta en formato PDF visual o ATS
+
+### Adaptación con IA
+
+1. Ve a la pestaña **"Asistente IA"**
+2. Pega la **descripción del trabajo**
+3. Haz clic en **"Adaptar CV"**
+4. Revisa el **análisis de compatibilidad**
+5. Aplica las **sugerencias automáticas**
+
+### Generación de Carta de Presentación
+
+1. En **"Asistente IA"**, pega la descripción del trabajo
+2. Haz clic en **"Generar Carta"**
+3. **Edita** el contenido si lo deseas
+4. **Descarga** en formato Minimal o Formal
+
+### Análisis ATS
+
+1. Ve a **Vista previa → pestaña ATS**
+2. Haz clic en **"Analizar con IA"**
+3. Revisa la **puntuación** y sugerencias
+4. Descarga **PDF optimizado para ATS**
+
+### Gestión de Versiones
+
+1. Haz clic en el botón **"Guardar"**
+2. Ponle un **nombre** a la versión (ej: "CV para Google")
+3. Accede al **historial** con el botón "Historial"
+4. **Carga** versiones anteriores cuando las necesites
+
+### Backup de Datos
+
+```javascript
+// Desde la consola del navegador (F12):
+// Exportar todos los datos
+const backup = localStorage.getItem('cv_generator_data');
+console.log(backup);
+
+// O usa el botón "Exportar Todo" en la UI (si lo implementas)
 ```
 
-### Vista previa de producción
+---
 
-```bash
-npm run preview
-```
-
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
 CV-Generator-Gemini_Version/
 ├── src/
 │   ├── components/          # Componentes React
-│   │   ├── auth/           # Autenticación
 │   │   ├── cv/             # Componentes de CV
 │   │   │   ├── pdf/        # Plantillas PDF
 │   │   │   ├── preview/    # Plantillas de vista previa
-│   │   │   └── sections/   # Secciones del formulario
-│   │   └── ui/             # Componentes shadcn/ui
+│   │   │   ├── sections/   # Secciones del formulario
+│   │   │   ├── AIAssistant.tsx  # Asistente IA
+│   │   │   └── CVForm.tsx       # Formulario principal
+│   │   ├── ui/             # Componentes shadcn/ui
+│   │   └── LanguageSelector.tsx # Selector de idioma
+│   ├── contexts/           # Contextos de React
+│   │   └── LanguageContext.tsx  # Contexto de idioma
 │   ├── hooks/              # React hooks personalizados
+│   │   └── useAutoSave.ts       # Hook de auto-guardado
+│   ├── services/           # Servicios
+│   │   ├── geminiService.ts     # Servicio de Gemini AI
+│   │   └── storageService.ts    # Servicio de localStorage
 │   ├── pages/              # Páginas de la aplicación
+│   │   └── Index.tsx            # Página principal
 │   ├── types/              # Definiciones TypeScript
+│   │   └── cv.ts                # Tipos del CV
 │   ├── lib/                # Utilidades
-│   ├── utils/              # Funciones auxiliares
-│   └── integrations/       # Integraciones externas
-│       └── supabase/       # Cliente Supabase
-├── supabase/
-│   ├── functions/          # Edge Functions
-│   │   ├── adapt-cv/
-│   │   ├── analyze-ats/
-│   │   ├── generate-summary/
-│   │   ├── enhance-description/
-│   │   └── generate-cover-letter/
-│   ├── migrations/         # Migraciones de BD
-│   └── config.toml         # Configuración Supabase
+│   │   ├── confetti.ts          # Animaciones
+│   │   └── i18n.ts              # Configuración i18n
+│   └── utils/              # Funciones auxiliares
 ├── public/                 # Archivos estáticos
-├── scripts/                # Scripts de utilidad
-└── package.json
+│   └── locales/           # Traducciones
+│       ├── es/            # Español
+│       └── en/            # Inglés
+├── .env                    # Variables de entorno
+├── package.json
+├── vite.config.ts
+└── README.md
 ```
 
-## API de Google Gemini
+---
 
-Este proyecto utiliza **Gemini 2.0-flash-exp** para todas las funcionalidades de IA:
+## 🔑 API de Google Gemini
 
-### Endpoint
-```
-https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+Este proyecto utiliza **Gemini 2.5-flash** directamente desde el cliente:
+
+### Configuración
+```typescript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 ```
 
 ### Funciones que usan Gemini
-1. **adapt-cv** - Adaptación de CV según ofertas
-2. **generate-cover-letter** - Generación de cartas de presentación
+1. **Adaptación de CV** - Análisis y optimización según ofertas
+2. **Generación de cartas** - Cartas de presentación personalizadas
+3. **Análisis ATS** - Evaluación de compatibilidad
+4. **Generación de resumen** - Resúmenes profesionales optimizados
 
-### Configuración
-- Temperature: 0.7
-- Max tokens: 800-1500 según función
-- Formato de respuesta: JSON estructurado
+### Parámetros
+- **Model:** gemini-2.5-flash
+- **Temperature:** 0.7
+- **Max tokens:** Variable según función
+- **Response format:** JSON estructurado
 
-## Base de Datos
+### Límites (Free Tier)
+- ✅ 15 requests/minuto
+- ✅ 1,500 requests/día
+- ✅ 1 millón de tokens/mes
 
-### Tablas
+**Suficiente para uso personal** 🎉
 
-#### `profiles`
-```sql
-- id (uuid, PK)
-- created_at (timestamp)
-- updated_at (timestamp)
+---
+
+## 💾 Almacenamiento de Datos
+
+### localStorage
+
+Todos los datos se guardan en tu navegador usando `localStorage`:
+
+```javascript
+// Estructura de datos
+{
+  "cv_generator_data": {         // CV actual
+    "personalInfo": {...},
+    "summary": "...",
+    "experience": [...],
+    // ...
+  },
+  "cv_generator_history": [      // Historial (últimas 10)
+    {
+      "id": "1699999999999",
+      "name": "CV para Google",
+      "data": {...},
+      "createdAt": "2024-11-12T10:30:00Z"
+    }
+  ],
+  "cv_generator_cover_letters": [  // Cartas (últimas 20)
+    {
+      "id": "1699999999999",
+      "jobTitle": "Senior Developer",
+      "content": "...",
+      "createdAt": "2024-11-12T10:35:00Z"
+    }
+  ],
+  "cv_generator_settings": {}     // Configuración
+}
 ```
 
-#### `cvs`
-```sql
-- id (uuid, PK)
-- user_id (uuid, FK → profiles)
-- cv_data (jsonb)
-- template_type (text)
-- cv_name (text)
-- created_at (timestamp)
-- updated_at (timestamp)
-```
+### Capacidad
+- **Límite típico:** 5-10 MB por dominio
+- **Espacio usado:** ~100-500 KB (dependiendo del contenido)
+- **CVs almacenables:** ~50-100 versiones completas
 
-### Políticas RLS
-- Los usuarios solo pueden leer/escribir sus propios datos
-- Autenticación requerida para todas las operaciones
-
-## Despliegue
-
-### Opción 1: Vercel
+### Backup Manual
 ```bash
-npm install -g vercel
-vercel
+# Exportar desde consola del navegador (F12)
+const data = {
+  cvData: localStorage.getItem('cv_generator_data'),
+  history: localStorage.getItem('cv_generator_history'),
+  letters: localStorage.getItem('cv_generator_cover_letters')
+};
+console.log(JSON.stringify(data, null, 2));
 ```
+
+---
+
+## 🚀 Despliegue
+
+### Opción 1: Vercel (Recomendado)
+
+```bash
+# Instalar Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
+
+# Configurar variables de entorno en Vercel Dashboard:
+# Settings → Environment Variables
+# VITE_GEMINI_API_KEY = tu_api_key
+```
+
+**URL de ejemplo:** `https://tu-proyecto.vercel.app`
 
 ### Opción 2: Netlify
+
 ```bash
+# Instalar Netlify CLI
 npm install -g netlify-cli
-netlify deploy --prod
-```
 
-### Opción 3: Hosting tradicional
-```bash
+# Build
 npm run build
-# Subir la carpeta dist/ a tu servidor
+
+# Deploy
+netlify deploy --prod --dir=dist
+
+# Configurar variables:
+# Site settings → Build & deploy → Environment
 ```
 
-## Scripts Disponibles
+### Opción 3: GitHub Pages
 
 ```bash
-npm run dev          # Servidor de desarrollo
+# Configurar vite.config.ts:
+export default defineConfig({
+  base: '/CV-Generator-Gemini_Version/',
+  // ...
+})
+
+# Build
+npm run build
+
+# Subir carpeta dist/ a GitHub Pages
+```
+
+### Variables de Entorno en Producción
+
+**Importante:** No subas tu `.env` a GitHub. En producción:
+
+1. **Vercel/Netlify:** Usa el dashboard para agregar `VITE_GEMINI_API_KEY`
+2. **Otras plataformas:** Consulta su documentación sobre variables de entorno
+
+---
+
+## 📜 Scripts Disponibles
+
+```bash
+npm run dev          # Servidor de desarrollo (puerto 8080)
 npm run build        # Compilar para producción
-npm run preview      # Vista previa de build
+npm run preview      # Vista previa de build de producción
 npm run lint         # Ejecutar ESLint
 ```
 
-## Seguridad
+---
 
-- ✅ Git hooks para detectar credenciales expuestas
-- ✅ Variables de entorno para secretos
-- ✅ Row-Level Security (RLS) en Supabase
-- ✅ Autenticación JWT
-- ✅ HTTPS en producción
+## 🔒 Seguridad & Privacidad
 
-## Contribuciones
+### ✅ Características de Seguridad
 
-Las contribuciones son bienvenidas! Por favor:
+- **Sin backend** - No hay servidor que hackear
+- **Sin base de datos** - Tus datos nunca salen de tu navegador
+- **Sin autenticación** - No necesitas crear cuentas
+- **API Key protegida** - Usa variables de entorno (nunca en el código)
+- **HTTPS en producción** - Comunicación encriptada con Gemini API
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+### ⚠️ Consideraciones
 
-## Roadmap
+1. **Datos en localStorage:**
+   - Los datos persisten en el navegador
+   - Si borras caché/cookies, pierdes los datos
+   - **Solución:** Exporta backups regularmente
+
+2. **API Key en producción:**
+   - La API key es accesible desde el cliente
+   - **Para uso personal:** Está bien
+   - **Para app pública:** Considera usar un proxy/backend
+
+3. **Límites de Gemini:**
+   - 15 requests/minuto (suficiente para uso personal)
+   - Si compartes la app públicamente, considera rate limiting
+
+---
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! 
+
+### Cómo contribuir:
+
+1. **Fork** el proyecto
+2. Crea tu **feature branch** (`git checkout -b feature/AmazingFeature`)
+3. **Commit** tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** a la branch (`git push origin feature/AmazingFeature`)
+5. Abre un **Pull Request**
+
+### Áreas de mejora:
 
 - [ ] Más plantillas de CV
 - [ ] Exportación a Word (.docx)
 - [ ] Integración con LinkedIn
-- [ ] Análisis de compatibilidad con múltiples ofertas
-- [ ] Sugerencias de mejora en tiempo real
 - [ ] Modo oscuro completo
-- [ ] Panel de estadísticas de aplicaciones
+- [ ] Más idiomas (francés, alemán, etc.)
+- [ ] Análisis de compatibilidad con múltiples ofertas
+- [ ] Sugerencias en tiempo real mientras escribes
 
-## Soporte
+---
 
-Si encuentras algún problema o tienes sugerencias:
+## 🐛 Reportar Problemas
 
-1. Abre un [Issue](https://github.com/Bitxogm/CV-Generator-Gemini_Version/issues)
-2. Describe el problema detalladamente
-3. Incluye capturas de pantalla si es posible
+Si encuentras un bug o tienes una sugerencia:
 
-## Licencia
+1. Ve a [Issues](https://github.com/Bitxogm/CV-Generator-Gemini_Version/issues)
+2. Busca si ya existe un issue similar
+3. Si no, crea uno nuevo con:
+   - Descripción detallada
+   - Pasos para reproducir
+   - Capturas de pantalla
+   - Versión del navegador
 
-Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+Esto significa que puedes:
+- ✅ Usar comercialmente
+- ✅ Modificar el código
+- ✅ Distribuir
+- ✅ Uso privado
+
+Siempre que incluyas el aviso de copyright y licencia.
+
+---
+
+## 🙏 Agradecimientos
+
+- **Google Gemini AI** - Por proporcionar una API de IA potente y gratuita
+- **shadcn/ui** - Por los componentes UI hermosos
+- **Lovable.dev** - Por facilitar el desarrollo inicial
+- **Comunidad Open Source** - Por todas las librerías increíbles
+
+---
+
+## 📞 Contacto
+
+**Victor Manuel González Moreno**
+
+- GitHub: [@Bitxogm](https://github.com/Bitxogm)
+- LinkedIn: [Victor Manuel González Moreno](https://www.linkedin.com/in/victor-manuel-gonzalez-moreno/)
+- Email: vmmoreno1999@gmail.com
+- Portfolio: [myreactportfolio1944.web.app](https://myreactportfolio1944.web.app/)
+
+---
+
+## 🌟 Roadmap Futuro
+
+### Versión 2.0 (Próximamente)
+- [ ] Modo offline completo (PWA)
+- [ ] Sincronización opcional con MongoDB
+- [ ] Editor de plantillas personalizado
+- [ ] Más modelos de IA (Claude, GPT-4)
+- [ ] Análisis de múltiples ofertas simultáneas
+- [ ] Estadísticas de aplicaciones
+- [ ] Panel de seguimiento de candidaturas
+
+### Versión 3.0 (A largo plazo)
+- [ ] App móvil nativa
+- [ ] Integración con job boards (LinkedIn, Indeed)
+- [ ] Análisis predictivo de éxito
+- [ ] Red social para compartir templates
+- [ ] Marketplace de plantillas
 
 ---
 
 <div align="center">
 
-**Hecho con ❤️ usando React, TypeScript y Google Gemini AI**
+**Hecho con ❤️ usando React, TypeScript y Google Gemini 2.5 Flash**
+
+**Sin Supabase, sin backend, sin complicaciones** ✨
 
 [⬆ Volver arriba](#cv-crafter---generador-de-cv-con-ia)
+
+**⭐ Si te gusta el proyecto, dale una estrella en GitHub!**
 
 </div>
