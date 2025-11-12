@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sparkles, Loader2, FileText, CheckCircle2, Download, Copy, Eye, Edit2 } from 'lucide-react';
 import { CVData } from '@/types/cv';
@@ -25,6 +24,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
+// ✅ NUEVO: Importar funciones de Gemini directo
+import { adaptCVWithGemini, generateCoverLetter, analyzeCVCompatibility } from '@/services/geminiService';
 
 interface AIAssistantProps {
   cvData: CVData;
@@ -46,6 +47,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [isEditingSummary, setIsEditingSummary] = useState(false);
   const [editedSummary, setEditedSummary] = useState('');
 
+  // ✅ NUEVA FUNCIÓN: Adaptar CV usando Gemini directo
   const handleAdaptCV = async () => {
     if (!jobDescription.trim()) {
       toast.error(t('aiAssistant.pleaseJobDescription'));
@@ -54,26 +56,46 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('adapt-cv', {
-        body: { cvData, jobDescription, language }
-      });
+      console.log('🤖 Analizando CV con Gemini 2.5 Flash...');
 
-      if (error) throw error;
+      // ✅ Llamar a Gemini directo para análisis de compatibilidad
+      const compatibilityResult = await analyzeCVCompatibility(cvData, jobDescription);
+      
+      // ✅ Adaptar el CV
+      const adaptedCV = await adaptCVWithGemini(cvData, jobDescription);
 
-      if (data?.adaptation) {
-        setAdaptation(data.adaptation);
-        setEditedSummary(data.adaptation.suggestions?.summary || '');
-        setIsEditingSummary(false);
-        toast.success(t('aiAssistant.analysisCompleted'));
-      }
+      // Construir el objeto de adaptación con la estructura esperada
+      const adaptationData = {
+        compatibilityScore: compatibilityResult.score,
+        matchedSkills: extractMatchedSkills(cvData, jobDescription),
+        missingSkills: compatibilityResult.missing || [],
+        overallRecommendations: [
+          compatibilityResult.analysis,
+          ...generateRecommendations(compatibilityResult)
+        ],
+        suggestions: {
+          summary: adaptedCV.summary || adaptedCV.personalInfo?.summary || '',
+          skills: adaptedCV.skills || cvData.skills,
+          experience: adaptedCV.experience || cvData.experience,
+        }
+      };
+
+      setAdaptation(adaptationData);
+      setEditedSummary(adaptationData.suggestions?.summary || '');
+      setIsEditingSummary(false);
+      
+      console.log('✅ Análisis completado con Gemini');
+      toast.success(t('aiAssistant.analysisCompleted'));
+
     } catch (error: any) {
-      console.error('Error adapting CV:', error);
+      console.error('❌ Error al adaptar CV con Gemini:', error);
       toast.error(t('aiAssistant.errorAnalyzing'));
     } finally {
       setIsAnalyzing(false);
     }
   };
 
+  // ✅ NUEVA FUNCIÓN: Generar carta usando Gemini directo
   const handleGenerateCoverLetter = async () => {
     if (!jobDescription.trim()) {
       toast.error(t('aiAssistant.pleaseJobDescription'));
@@ -82,29 +104,99 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
     setIsGeneratingLetter(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-cover-letter', {
-        body: { cvData, jobDescription, language }
-      });
+      console.log('✉️ Generando carta de presentación con Gemini 2.5 Flash...');
 
-      if (error) throw error;
+      // Extraer nombre de la empresa de la descripción
+      const companyName = extractCompanyName(jobDescription) || 'la empresa';
 
-      if (data?.coverLetter) {
-        setCoverLetter(data.coverLetter);
-        setIsEditingLetter(false);
+      // ✅ Llamar a Gemini directo
+      const generatedLetter = await generateCoverLetter(
+        cvData,
+        jobDescription,
+        companyName
+      );
 
-        const wordCount = data.wordCount || data.coverLetter.split(/\s+/).length;
-        if (wordCount > 450) {
-          toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} - ${t('aiAssistant.considerShortening')}`);
-        } else {
-          toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} ✓`);
-        }
+      setCoverLetter(generatedLetter);
+      setIsEditingLetter(false);
+
+      const wordCount = generatedLetter.split(/\s+/).length;
+      
+      console.log(`✅ Carta generada (${wordCount} palabras)`);
+
+      if (wordCount > 450) {
+        toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} - ${t('aiAssistant.considerShortening')}`);
+      } else {
+        toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} ✓`);
       }
+
     } catch (error: any) {
-      console.error('Error generating cover letter:', error);
+      console.error('❌ Error al generar carta con Gemini:', error);
       toast.error(t('aiAssistant.coverLetterError'));
     } finally {
       setIsGeneratingLetter(false);
     }
+  };
+
+  // Funciones auxiliares
+  const extractMatchedSkills = (cv: CVData, jobDesc: string): string[] => {
+    const jobDescLower = jobDesc.toLowerCase();
+    const matched: string[] = [];
+
+    // Buscar skills del CV en la descripción
+    cv.skills?.forEach(skill => {
+      if (typeof skill === 'string' && jobDescLower.includes(skill.toLowerCase())) {
+        matched.push(skill);
+      } else if (typeof skill === 'object' && 'name' in skill) {
+        if (jobDescLower.includes(skill.name.toLowerCase())) {
+          matched.push(skill.name);
+        }
+      }
+    });
+
+    return matched.slice(0, 10); // Limitar a 10
+  };
+
+  const generateRecommendations = (compatibility: any): string[] => {
+    const recommendations: string[] = [];
+
+    if (compatibility.score < 50) {
+      recommendations.push('Considera añadir más habilidades relevantes al puesto');
+    }
+    if (compatibility.missing?.length > 0) {
+      recommendations.push(`Desarrolla conocimientos en: ${compatibility.missing.slice(0, 3).join(', ')}`);
+    }
+    if (compatibility.score >= 70) {
+      recommendations.push('Tu perfil es muy compatible con este puesto');
+    }
+
+    return recommendations;
+  };
+
+  const extractCompanyName = (description: string): string | null => {
+    const patterns = [
+      /empresa[:\s]+([^\n.,]+)/i,
+      /company[:\s]+([^\n.,]+)/i,
+      /organización[:\s]+([^\n.,]+)/i,
+      /organization[:\s]+([^\n.,]+)/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = description.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+
+    // Buscar nombres propios en mayúsculas al inicio de líneas
+    const lines = description.split('\n');
+    for (const line of lines.slice(0, 5)) {
+      const capitalized = line.match(/^([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)/);
+      if (capitalized && capitalized[1] && capitalized[1].split(' ').length <= 3) {
+        return capitalized[1];
+      }
+    }
+
+    return null;
   };
 
   const copyCoverLetter = () => {
