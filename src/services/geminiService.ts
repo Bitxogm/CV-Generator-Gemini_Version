@@ -1,11 +1,20 @@
 // src/services/geminiService.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { CVData } from "@/types/cv";
+
+export interface CompatibilityAnalysis {
+  score: number;
+  analysis: string;
+  missing: string[];
+}
+
+export type AdaptedCVData = Partial<CVData>;
 
 // Inicializar Gemini con tu API key
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  console.error('⚠️ VITE_GEMINI_API_KEY no está configurada en .env');
+  console.error("⚠️ VITE_GEMINI_API_KEY no está configurada en .env");
 }
 
 const genAI = new GoogleGenerativeAI(API_KEY);
@@ -17,17 +26,17 @@ const genAI = new GoogleGenerativeAI(API_KEY);
  * @returns CV adaptado
  */
 export async function adaptCVWithGemini(
-  cvData: any,
-  jobDescription: string
-): Promise<any> {
+  cvData: CVData,
+  jobDescription: string,
+): Promise<AdaptedCVData> {
   try {
     // ✅ Modelo estable recomendado por Google
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
         temperature: 0.7,
         maxOutputTokens: 8192,
-      }
+      },
     });
 
     const prompt = `
@@ -60,34 +69,35 @@ ${jobDescription}
 NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
     `.trim();
 
-    console.log('🤖 Llamando a Gemini 2.5 Flash...');
+    console.log("🤖 Llamando a Gemini 2.5 Flash...");
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    
-    console.log('✅ Respuesta recibida de Gemini');
+
+    console.log("✅ Respuesta recibida de Gemini");
 
     // Limpiar y parsear el JSON
     let cleanText = text.trim();
-    
+
     // Eliminar markdown si existe
-    cleanText = cleanText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    
+    cleanText = cleanText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+
     try {
-      const parsedCV = JSON.parse(cleanText);
+      const parsedCV = JSON.parse(cleanText) as AdaptedCVData;
       return parsedCV;
     } catch (parseError) {
-      console.warn('⚠️ La respuesta no es JSON válido, intentando extraer...');
+      console.warn("⚠️ La respuesta no es JSON válido, intentando extraer...");
       // Intenta extraer JSON del texto
       const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+        return JSON.parse(jsonMatch[0]) as AdaptedCVData;
       }
-      throw new Error('No se pudo parsear la respuesta de Gemini');
+      throw new Error("No se pudo parsear la respuesta de Gemini");
     }
-    
   } catch (error) {
-    console.error('❌ Error al adaptar CV con Gemini:', error);
-    throw new Error(`Error al adaptar CV: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    console.error("❌ Error al adaptar CV con Gemini:", error);
+    throw new Error(
+      `Error al adaptar CV: ${error instanceof Error ? error.message : "Error desconocido"}`,
+    );
   }
 }
 
@@ -96,9 +106,9 @@ NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
  * @param cvData - Datos del CV a analizar
  * @returns Sugerencias de mejora
  */
-export async function generateCVSuggestions(cvData: any): Promise<string[]> {
+export async function generateCVSuggestions(cvData: CVData): Promise<string[]> {
   try {
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
 
@@ -115,14 +125,13 @@ SOLO devuelve el array JSON, sin texto adicional.
 
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
-    
+
     // Limpiar markdown
-    const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    
+    const cleanText = text.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+
     return JSON.parse(cleanText);
-    
   } catch (error) {
-    console.error('❌ Error al generar sugerencias:', error);
+    console.error("❌ Error al generar sugerencias:", error);
     throw error;
   }
 }
@@ -134,11 +143,11 @@ SOLO devuelve el array JSON, sin texto adicional.
  * @returns Puntuación de compatibilidad
  */
 export async function analyzeCVCompatibility(
-  cvData: any,
-  jobDescription: string
-): Promise<{ score: number; analysis: string; missing: string[] }> {
+  cvData: CVData,
+  jobDescription: string,
+): Promise<CompatibilityAnalysis> {
   try {
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
 
@@ -163,12 +172,11 @@ SOLO JSON, sin texto adicional.
 
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
-    const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    
+    const cleanText = text.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+
     return JSON.parse(cleanText);
-    
   } catch (error) {
-    console.error('❌ Error al analizar compatibilidad:', error);
+    console.error("❌ Error al analizar compatibilidad:", error);
     throw error;
   }
 }
@@ -181,12 +189,12 @@ SOLO JSON, sin texto adicional.
  * @returns Carta de presentación
  */
 export async function generateCoverLetter(
-  cvData: any,
+  cvData: CVData,
   jobDescription: string,
-  companyName: string
+  companyName: string,
 ): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
 
@@ -213,16 +221,15 @@ Devuelve SOLO el texto de la carta, sin formato markdown.
 
     const result = await model.generateContent(prompt);
     return result.response.text().trim();
-    
   } catch (error) {
-    console.error('❌ Error al generar carta:', error);
+    console.error("❌ Error al generar carta:", error);
     throw error;
   }
 }
 
 // Función auxiliar para validar la respuesta de Gemini
 function validateGeminiResponse(text: string): boolean {
-  return text && text.length > 0 && !text.includes('Error');
+  return text && text.length > 0 && !text.includes("Error");
 }
 
 export default {

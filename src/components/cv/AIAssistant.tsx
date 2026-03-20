@@ -27,9 +27,29 @@ import { useLanguage } from '@/contexts/LanguageContext';
 // ✅ NUEVO: Importar funciones de Gemini directo
 import { adaptCVWithGemini, generateCoverLetter, analyzeCVCompatibility } from '@/services/geminiService';
 
+interface AISuggestions {
+  summary?: string;
+  skills?: CVData['skills'];
+  experience?: CVData['experience'];
+}
+
+interface CompatibilityResult {
+  score: number;
+  analysis: string;
+  missing: string[];
+}
+
+interface AdaptationData {
+  compatibilityScore: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  overallRecommendations: string[];
+  suggestions: AISuggestions;
+}
+
 interface AIAssistantProps {
   cvData: CVData;
-  onApplySuggestions?: (suggestions: any) => void;
+  onApplySuggestions?: (suggestions: AISuggestions) => void;
 }
 
 export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
@@ -37,7 +57,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [jobDescription, setJobDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
-  const [adaptation, setAdaptation] = useState<any>(null);
+  const [adaptation, setAdaptation] = useState<AdaptationData | null>(null);
   const [coverLetter, setCoverLetter] = useState('');
   const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
   const [pdfFormat, setPdfFormat] = useState<CoverLetterFormat>('minimal');
@@ -60,12 +80,12 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
       // ✅ Llamar a Gemini directo para análisis de compatibilidad
       const compatibilityResult = await analyzeCVCompatibility(cvData, jobDescription);
-      
+
       // ✅ Adaptar el CV
       const adaptedCV = await adaptCVWithGemini(cvData, jobDescription);
 
       // Construir el objeto de adaptación con la estructura esperada
-      const adaptationData = {
+      const adaptationData: AdaptationData = {
         compatibilityScore: compatibilityResult.score,
         matchedSkills: extractMatchedSkills(cvData, jobDescription),
         missingSkills: compatibilityResult.missing || [],
@@ -74,7 +94,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
           ...generateRecommendations(compatibilityResult)
         ],
         suggestions: {
-          summary: adaptedCV.summary || adaptedCV.personalInfo?.summary || '',
+          summary: adaptedCV.summary || '',
           skills: adaptedCV.skills || cvData.skills,
           experience: adaptedCV.experience || cvData.experience,
         }
@@ -83,11 +103,11 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       setAdaptation(adaptationData);
       setEditedSummary(adaptationData.suggestions?.summary || '');
       setIsEditingSummary(false);
-      
+
       console.log('✅ Análisis completado con Gemini');
       toast.success(t('aiAssistant.analysisCompleted'));
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error al adaptar CV con Gemini:', error);
       toast.error(t('aiAssistant.errorAnalyzing'));
     } finally {
@@ -120,7 +140,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       setIsEditingLetter(false);
 
       const wordCount = generatedLetter.split(/\s+/).length;
-      
+
       console.log(`✅ Carta generada (${wordCount} palabras)`);
 
       if (wordCount > 450) {
@@ -129,7 +149,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
         toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} ✓`);
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error al generar carta con Gemini:', error);
       toast.error(t('aiAssistant.coverLetterError'));
     } finally {
@@ -144,19 +164,15 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
     // Buscar skills del CV en la descripción
     cv.skills?.forEach(skill => {
-      if (typeof skill === 'string' && jobDescLower.includes(skill.toLowerCase())) {
+      if (jobDescLower.includes(skill.toLowerCase())) {
         matched.push(skill);
-      } else if (typeof skill === 'object' && 'name' in skill) {
-        if (jobDescLower.includes(skill.name.toLowerCase())) {
-          matched.push(skill.name);
-        }
       }
     });
 
     return matched.slice(0, 10); // Limitar a 10
   };
 
-  const generateRecommendations = (compatibility: any): string[] => {
+  const generateRecommendations = (compatibility: CompatibilityResult): string[] => {
     const recommendations: string[] = [];
 
     if (compatibility.score < 50) {

@@ -32,7 +32,7 @@ export function ExperienceSection({ cvData, setCvData }: ExperienceSectionProps)
     });
   };
 
-  const updateExperience = (id: string, field: string, value: any) => {
+  const updateExperience = (id: string, field: string, value: string | boolean) => {
     setCvData({
       ...cvData,
       experience: cvData.experience.map((exp) =>

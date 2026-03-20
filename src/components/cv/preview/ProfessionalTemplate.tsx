@@ -41,6 +41,13 @@ export function ProfessionalTemplate({ data, language = 'es' }: ProfessionalTemp
         {/* Sidebar */}
         <div className="col-span-1 bg-muted p-6">
           <div className="mb-6">
+            {data.personalInfo.photo && (
+              <img
+                src={data.personalInfo.photo}
+                alt="Foto de perfil"
+                className="w-28 h-28 rounded-full object-cover border border-border mx-auto mb-4"
+              />
+            )}
             <h1 className="text-2xl font-display font-bold text-foreground mb-4">
               {data.personalInfo.fullName}
             </h1>
@@ -139,7 +146,14 @@ export function ProfessionalTemplate({ data, language = 'es' }: ProfessionalTemp
               <h2 className="text-xl font-display font-bold text-primary mb-3 pb-2 border-b-2 border-primary">
                 {t.professionalSummary.toUpperCase()}
               </h2>
-              <p className="text-foreground leading-relaxed">{data.summary}</p>
+              <ul className="space-y-1 list-none pl-0">
+                {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+                  <li key={i} className="flex gap-2 text-foreground leading-relaxed">
+                    <span className="text-primary flex-shrink-0">•</span>
+                    <span>{line.replace(/^[•]\s*/, '')}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

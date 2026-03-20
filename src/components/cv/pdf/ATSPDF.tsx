@@ -1,5 +1,6 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
+import { getPdfDensity, getPdfScales } from './pdfDensity';
 
 Font.register({
   family: 'Arial',
@@ -9,77 +10,82 @@ Font.register({
 });
 
 // ATS-optimized PDF with simple, machine-readable format
-const styles = StyleSheet.create({
-  page: {
-    padding: 30,
-    fontFamily: 'Helvetica',
-    fontSize: 9,
-    lineHeight: 1.2,
-    color: '#000000',
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  contactInfo: {
-    fontSize: 9,
-    textAlign: 'center',
-    marginBottom: 12,
-    paddingBottom: 8,
-    borderBottom: '1pt solid #000000',
-  },
-  section: {
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    marginBottom: 5,
-    paddingBottom: 2,
-    borderBottom: '1pt solid #000000',
-  },
-  text: {
-    fontSize: 9,
-    marginBottom: 4,
-    lineHeight: 1.3,
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  subsection: {
-    marginBottom: 6,
-  },
-  bulletPoint: {
-    marginLeft: 15,
-    marginBottom: 3,
-  },
-  summaryTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  summaryIntro: {
-    fontSize: 9,
-    lineHeight: 1.3,
-    marginBottom: 4,
-  },
-  summaryBulletHeader: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    marginBottom: 3,
-    marginTop: 2,
-  },
-  bulletItem: {
-    fontSize: 9,
-    lineHeight: 1.3,
-    marginBottom: 2,
-    marginLeft: 10,
-  },
-});
+const createStyles = (fontScale: number, spacingScale: number) => {
+  const f = (value: number) => value * fontScale;
+  const s = (value: number) => value * spacingScale;
+
+  return StyleSheet.create({
+    page: {
+      padding: s(30),
+      fontFamily: 'Helvetica',
+      fontSize: f(9),
+      lineHeight: f(1.2),
+      color: '#000000',
+    },
+    name: {
+      fontSize: f(18),
+      fontWeight: 'bold',
+      marginBottom: s(6),
+      textAlign: 'center',
+    },
+    contactInfo: {
+      fontSize: f(9),
+      textAlign: 'center',
+      marginBottom: s(12),
+      paddingBottom: s(8),
+      borderBottom: '1pt solid #000000',
+    },
+    section: {
+      marginBottom: s(8),
+    },
+    sectionTitle: {
+      fontSize: f(12),
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      marginBottom: s(5),
+      paddingBottom: s(2),
+      borderBottom: '1pt solid #000000',
+    },
+    text: {
+      fontSize: f(9),
+      marginBottom: s(4),
+      lineHeight: f(1.3),
+    },
+    bold: {
+      fontWeight: 'bold',
+    },
+    subsection: {
+      marginBottom: s(6),
+    },
+    bulletPoint: {
+      marginLeft: s(15),
+      marginBottom: s(3),
+    },
+    summaryTitle: {
+      fontSize: f(14),
+      fontWeight: 'bold',
+      marginBottom: s(6),
+      textAlign: 'center',
+    },
+    summaryIntro: {
+      fontSize: f(9),
+      lineHeight: f(1.3),
+      marginBottom: s(4),
+    },
+    summaryBulletHeader: {
+      fontSize: f(9),
+      fontWeight: 'bold',
+      marginBottom: s(3),
+      marginTop: s(2),
+    },
+    bulletItem: {
+      fontSize: f(9),
+      lineHeight: f(1.3),
+      marginBottom: s(2),
+      marginLeft: s(10),
+    },
+  });
+};
 
 interface ATSPDFProps {
   data: CVData;
@@ -113,11 +119,21 @@ const translations = {
 
 export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
   const t = translations[language];
+  const density = getPdfDensity(data);
+  const { fontScale, spacingScale } = getPdfScales(density);
+  const styles = createStyles(fontScale, spacingScale);
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} wrap={false}>
         {/* Name */}
         <Text style={styles.name}>{data.personalInfo.fullName.toUpperCase()}</Text>
+        {data.personalInfo.photo && (
+          <Image
+            src={data.personalInfo.photo}
+            style={{ width: spacingScale * 50, height: spacingScale * 50, borderRadius: spacingScale * 25, alignSelf: 'center', marginBottom: spacingScale * 6 }}
+          />
+        )}
 
         {/* Contact Info */}
         <View style={styles.contactInfo}>
@@ -135,7 +151,9 @@ export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
         {data.summary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
-            <Text style={styles.text}>{data.summary}</Text>
+            {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+              <Text key={i} style={styles.bulletItem}>{line.startsWith('•') ? line : `• ${line}`}</Text>
+            ))}
           </View>
         )}
 

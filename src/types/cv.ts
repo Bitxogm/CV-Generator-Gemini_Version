@@ -18,6 +18,7 @@ export interface PersonalInfo {
   linkedin?: string;
   website?: string;
   github?: string;
+  photo?: string;
 }
 
 export interface Experience {

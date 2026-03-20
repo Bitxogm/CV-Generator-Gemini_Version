@@ -28,7 +28,7 @@ export function ProjectsSection({ cvData, setCvData }: ProjectsSectionProps) {
     });
   };
 
-  const updateProject = (id: string, field: string, value: any) => {
+  const updateProject = (id: string, field: string, value: string | string[]) => {
     setCvData({
       ...cvData,
       projects: (cvData.projects || []).map((proj) =>

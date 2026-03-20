@@ -31,7 +31,7 @@ export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
     });
   };
 
-  const updateEducation = (id: string, field: string, value: any) => {
+  const updateEducation = (id: string, field: string, value: string | boolean) => {
     setCvData({
       ...cvData,
       education: cvData.education.map((edu) =>

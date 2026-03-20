@@ -39,39 +39,50 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-primary opacity-90" />
         <div className="relative p-8 text-white">
-          <h1 className="text-5xl font-display font-bold mb-4">
-            {data.personalInfo.fullName}
-          </h1>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-1">
-              <Mail className="w-4 h-4" />
-              <span>{data.personalInfo.email}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Phone className="w-4 h-4" />
-              <span>{data.personalInfo.phone}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
-              <span>{data.personalInfo.location}</span>
-            </div>
-            {data.personalInfo.linkedin && (
-              <div className="flex items-center gap-1">
-                <Linkedin className="w-4 h-4" />
-                <span>{data.personalInfo.linkedin}</span>
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-5xl font-display font-bold mb-4">
+                {data.personalInfo.fullName}
+              </h1>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <Mail className="w-4 h-4" />
+                  <span>{data.personalInfo.email}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Phone className="w-4 h-4" />
+                  <span>{data.personalInfo.phone}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{data.personalInfo.location}</span>
+                </div>
+                {data.personalInfo.linkedin && (
+                  <div className="flex items-center gap-1">
+                    <Linkedin className="w-4 h-4" />
+                    <span>{data.personalInfo.linkedin}</span>
+                  </div>
+                )}
+                {data.personalInfo.website && (
+                  <div className="flex items-center gap-1">
+                    <Globe className="w-4 h-4" />
+                    <span>{data.personalInfo.website}</span>
+                  </div>
+                )}
+                {data.personalInfo.github && (
+                  <div className="flex items-center gap-1">
+                    <Github className="w-4 h-4" />
+                    <span>{data.personalInfo.github}</span>
+                  </div>
+                )}
               </div>
-            )}
-            {data.personalInfo.website && (
-              <div className="flex items-center gap-1">
-                <Globe className="w-4 h-4" />
-                <span>{data.personalInfo.website}</span>
-              </div>
-            )}
-            {data.personalInfo.github && (
-              <div className="flex items-center gap-1">
-                <Github className="w-4 h-4" />
-                <span>{data.personalInfo.github}</span>
-              </div>
+            </div>
+            {data.personalInfo.photo && (
+              <img
+                src={data.personalInfo.photo}
+                alt="Foto de perfil"
+                className="w-28 h-28 rounded-full object-cover border border-white/30 flex-shrink-0"
+              />
             )}
           </div>
         </div>
@@ -84,7 +95,14 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
             <h2 className="text-2xl font-display font-bold text-accent mb-3">
               {t.professionalSummary}
             </h2>
-            <p className="text-foreground leading-relaxed italic">{data.summary}</p>
+            <ul className="space-y-1 list-none pl-0">
+              {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+                <li key={i} className="flex gap-2 text-foreground leading-relaxed italic">
+                  <span className="text-accent flex-shrink-0">•</span>
+                  <span>{line.replace(/^[•]\s*/, '')}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

@@ -12,16 +12,74 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { History, FileDown, BarChart, Loader2, Sparkles, Trash2 } from 'lucide-react';
+import { History, FileDown, BarChart, Loader2, Sparkles, Trash2, Upload, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIAssistant } from '@/components/cv/AIAssistant';
 import { celebrateDownload } from '@/lib/confetti';
 import { pdf } from '@react-pdf/renderer';
-// ✅ Importar servicios de localStorage y Gemini
 import StorageService from '@/services/storageService';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+type SavedCV = ReturnType<typeof StorageService.loadCVHistory>[number];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PLANTILLA VACÍA — se usa en producción para nuevos visitantes.
+// Nunca expone datos personales del autor.
+// ─────────────────────────────────────────────────────────────────────────────
 const initialCVData: CVData = {
+  personalInfo: {
+    fullName: '',
+    email: '',
+    phone: '',
+    location: '',
+    linkedin: '',
+    github: '',
+    website: '',
+    photo: '',
+  },
+  summary: '',
+  experience: [
+    {
+      id: '1',
+      company: '',
+      position: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      description: '',
+    },
+  ],
+  education: [
+    {
+      id: '1',
+      institution: '',
+      degree: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+    },
+  ],
+  skills: [],
+  softSkills: [],
+  projects: [
+    {
+      id: '1',
+      name: '',
+      description: '',
+      technologies: [],
+      link: '',
+    },
+  ],
+  languages: [],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DATOS DE VICTOR — solo se cargan en entorno local (import.meta.env.DEV)
+// y únicamente si localStorage está vacío.
+// ─────────────────────────────────────────────────────────────────────────────
+const victorData: CVData = {
   personalInfo: {
     fullName: 'Victor Manuel González Moreno',
     email: 'vmmoreno1999@gmail.com',
@@ -29,32 +87,20 @@ const initialCVData: CVData = {
     location: 'Barakaldo, Vizcaya',
     linkedin: 'https://www.linkedin.com/in/victor-manuel-gonzalez-moreno/',
     github: 'https://github.com/Bitxogm',
-    website: 'https://myreactportfolio1944.web.app/',
+    website: 'https://bitxo-dev.com',
+    photo: '', // pega aquí el base64 de tu foto si quieres tenerla por defecto en local
   },
-  summary: 'Profesional en transición hacia desarrollo web con 8+ años de experiencia comprobada en liderazgo de equipos, gestión de proyectos complejos y resolución de problemas bajo presión. Especializado en desarrollo full-stack con enfoque en integración de Inteligencia Artificial (Claude, Gemini) aplicando técnicas de Prompt Engineering y RAG. Apasionado por crear soluciones web escalables, innovadoras y centradas en el usuario.',
+
+  // Resumen: quién eres y qué aportas. Sin repetir el listado de tecnologías.
+  summary: `• Desarrollador Web Full-Stack con background de 8+ años en liderazgo técnico de equipos internacionales.
+• Sólidas habilidades técnicas (React, Next.js, Node.js, PostgreSQL, Docker, AWS) y capacidad demostrada para gestionar proyectos complejos bajo presión.
+• Nivel de inglés B2.
+• Disponible para incorporación inmediata.`,
+
+  // Experiencia: solo trabajo real. KeepCoding va en Educación.
   experience: [
     {
       id: '1',
-      company: 'KeepCoding Web Bootcamp',
-      position: 'Desarrollador Web Full-Stack (Formación Intensiva)',
-      location: 'Cantabria',
-      startDate: '2025',
-      endDate: 'Actualidad',
-      current: true,
-      description: `Programa intensivo de +500 horas enfocado en el desarrollo práctico de aplicaciones web modernas.
-
-Experiencia en:
-• Desarrollo de interfaces dinámicas y responsivas con React, TypeScript y TailwindCSS
-• Implementación de APIs RESTful con Node.js y Express
-• Gestión de bases de datos relacionales (PostgreSQL) y no relacionales (MongoDB)
-• Integración de IA: Claude API, Gemini API, Google AI Studio, Prompt Engineering y RAG
-• Testing automatizado con Vitest (frontend) y Jest (backend)
-• Control de versiones con Git/GitHub y flujos CI/CD
-• Despliegue de aplicaciones en Firebase, Render y Vercel
-• Python para scripting y automatización`,
-    },
-    {
-      id: '2',
       company: 'Gestamp Try Out',
       position: 'Team Leader / Responsable de Turno y Sección',
       location: 'Barakaldo',
@@ -77,63 +123,128 @@ Responsabilidades clave:
 - Coordinación internacional en plantas de cliente`,
     },
   ],
-  education: [],
-  skills: ['React', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Node.js', 'HTML5', 'CSS3', 'MongoDB'],
-  softSkills: ['Liderazgo de equipos', 'Comunicación efectiva', 'Gestión de proyectos', 'Colaboración en equipo'],
-  projects: [
+
+  // Educación: bootcamp + formación previa
+  education: [
     {
       id: '1',
-      name: 'AgentLogic AI - Tutor Inteligente de Programación',
-      description: 'Plataforma educativa full-stack con múltiples módulos: generación automática de código con IA, chat interactivo para tutorías personalizadas, visualización de algoritmos con diagramas de flujo, y sistema de gestión de ejercicios.',
-      technologies: ['Firebase v2', 'MongoDB Atlas', 'Gemini AI', 'TypeScript'],
-      link: 'https://new-logic-agent-git-dev-bitxejos-projects.vercel.app/',
+      institution: 'KeepCoding Web Bootcamp',
+      degree: 'Desarrollo Web Full-Stack',
+      field: 'Bootcamp intensivo (+800h) · Cantabria',
+      startDate: '2025',
+      endDate: '2026',
+      current: false,
     },
     {
       id: '2',
-      name: 'Asistente de Refactorización con IA',
-      description: 'Herramienta que analiza código multilenguaje y sugiere mejoras utilizando la API de Gemini, ayudando a los desarrolladores a escribir código más limpio y mantenible.',
-      technologies: ['Node.js', 'React + TypeScript', 'Gemini API', 'REST'],
-      link: 'https://new-code-ai-assistant.vercel.app/',
+      institution: 'Instituto Nicolás Larburu',
+      degree: 'Grado Superior — Matricería y Moldes',
+      field: 'Fabricación y ajuste de matricería · Barakaldo',
+      startDate: '1990',
+      endDate: '1995',
+      current: false,
     },
   ],
+
+  skills: [
+    'React',
+    'Next.js',
+    'TypeScript',
+    'JavaScript',
+    'Node.js',
+    'Express',
+    'Python',
+    'PostgreSQL',
+    'MongoDB',
+    'Prisma',
+    'Docker',
+    'AWS',
+    'Git',
+    'HTML5',
+    'CSS3',
+    'TailwindCSS',
+    'Responsive Design',
+  ],
+
+  softSkills: [
+    'Liderazgo de equipos',
+    'Comunicación efectiva',
+    'Gestión de proyectos',
+    'Resolución de problemas',
+    'Trabajo en equipo',
+    'Agile / Scrum',
+  ],
+
+  projects: [
+    {
+      id: '1',
+      name: 'TestLab AI — Generador y Ejecutor de Tests con IA',
+      description: 'Monorepo full-stack que genera y ejecuta tests automáticamente mediante IA. Frontend en Next.js 14, backend Express con arquitectura hexagonal, sandboxes Docker aislados por ejecución, comunicación en tiempo real con Socket.io y almacenamiento dual PostgreSQL/Prisma + MongoDB/Mongoose.',
+      technologies: ['Next.js', 'Express', 'Gemini API', 'Docker', 'Socket.io', 'PostgreSQL', 'Prisma', 'MongoDB'],
+      link: '',
+    },
+    {
+      id: '2',
+      name: 'AgentLogic AI — Tutor Inteligente de Programación',
+      description: 'Plataforma educativa full-stack con múltiples módulos: generación automática de código con IA, chat interactivo para tutorías personalizadas, visualización de algoritmos con diagramas de flujo y sistema de gestión de ejercicios.',
+      technologies: ['Firebase', 'MongoDB Atlas', 'Gemini AI', 'TypeScript'],
+      link: 'https://new-logic-agent-git-dev-bitxejos-projects.vercel.app/',
+    },
+    {
+      id: '3',
+      name: 'Asistente de Refactorización con IA',
+      description: 'Herramienta que analiza código multilenguaje y sugiere mejoras utilizando la API de Gemini, ayudando a los desarrolladores a escribir código más limpio y mantenible.',
+      technologies: ['Node.js', 'React', 'TypeScript', 'Gemini API', 'REST'],
+      link: 'https://new-code-ai-assistant.vercel.app/',
+    },
+    {
+      id: '4',
+      name: 'CV Crafter — Generador de CVs con IA',
+      description: 'Aplicación web para crear y exportar CVs profesionales en múltiples plantillas. Incluye análisis ATS con Gemini, asistente IA integrado, historial de versiones en localStorage y exportación a PDF con react-pdf.',
+      technologies: ['React', 'TypeScript', 'Vite', 'Gemini API', 'TailwindCSS'],
+      link: '',
+    },
+  ],
+
   languages: [],
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
 export default function Index() {
   const { t, language } = useLanguage();
-  
-  // ✅ Cargar CV desde localStorage solo una vez al montar
+
+  // Prioridad de carga:
+  // 1. localStorage (siempre, si existe)
+  // 2. victorData (solo en DEV y si localStorage está vacío)
+  // 3. initialCVData vacío (producción, usuario nuevo)
   const [cvData, setCvData] = useState<CVData>(() => {
     const saved = StorageService.loadCVData();
-    return saved || initialCVData;
+    if (saved) return saved;
+    return import.meta.env.DEV ? victorData : initialCVData;
   });
-  
+
   const [templateType, setTemplateType] = useState<TemplateType>('modern');
   const [showPreview, setShowPreview] = useState(false);
-  const [savedCVs, setSavedCVs] = useState<any[]>([]);
+  const [savedCVs, setSavedCVs] = useState<SavedCV[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // ✅ CORREGIDO: Auto-guardar con ref para evitar loop infinito
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  // Auto-guardado con debounce
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const previousCVDataRef = useRef<string>();
 
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return 'Error desconocido';
+  };
+
   useEffect(() => {
-    // Serializar para comparar
     const currentCVData = JSON.stringify(cvData);
-    
-    // Solo guardar si cambió
-    if (previousCVDataRef.current === currentCVData) {
-      return;
-    }
+    if (previousCVDataRef.current === currentCVData) return;
 
-    // Limpiar timeout anterior
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // Crear nuevo timeout
     timeoutRef.current = setTimeout(() => {
       StorageService.saveCVData(cvData);
       previousCVDataRef.current = currentCVData;
@@ -141,13 +252,10 @@ export default function Index() {
     }, 2000);
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [cvData]);
 
-  // Cargar historial al montar
   useEffect(() => {
     loadSavedCVs();
   }, []);
@@ -157,58 +265,103 @@ export default function Index() {
     setSavedCVs(history);
   };
 
+  // ─── Foto de perfil ────────────────────────────────────────────────────────
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('El archivo debe ser una imagen (JPG, PNG, WebP...)');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('La imagen no debe superar 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCvData(prev => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          photo: reader.result as string,
+        },
+      }));
+      toast.success('Foto cargada correctamente');
+    };
+    reader.onerror = () => toast.error('Error al leer la imagen');
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setCvData(prev => ({
+      ...prev,
+      personalInfo: { ...prev.personalInfo, photo: '' },
+    }));
+    toast.success('Foto eliminada');
+  };
+  // ──────────────────────────────────────────────────────────────────────────
+
   const handleSave = () => {
     try {
       const cvName = prompt(t('notifications.cvNamePrompt'));
       if (!cvName) return;
-
       const success = StorageService.saveCVVersion(cvData, cvName);
-      
       if (success) {
         toast.success(t('notifications.cvSaved'));
         loadSavedCVs();
       } else {
         toast.error(t('notifications.errorSaving'));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(t('notifications.errorSaving'));
       console.error(error);
     }
   };
 
-  const handleDownload = async (format: 'visual' | 'ats' = 'visual') => {
+  const handleDownload = async (
+    format: 'visual' | 'ats' = 'visual',
+    selectedTemplate: TemplateType = templateType,
+  ) => {
     try {
-      let pdfDoc;
-      if (format === 'ats') {
-        pdfDoc = <ATSPDF data={cvData} language={language} />;
-      } else {
-        const templates = { modern: ModernPDF, professional: ProfessionalPDF, creative: CreativePDF };
-        const Template = templates[templateType];
-        pdfDoc = <Template data={cvData} language={language} />;
-      }
+      const getVisualPdf = (selectedTemplate: TemplateType) => {
+        switch (selectedTemplate) {
+          case 'professional':
+            return <ProfessionalPDF data={cvData} language={language} />;
+          case 'creative':
+            return <CreativePDF data={cvData} language={language} />;
+          case 'modern':
+          default:
+            return <ModernPDF data={cvData} language={language} />;
+        }
+      };
+
+      const pdfDoc = format === 'ats'
+        ? <ATSPDF data={cvData} language={language} />
+        : getVisualPdf(selectedTemplate);
+
       const blob = await pdf(pdfDoc).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `CV_${cvData.personalInfo.fullName || 'curriculum'}_${format}.pdf`;
+      const fileVariant = format === 'ats' ? 'ats' : selectedTemplate;
+      link.download = `CV_${cvData.personalInfo.fullName || 'curriculum'}_${fileVariant}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
-      const formatLabel = format === 'ats' ? 'ATS' : 'visual';
-      toast.success(t('notifications.downloadSuccess', { format: formatLabel }));
+      toast.success(t('notifications.downloadSuccess', { format: format === 'ats' ? 'ATS' : fileVariant }));
       celebrateDownload();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error downloading PDF:', error);
-      toast.error(`${t('notifications.downloadError')}: ${error.message || 'Error desconocido'}`);
+      toast.error(`${t('notifications.downloadError')}: ${getErrorMessage(error)}`);
     }
   };
 
   const handleAnalyzeATS = async () => {
     setIsAnalyzing(true);
     try {
-      console.log('🔍 Analizando CV para ATS con Gemini...');
-
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       const prompt = `
 Eres un experto en sistemas ATS (Applicant Tracking Systems). Analiza este CV y proporciona un análisis detallado.
@@ -228,29 +381,23 @@ Devuelve ÚNICAMENTE un JSON válido con esta estructura:
 {
   "score": número entre 0 y 100,
   "keywords": {
-    "matched": ["palabra1", "palabra2", ...],
-    "missing": ["palabra1", "palabra2", ...]
+    "matched": ["palabra1", "palabra2"],
+    "missing": ["palabra1", "palabra2"]
   },
-  "suggestions": ["sugerencia 1", "sugerencia 2", ...],
-  "strengths": ["fortaleza 1", "fortaleza 2", ...],
-  "weaknesses": ["debilidad 1", "debilidad 2", ...]
+  "suggestions": ["sugerencia 1", "sugerencia 2"],
+  "strengths": ["fortaleza 1", "fortaleza 2"],
+  "weaknesses": ["debilidad 1", "debilidad 2"]
 }
 
 NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
       `.trim();
 
       const result = await model.generateContent(prompt);
-      let text = result.response.text().trim();
-      
-      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-      
+      const text = result.response.text().trim().replace(/```json\n?/g, '').replace(/```\n?/g, '');
       const analysis: ATSAnalysis = JSON.parse(text);
-      
       setAtsAnalysis(analysis);
-      console.log('✅ Análisis ATS completado');
       toast.success(t('notifications.atsCompleted'));
-
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error en análisis ATS:', error);
       toast.error(t('notifications.atsError'));
     } finally {
@@ -258,7 +405,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
     }
   };
 
-  const loadCV = (cv: any) => {
+  const loadCV = (cv: SavedCV) => {
     setCvData(cv.data);
     setShowHistory(false);
     toast.success(t('notifications.cvLoaded', { name: cv.name }));
@@ -274,6 +421,8 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+
+      {/* ── Header ────────────────────────────────────────────────────────── */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -284,17 +433,15 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
               <div>
                 <h1 className="text-2xl font-display font-bold">CV Crafter</h1>
                 <p className="text-sm text-muted-foreground">
-                  {t('common.hello')}, {cvData.personalInfo.fullName}
+                  {cvData.personalInfo.fullName
+                    ? `${t('common.hello')}, ${cvData.personalInfo.fullName}`
+                    : 'Tu CV profesional, listo para destacar'}
                 </p>
               </div>
             </div>
-
             <div className="flex gap-2 items-center">
               <LanguageSelector />
-              <Button
-                variant="outline"
-                onClick={() => setShowHistory(true)}
-              >
+              <Button variant="outline" onClick={() => setShowHistory(true)}>
                 <History className="w-4 h-4 mr-2" />
                 {t('tabs.history')}
               </Button>
@@ -304,6 +451,67 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
       </header>
 
       <main className="container mx-auto px-4 py-8">
+
+        {/* ── Foto de perfil ──────────────────────────────────────────────── */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Foto de perfil{' '}
+              <span className="text-muted-foreground font-normal text-sm">
+                (opcional — recomendada en España)
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-full border-2 border-dashed border-muted-foreground/30 overflow-hidden flex items-center justify-center bg-muted flex-shrink-0">
+                {cvData.personalInfo.photo ? (
+                  <img
+                    src={cvData.personalInfo.photo}
+                    alt="Foto de perfil"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8 text-muted-foreground/40" />
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="photo-upload" className="cursor-pointer">
+                  <Button variant="outline" size="sm" asChild>
+                    <span>
+                      <Upload className="w-3 h-3 mr-2" />
+                      {cvData.personalInfo.photo ? 'Cambiar foto' : 'Subir foto'}
+                    </span>
+                  </Button>
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                  />
+                </label>
+                {cvData.personalInfo.photo && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRemovePhoto}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="w-3 h-3 mr-2" />
+                    Eliminar foto
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  JPG, PNG o WebP · máx. 2MB · se guarda en local
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Tabs principales ────────────────────────────────────────────── */}
         <Tabs defaultValue="cv" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="cv">{t('tabs.editor')}</TabsTrigger>
@@ -334,7 +542,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                 if (suggestions.skills?.length > 0) {
                   setCvData(prev => ({
                     ...prev,
-                    skills: [...new Set([...prev.skills, ...suggestions.skills])]
+                    skills: [...new Set([...prev.skills, ...suggestions.skills])],
                   }));
                 }
               }}
@@ -343,6 +551,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
         </Tabs>
       </main>
 
+      {/* ── Modal Preview ──────────────────────────────────────────────────── */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -356,7 +565,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
             <TabsContent value="preview" className="space-y-4">
               <CVPreview data={cvData} template={templateType} language={language} />
               <div className="flex gap-2">
-                <Button onClick={() => handleDownload('visual')} className="flex-1">
+                <Button onClick={() => handleDownload('visual', templateType)} className="flex-1">
                   <FileDown className="w-4 h-4 mr-2" />
                   {t(`cv.download${templateType.charAt(0).toUpperCase() + templateType.slice(1)}`)}
                 </Button>
@@ -371,7 +580,9 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                 <Card>
                   <CardContent className="pt-6 text-center">
                     <Button onClick={handleAnalyzeATS} disabled={isAnalyzing}>
-                      {isAnalyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <BarChart className="w-4 h-4 mr-2" />}
+                      {isAnalyzing
+                        ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        : <BarChart className="w-4 h-4 mr-2" />}
                       {t('cv.analyzeWithAI')}
                     </Button>
                   </CardContent>
@@ -402,6 +613,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
         </DialogContent>
       </Dialog>
 
+      {/* ── Modal Historial ────────────────────────────────────────────────── */}
       <Dialog open={showHistory} onOpenChange={setShowHistory}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -425,17 +637,10 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => loadCV(cv)}
-                    >
+                    <Button size="sm" onClick={() => loadCV(cv)}>
                       {t('common.load')}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => deleteCV(cv.id, cv.name)}
-                    >
+                    <Button size="sm" variant="outline" onClick={() => deleteCV(cv.id, cv.name)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -445,6 +650,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
           </div>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 }

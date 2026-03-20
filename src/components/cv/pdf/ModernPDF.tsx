@@ -1,152 +1,157 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
+import { getPdfDensity, getPdfScales } from './pdfDensity';
 
 // Using system font (Helvetica) for compatibility with @react-pdf
 
+const createStyles = (fontScale: number, spacingScale: number) => {
+  const f = (value: number) => value * fontScale;
+  const s = (value: number) => value * spacingScale;
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 35,
-    fontFamily: 'Helvetica',
-    fontSize: 9,
-    color: '#1a1a1a',
-  },
-  header: {
-    borderBottom: '1pt solid #000000',
-    paddingBottom: 15,
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#000000',
-  },
-  contactInfo: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    fontSize: 9,
-    color: '#000000',
-  },
-  contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  section: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    borderBottom: '1pt solid #000000',
-    paddingBottom: 3,
-  },
-  summaryText: {
-    lineHeight: 1.3,
-    fontSize: 10,
-    color: '#000000',
-  },
-  experienceItem: {
-    marginBottom: 12,
-  },
-  jobTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 3,
-  },
-  company: {
-    fontSize: 10,
-    color: '#000000',
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  dateLocation: {
-    fontSize: 9,
-    color: '#000000',
-    marginBottom: 5,
-  },
-  description: {
-    fontSize: 10,
-    lineHeight: 1.4,
-    color: '#000000',
-  },
-  skillsContainer: {
-    fontSize: 10,
-  },
-  skillPill: {
-    fontSize: 10,
-    color: '#000000',
-  },
-  educationItem: {
-    marginBottom: 10,
-  },
-  degree: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 3,
-  },
-  institution: {
-    fontSize: 10,
-    color: '#000000',
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  projectItem: {
-    marginBottom: 10,
-  },
-  projectName: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 3,
-  },
-  techStack: {
-    fontSize: 9,
-    color: '#000000',
-    marginTop: 3,
-  },
-  languageContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 15,
-  },
-  languageItem: {
-    fontSize: 10,
-  },
-  summaryTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  summaryIntro: {
-    fontSize: 10,
-    lineHeight: 1.3,
-    color: '#000000',
-    marginBottom: 6,
-  },
-  summaryBulletHeader: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 4,
-    marginTop: 3,
-  },
-  bulletItem: {
-    fontSize: 9,
-    lineHeight: 1.4,
-    color: '#000000',
-    marginBottom: 3,
-    paddingLeft: 10,
-  },
-});
+  return StyleSheet.create({
+    page: {
+      padding: s(35),
+      fontFamily: 'Helvetica',
+      fontSize: f(9),
+      color: '#1a1a1a',
+    },
+    header: {
+      borderBottom: '1pt solid #000000',
+      paddingBottom: s(15),
+      marginBottom: s(20),
+    },
+    name: {
+      fontSize: f(28),
+      fontWeight: 'bold',
+      marginBottom: s(8),
+      color: '#000000',
+    },
+    contactInfo: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: s(12),
+      fontSize: f(9),
+      color: '#000000',
+    },
+    contactItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    section: {
+      marginBottom: s(12),
+    },
+    sectionTitle: {
+      fontSize: f(14),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(10),
+      textTransform: 'uppercase',
+      borderBottom: '1pt solid #000000',
+      paddingBottom: s(3),
+    },
+    summaryText: {
+      lineHeight: f(1.3),
+      fontSize: f(10),
+      color: '#000000',
+    },
+    experienceItem: {
+      marginBottom: s(12),
+    },
+    jobTitle: {
+      fontSize: f(12),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(3),
+    },
+    company: {
+      fontSize: f(10),
+      color: '#000000',
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    dateLocation: {
+      fontSize: f(9),
+      color: '#000000',
+      marginBottom: s(5),
+    },
+    description: {
+      fontSize: f(10),
+      lineHeight: f(1.4),
+      color: '#000000',
+    },
+    skillsContainer: {
+      fontSize: f(10),
+    },
+    skillPill: {
+      fontSize: f(10),
+      color: '#000000',
+    },
+    educationItem: {
+      marginBottom: s(10),
+    },
+    degree: {
+      fontSize: f(12),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(3),
+    },
+    institution: {
+      fontSize: f(10),
+      color: '#000000',
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    projectItem: {
+      marginBottom: s(10),
+    },
+    projectName: {
+      fontSize: f(11),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(3),
+    },
+    techStack: {
+      fontSize: f(9),
+      color: '#000000',
+      marginTop: s(3),
+    },
+    languageContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: s(15),
+    },
+    languageItem: {
+      fontSize: f(10),
+    },
+    summaryTitle: {
+      fontSize: f(16),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(8),
+      textAlign: 'center',
+    },
+    summaryIntro: {
+      fontSize: f(10),
+      lineHeight: f(1.3),
+      color: '#000000',
+      marginBottom: s(6),
+    },
+    summaryBulletHeader: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      color: '#000000',
+      marginBottom: s(4),
+      marginTop: s(3),
+    },
+    bulletItem: {
+      fontSize: f(9),
+      lineHeight: f(1.4),
+      color: '#000000',
+      marginBottom: s(3),
+      paddingLeft: s(10),
+    },
+  });
+};
 
 interface ModernPDFProps {
   data: CVData;
@@ -180,19 +185,33 @@ const translations = {
 
 export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
   const t = translations[language];
+  const density = getPdfDensity(data);
+  const { fontScale, spacingScale } = getPdfScales(density);
+  const styles = createStyles(fontScale, spacingScale);
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} wrap={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.name}>{data.personalInfo.fullName}</Text>
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactItem}>{data.personalInfo.email}</Text>
-            <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
-            <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
-            {data.personalInfo.linkedin && <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>}
-            {data.personalInfo.website && <Text style={styles.contactItem}>{data.personalInfo.website}</Text>}
-            {data.personalInfo.github && <Text style={styles.contactItem}>{data.personalInfo.github}</Text>}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactItem}>{data.personalInfo.email}</Text>
+                <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
+                <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
+                {data.personalInfo.linkedin && <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>}
+                {data.personalInfo.website && <Text style={styles.contactItem}>{data.personalInfo.website}</Text>}
+                {data.personalInfo.github && <Text style={styles.contactItem}>{data.personalInfo.github}</Text>}
+              </View>
+            </View>
+            {data.personalInfo.photo && (
+              <Image
+                src={data.personalInfo.photo}
+                style={{ width: fontScale * 60, height: fontScale * 60, borderRadius: fontScale * 30, marginLeft: spacingScale * 10 }}
+              />
+            )}
           </View>
         </View>
 
@@ -200,7 +219,9 @@ export function ModernPDF({ data, language = 'es' }: ModernPDFProps) {
         {data.summary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t.professionalSummary}</Text>
-            <Text style={styles.summaryText}>{data.summary}</Text>
+            {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+              <Text key={i} style={styles.bulletItem}>{line.startsWith('•') ? line : `• ${line}`}</Text>
+            ))}
           </View>
         )}
 

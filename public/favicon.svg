@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fondo redondeado -->
+  <rect width="64" height="64" rx="14" fill="#0f172a"/>
+  
+  <!-- Hoja de papel con doblez -->
+  <rect x="14" y="10" width="30" height="38" rx="3" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <!-- Doblez esquina superior derecha -->
+  <path d="M36 10 L44 18 L36 18 Z" fill="#0f172a"/>
+  <path d="M36 10 L44 18 L36 18" fill="none" stroke="#334155" stroke-width="1"/>
+
+  <!-- Líneas de texto simuladas -->
+  <rect x="18" y="24" width="18" height="2.5" rx="1.2" fill="#64748b"/>
+  <rect x="18" y="30" width="22" height="2" rx="1" fill="#334155"/>
+  <rect x="18" y="35" width="16" height="2" rx="1" fill="#334155"/>
+
+  <!-- Chispa IA — estrella en esquina inferior derecha -->
+  <g transform="translate(40, 40)">
+    <!-- Estrella de 4 puntas -->
+    <path d="M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2 Z" fill="#6366f1"/>
+    <!-- Punto central brillante -->
+    <circle cx="0" cy="0" r="2" fill="#a5b4fc"/>
+  </g>
+</svg>

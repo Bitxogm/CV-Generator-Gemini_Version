@@ -1,196 +1,226 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
+import { getPdfDensity, getPdfScales } from './pdfDensity';
 
 // Using system font (Helvetica) for compatibility with @react-pdf
 
+const createStyles = (fontScale: number, spacingScale: number) => {
+  const f = (value: number) => value * fontScale;
+  const s = (value: number) => value * spacingScale;
 
-const styles = StyleSheet.create({
-  page: {
-    fontFamily: 'Helvetica',
-    fontSize: 9,
-    color: '#1a1a1a',
-  },
-  header: {
-    backgroundColor: '#3B82F6',
-    padding: 20,
-    color: 'white',
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  contactInfo: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    fontSize: 8,
-  },
-  content: {
-    padding: 15,
-  },
-  summaryBox: {
-    backgroundColor: '#EEF2FF',
-    padding: 10,
-    borderLeft: '3pt solid #8B5CF6',
-    marginBottom: 10,
-    borderRadius: 3,
-  },
-  section: {
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#3B82F6',
-    marginBottom: 6,
-  },
-  experienceTimeline: {
-    borderLeft: '2pt solid #D1D5DB',
-    paddingLeft: 15,
-  },
-  experienceItem: {
-    marginBottom: 8,
-    position: 'relative',
-  },
-  timelineDot: {
-    position: 'absolute',
-    left: -20,
-    top: 0,
-    width: 8,
-    height: 8,
-    backgroundColor: '#3B82F6',
-    borderRadius: '50%',
-  },
-  experienceBox: {
-    backgroundColor: '#F9FAFB',
-    padding: 8,
-    borderRadius: 3,
-  },
-  jobTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 3,
-  },
-  company: {
-    fontSize: 9,
-    color: '#3B82F6',
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  dateBox: {
-    fontSize: 7,
-    backgroundColor: 'white',
-    padding: '2pt 6pt',
-    borderRadius: 2,
-    color: '#6b7280',
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 8,
-    lineHeight: 1.3,
-  },
-  educationGrid: {
-    gap: 6,
-  },
-  educationBox: {
-    backgroundColor: '#F9FAFB',
-    padding: 8,
-    borderRadius: 3,
-    marginBottom: 6,
-  },
-  degree: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 3,
-  },
-  institution: {
-    fontSize: 9,
-    color: '#3B82F6',
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  skillsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 5,
-  },
-  skillPill: {
-    backgroundColor: '#3B82F6',
-    color: 'white',
-    padding: '4pt 8pt',
-    borderRadius: 10,
-    fontSize: 8,
-    fontWeight: 'bold',
-  },
-  projectBox: {
-    backgroundColor: '#F9FAFB',
-    padding: 8,
-    borderRadius: 3,
-    borderLeft: '3pt solid #8B5CF6',
-    marginBottom: 6,
-  },
-  projectName: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 3,
-  },
-  techPill: {
-    backgroundColor: '#EEF2FF',
-    color: '#8B5CF6',
-    padding: '2pt 6pt',
-    borderRadius: 6,
-    fontSize: 7,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginTop: 3,
-  },
-  languageGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  languageBox: {
-    backgroundColor: '#F9FAFB',
-    padding: 6,
-    borderRadius: 3,
-    minWidth: '45%',
-  },
-  languageName: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    marginBottom: 1,
-  },
-  languageLevel: {
-    fontSize: 7,
-    color: '#3B82F6',
-  },
-  summaryTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#8B5CF6',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  summaryIntro: {
-    fontSize: 8,
-    lineHeight: 1.3,
-    marginBottom: 4,
-  },
-  summaryBulletHeader: {
-    fontSize: 8,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    marginBottom: 3,
-    marginTop: 2,
-  },
-  bulletItem: {
-    fontSize: 7,
-    lineHeight: 1.3,
-    marginBottom: 2,
-    paddingLeft: 8,
-  },
-});
+  return StyleSheet.create({
+    page: {
+      fontFamily: 'Helvetica',
+      fontSize: f(9),
+      color: '#1a1a1a',
+    },
+    header: {
+      backgroundColor: '#3B82F6',
+      padding: s(20),
+      color: 'white',
+    },
+    name: {
+      fontSize: f(24),
+      fontWeight: 'bold',
+      marginBottom: s(6),
+    },
+    contactInfo: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: s(8),
+      fontSize: f(8),
+    },
+    content: {
+      padding: s(15),
+    },
+    summaryBox: {
+      backgroundColor: '#EEF2FF',
+      padding: s(10),
+      borderLeft: '3pt solid #8B5CF6',
+      marginBottom: s(10),
+      borderRadius: s(3),
+    },
+    summaryHeading: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(4),
+      color: '#8B5CF6',
+    },
+    summaryContent: {
+      fontSize: f(8),
+      lineHeight: f(1.3),
+    },
+    section: {
+      marginBottom: s(8),
+    },
+    sectionTitle: {
+      fontSize: f(12),
+      fontWeight: 'bold',
+      color: '#3B82F6',
+      marginBottom: s(6),
+    },
+    experienceTimeline: {
+      borderLeft: '2pt solid #D1D5DB',
+      paddingLeft: s(15),
+    },
+    experienceItem: {
+      marginBottom: s(8),
+      position: 'relative',
+    },
+    timelineDot: {
+      position: 'absolute',
+      left: s(-20),
+      top: 0,
+      width: s(8),
+      height: s(8),
+      backgroundColor: '#3B82F6',
+      borderRadius: '50%',
+    },
+    experienceBox: {
+      backgroundColor: '#F9FAFB',
+      padding: s(8),
+      borderRadius: s(3),
+    },
+    jobTitle: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(3),
+    },
+    company: {
+      fontSize: f(9),
+      color: '#3B82F6',
+      fontWeight: 'bold',
+      marginBottom: s(4),
+    },
+    dateBox: {
+      fontSize: f(7),
+      backgroundColor: 'white',
+      padding: `${s(2)}pt ${s(6)}pt`,
+      borderRadius: s(2),
+      color: '#6b7280',
+      marginBottom: s(4),
+    },
+    description: {
+      fontSize: f(8),
+      lineHeight: f(1.3),
+    },
+    educationGrid: {
+      gap: s(6),
+    },
+    educationBox: {
+      backgroundColor: '#F9FAFB',
+      padding: s(8),
+      borderRadius: s(3),
+      marginBottom: s(6),
+    },
+    degree: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(3),
+    },
+    institution: {
+      fontSize: f(9),
+      color: '#3B82F6',
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    educationDate: {
+      fontSize: f(7),
+      color: '#6b7280',
+      marginTop: s(2),
+    },
+    skillsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: s(5),
+    },
+    skillPill: {
+      backgroundColor: '#3B82F6',
+      color: 'white',
+      padding: `${s(4)}pt ${s(8)}pt`,
+      borderRadius: s(10),
+      fontSize: f(8),
+      fontWeight: 'bold',
+    },
+    projectBox: {
+      backgroundColor: '#F9FAFB',
+      padding: s(8),
+      borderRadius: s(3),
+      borderLeft: '3pt solid #8B5CF6',
+      marginBottom: s(6),
+    },
+    projectName: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(3),
+    },
+    projectTechRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: s(4),
+    },
+    techPill: {
+      backgroundColor: '#EEF2FF',
+      color: '#8B5CF6',
+      padding: `${s(2)}pt ${s(6)}pt`,
+      borderRadius: s(6),
+      fontSize: f(7),
+      fontWeight: 'bold',
+      marginRight: s(3),
+      marginTop: s(3),
+    },
+    projectLink: {
+      fontSize: f(7),
+      color: '#3B82F6',
+      marginTop: s(3),
+    },
+    languageGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: s(8),
+    },
+    languageBox: {
+      backgroundColor: '#F9FAFB',
+      padding: s(6),
+      borderRadius: s(3),
+      minWidth: '45%',
+    },
+    languageName: {
+      fontSize: f(9),
+      fontWeight: 'bold',
+      marginBottom: s(1),
+    },
+    languageLevel: {
+      fontSize: f(7),
+      color: '#3B82F6',
+    },
+    summaryTitle: {
+      fontSize: f(12),
+      fontWeight: 'bold',
+      color: '#8B5CF6',
+      marginBottom: s(6),
+      textAlign: 'center',
+    },
+    summaryIntro: {
+      fontSize: f(8),
+      lineHeight: f(1.3),
+      marginBottom: s(4),
+    },
+    summaryBulletHeader: {
+      fontSize: f(8),
+      fontWeight: 'bold',
+      color: '#1a1a1a',
+      marginBottom: s(3),
+      marginTop: s(2),
+    },
+    bulletItem: {
+      fontSize: f(7),
+      lineHeight: f(1.3),
+      marginBottom: s(2),
+      paddingLeft: s(8),
+    },
+  });
+};
 
 interface CreativePDFProps {
   data: CVData;
@@ -224,19 +254,33 @@ const translations = {
 
 export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
   const t = translations[language];
+  const density = getPdfDensity(data);
+  const { fontScale, spacingScale } = getPdfScales(density);
+  const styles = createStyles(fontScale, spacingScale);
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} wrap={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.name}>{data.personalInfo.fullName}</Text>
-          <View style={styles.contactInfo}>
-            <Text>{data.personalInfo.email}</Text>
-            <Text>{data.personalInfo.phone}</Text>
-            <Text>{data.personalInfo.location}</Text>
-            {data.personalInfo.linkedin && <Text>{data.personalInfo.linkedin}</Text>}
-            {data.personalInfo.website && <Text>{data.personalInfo.website}</Text>}
-            {data.personalInfo.github && <Text>{data.personalInfo.github}</Text>}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+              <View style={styles.contactInfo}>
+                <Text>{data.personalInfo.email}</Text>
+                <Text>{data.personalInfo.phone}</Text>
+                <Text>{data.personalInfo.location}</Text>
+                {data.personalInfo.linkedin && <Text>{data.personalInfo.linkedin}</Text>}
+                {data.personalInfo.website && <Text>{data.personalInfo.website}</Text>}
+                {data.personalInfo.github && <Text>{data.personalInfo.github}</Text>}
+              </View>
+            </View>
+            {data.personalInfo.photo && (
+              <Image
+                src={data.personalInfo.photo}
+                style={{ width: fontScale * 60, height: fontScale * 60, borderRadius: fontScale * 30, border: '2pt solid white', marginLeft: spacingScale * 10 }}
+              />
+            )}
           </View>
         </View>
 
@@ -244,10 +288,10 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
           {/* Summary */}
           {data.summary && (
             <View style={styles.summaryBox}>
-              <Text style={{ fontSize: 10, fontWeight: 'bold', marginBottom: 4, color: '#8B5CF6' }}>
-                {t.professionalSummary}
-              </Text>
-              <Text style={{ fontSize: 8, lineHeight: 1.3 }}>{data.summary}</Text>
+              <Text style={styles.summaryHeading}>{t.professionalSummary}</Text>
+              {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+                <Text key={i} style={styles.bulletItem}>{line.startsWith('•') ? line : `• ${line}`}</Text>
+              ))}
             </View>
           )}
 
@@ -297,7 +341,7 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                   <View key={index} style={styles.educationBox}>
                     <Text style={styles.degree}>{edu.degree}</Text>
                     <Text style={styles.institution}>{edu.institution} • {edu.field}</Text>
-                    <Text style={{ fontSize: 7, color: '#6b7280', marginTop: 2 }}>
+                    <Text style={styles.educationDate}>
                       {edu.startDate} - {edu.current ? t.present : edu.endDate}
                       {edu.gpa && ` • ${t.gpa}: ${edu.gpa}`}
                     </Text>
@@ -339,16 +383,12 @@ export function CreativePDF({ data, language = 'es' }: CreativePDFProps) {
                 <View key={index} style={styles.projectBox}>
                   <Text style={styles.projectName}>{project.name}</Text>
                   <Text style={styles.description}>{project.description}</Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
+                  <View style={styles.projectTechRow}>
                     {project.technologies.map((tech, i) => (
                       <Text key={i} style={styles.techPill}>{tech}</Text>
                     ))}
                   </View>
-                  {project.link && (
-                    <Text style={{ fontSize: 7, color: '#3B82F6', marginTop: 3 }}>
-                      {project.link}
-                    </Text>
-                  )}
+                  {project.link && <Text style={styles.projectLink}>{project.link}</Text>}
                 </View>
               ))}
             </View>

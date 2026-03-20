@@ -1,148 +1,153 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
+import { getPdfDensity, getPdfScales } from './pdfDensity';
 
 // Using system font (Helvetica) for compatibility with @react-pdf
 
+const createStyles = (fontScale: number, spacingScale: number) => {
+  const f = (value: number) => value * fontScale;
+  const s = (value: number) => value * spacingScale;
 
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'row',
-    fontFamily: 'Helvetica',
-    fontSize: 9,
-    color: '#1a1a1a',
-  },
-  sidebar: {
-    width: '35%',
-    backgroundColor: '#f3f4f6',
-    padding: 25,
-  },
-  main: {
-    width: '65%',
-    padding: 25,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#1a1a1a',
-  },
-  sidebarSection: {
-    marginBottom: 20,
-  },
-  sidebarTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#3B82F6',
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  contactItem: {
-    fontSize: 8,
-    marginBottom: 6,
-    lineHeight: 1.3,
-  },
-  skillItem: {
-    fontSize: 8,
-    marginBottom: 4,
-  },
-  mainSection: {
-    marginBottom: 12,
-  },
-  mainTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#3B82F6',
-    marginBottom: 10,
-    paddingBottom: 5,
-    borderBottom: '2pt solid #3B82F6',
-  },
-  summary: {
-    fontSize: 9,
-    lineHeight: 1.5,
-  },
-  experienceItem: {
-    marginBottom: 12,
-  },
-  jobTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    marginBottom: 2,
-  },
-  company: {
-    fontSize: 9,
-    color: '#3B82F6',
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  dateLocation: {
-    fontSize: 8,
-    color: '#6b7280',
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 9,
-    lineHeight: 1.4,
-  },
-  educationItem: {
-    marginBottom: 10,
-  },
-  degree: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  projectItem: {
-    marginBottom: 10,
-  },
-  projectName: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  techStack: {
-    fontSize: 8,
-    color: '#6b7280',
-    marginTop: 2,
-  },
-  languageItem: {
-    marginBottom: 6,
-  },
-  languageName: {
-    fontSize: 9,
-    fontWeight: 'bold',
-  },
-  languageLevel: {
-    fontSize: 8,
-    color: '#6b7280',
-  },
-  summaryTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#3B82F6',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  summaryIntro: {
-    fontSize: 9,
-    lineHeight: 1.4,
-    marginBottom: 5,
-  },
-  summaryBulletHeader: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    marginBottom: 3,
-    marginTop: 2,
-  },
-  bulletItem: {
-    fontSize: 8,
-    lineHeight: 1.3,
-    marginBottom: 2,
-    paddingLeft: 8,
-  },
-});
+  return StyleSheet.create({
+    page: {
+      flexDirection: 'row',
+      fontFamily: 'Helvetica',
+      fontSize: f(9),
+      color: '#1a1a1a',
+    },
+    sidebar: {
+      width: '35%',
+      backgroundColor: '#f3f4f6',
+      padding: s(25),
+    },
+    main: {
+      width: '65%',
+      padding: s(25),
+    },
+    name: {
+      fontSize: f(18),
+      fontWeight: 'bold',
+      marginBottom: s(20),
+      color: '#1a1a1a',
+    },
+    sidebarSection: {
+      marginBottom: s(20),
+    },
+    sidebarTitle: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      color: '#3B82F6',
+      marginBottom: s(10),
+      textTransform: 'uppercase',
+      letterSpacing: f(0.5),
+    },
+    contactItem: {
+      fontSize: f(8),
+      marginBottom: s(6),
+      lineHeight: f(1.3),
+    },
+    skillItem: {
+      fontSize: f(8),
+      marginBottom: s(4),
+    },
+    mainSection: {
+      marginBottom: s(12),
+    },
+    mainTitle: {
+      fontSize: f(14),
+      fontWeight: 'bold',
+      color: '#3B82F6',
+      marginBottom: s(10),
+      paddingBottom: s(5),
+      borderBottom: '2pt solid #3B82F6',
+    },
+    summary: {
+      fontSize: f(9),
+      lineHeight: f(1.5),
+    },
+    experienceItem: {
+      marginBottom: s(12),
+    },
+    jobTitle: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      color: '#1a1a1a',
+      marginBottom: s(2),
+    },
+    company: {
+      fontSize: f(9),
+      color: '#3B82F6',
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    dateLocation: {
+      fontSize: f(8),
+      color: '#6b7280',
+      marginBottom: s(4),
+    },
+    description: {
+      fontSize: f(9),
+      lineHeight: f(1.4),
+    },
+    educationItem: {
+      marginBottom: s(10),
+    },
+    degree: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    projectItem: {
+      marginBottom: s(10),
+    },
+    projectName: {
+      fontSize: f(10),
+      fontWeight: 'bold',
+      marginBottom: s(2),
+    },
+    techStack: {
+      fontSize: f(8),
+      color: '#6b7280',
+      marginTop: s(2),
+    },
+    languageItem: {
+      marginBottom: s(6),
+    },
+    languageName: {
+      fontSize: f(9),
+      fontWeight: 'bold',
+    },
+    languageLevel: {
+      fontSize: f(8),
+      color: '#6b7280',
+    },
+    summaryTitle: {
+      fontSize: f(14),
+      fontWeight: 'bold',
+      color: '#3B82F6',
+      marginBottom: s(8),
+      textAlign: 'center',
+    },
+    summaryIntro: {
+      fontSize: f(9),
+      lineHeight: f(1.4),
+      marginBottom: s(5),
+    },
+    summaryBulletHeader: {
+      fontSize: f(9),
+      fontWeight: 'bold',
+      color: '#1a1a1a',
+      marginBottom: s(3),
+      marginTop: s(2),
+    },
+    bulletItem: {
+      fontSize: f(8),
+      lineHeight: f(1.3),
+      marginBottom: s(2),
+      paddingLeft: s(8),
+    },
+  });
+};
 
 interface ProfessionalPDFProps {
   data: CVData;
@@ -178,11 +183,21 @@ const translations = {
 
 export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps) {
   const t = translations[language];
+  const density = getPdfDensity(data);
+  const { fontScale, spacingScale } = getPdfScales(density);
+  const styles = createStyles(fontScale, spacingScale);
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} wrap={false}>
         {/* Sidebar */}
         <View style={styles.sidebar}>
+          {data.personalInfo.photo && (
+            <Image
+              src={data.personalInfo.photo}
+              style={{ width: spacingScale * 70, height: spacingScale * 70, borderRadius: spacingScale * 35, alignSelf: 'center', marginBottom: spacingScale * 10 }}
+            />
+          )}
           <Text style={styles.name}>{data.personalInfo.fullName}</Text>
 
           {/* Contact */}
@@ -192,19 +207,13 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
             <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
             {data.personalInfo.linkedin && (
-              <Text style={styles.contactItem}>
-                https://www.linkedin.com/in/victor-manuel-gonzalez-moreno/
-              </Text>
+              <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>
             )}
             {data.personalInfo.website && (
-              <Text style={styles.contactItem}>
-                https://myreactportfolio1944.web.app/
-              </Text>
+              <Text style={styles.contactItem}>{data.personalInfo.website}</Text>
             )}
             {data.personalInfo.github && (
-              <Text style={styles.contactItem}>
-                https://github.com/Bitxogm
-              </Text>
+              <Text style={styles.contactItem}>{data.personalInfo.github}</Text>
             )}
           </View>
 
@@ -248,7 +257,9 @@ export function ProfessionalPDF({ data, language = 'es' }: ProfessionalPDFProps)
           {data.summary && (
             <View style={styles.mainSection}>
               <Text style={styles.mainTitle}>{t.professionalSummary}</Text>
-              <Text style={styles.summary}>{data.summary}</Text>
+              {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+                <Text key={i} style={styles.bulletItem}>{line.startsWith('•') ? line : `• ${line}`}</Text>
+              ))}
             </View>
           )}
 

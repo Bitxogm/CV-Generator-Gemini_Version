@@ -37,39 +37,50 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
     <div className="bg-background text-foreground p-8 max-w-4xl mx-auto shadow-elegant">
       {/* Header */}
       <div className="border-b-2 border-primary pb-6 mb-6">
-        <h1 className="text-4xl font-display font-bold text-foreground mb-2">
-          {data.personalInfo.fullName}
-        </h1>
-        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4 flex-shrink-0" />
-            <span>{data.personalInfo.email}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 flex-shrink-0" />
-            <span>{data.personalInfo.phone}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span>{data.personalInfo.location}</span>
-          </div>
-          {data.personalInfo.linkedin && (
-            <div className="flex items-center gap-2">
-              <Linkedin className="w-4 h-4 flex-shrink-0" />
-              <span>{data.personalInfo.linkedin}</span>
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-4xl font-display font-bold text-foreground mb-2">
+              {data.personalInfo.fullName}
+            </h1>
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <span>{data.personalInfo.email}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <span>{data.personalInfo.phone}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span>{data.personalInfo.location}</span>
+              </div>
+              {data.personalInfo.linkedin && (
+                <div className="flex items-center gap-2">
+                  <Linkedin className="w-4 h-4 flex-shrink-0" />
+                  <span>{data.personalInfo.linkedin}</span>
+                </div>
+              )}
+              {data.personalInfo.website && (
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 flex-shrink-0" />
+                  <span>{data.personalInfo.website}</span>
+                </div>
+              )}
+              {data.personalInfo.github && (
+                <div className="flex items-center gap-2">
+                  <Github className="w-4 h-4 flex-shrink-0" />
+                  <span>{data.personalInfo.github}</span>
+                </div>
+              )}
             </div>
-          )}
-          {data.personalInfo.website && (
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 flex-shrink-0" />
-              <span>{data.personalInfo.website}</span>
-            </div>
-          )}
-          {data.personalInfo.github && (
-            <div className="flex items-center gap-2">
-              <Github className="w-4 h-4 flex-shrink-0" />
-              <span>{data.personalInfo.github}</span>
-            </div>
+          </div>
+          {data.personalInfo.photo && (
+            <img
+              src={data.personalInfo.photo}
+              alt="Foto de perfil"
+              className="w-28 h-28 rounded-full object-cover border border-border flex-shrink-0"
+            />
           )}
         </div>
       </div>
@@ -80,7 +91,14 @@ export function ModernTemplate({ data, language = 'es' }: ModernTemplateProps) {
           <h2 className="text-2xl font-display font-semibold text-primary mb-3">
             {t.professionalSummary}
           </h2>
-          <p className="text-foreground leading-relaxed">{data.summary}</p>
+          <ul className="space-y-1 list-none pl-0">
+            {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
+              <li key={i} className="flex gap-2 text-foreground leading-relaxed">
+                <span className="text-primary flex-shrink-0">•</span>
+                <span>{line.replace(/^[•]\s*/, '')}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

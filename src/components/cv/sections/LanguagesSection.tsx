@@ -26,7 +26,7 @@ export function LanguagesSection({ cvData, setCvData }: LanguagesSectionProps) {
     });
   };
 
-  const updateLanguage = (id: string, field: string, value: any) => {
+  const updateLanguage = (id: string, field: string, value: string) => {
     setCvData({
       ...cvData,
       languages: (cvData.languages || []).map((lang) =>

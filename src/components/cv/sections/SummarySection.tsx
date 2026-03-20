@@ -32,11 +32,11 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
       // Construir experiencia (usando los tipos correctos)
       const experienceText = cvData.experience && cvData.experience.length > 0
         ? cvData.experience.map(exp => {
-            const period = exp.current 
-              ? `${exp.startDate} - Presente`
-              : `${exp.startDate} - ${exp.endDate}`;
-            return `${exp.position} en ${exp.company} (${period})`;
-          }).join(', ')
+          const period = exp.current
+            ? `${exp.startDate} - Presente`
+            : `${exp.startDate} - ${exp.endDate}`;
+          return `${exp.position} en ${exp.company} (${period})`;
+        }).join(', ')
         : 'Sin experiencia especificada';
 
       // Construir skills (son strings directamente)
@@ -88,7 +88,7 @@ Devuelve SOLO el resumen, sin formato markdown ni explicaciones adicionales.
       setCvData({ ...cvData, summary });
       toast.success(t('summary.generatedSuccessfully'));
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error al generar resumen:', error);
       toast.error(t('summary.generateError'));
     } finally {

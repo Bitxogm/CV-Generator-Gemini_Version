@@ -1,4 +1,4 @@
-import confetti from 'canvas-confetti';
+import confetti from "canvas-confetti";
 
 export const celebrateDownload = () => {
   const count = 200;
@@ -7,7 +7,10 @@ export const celebrateDownload = () => {
     zIndex: 9999,
   };
 
-  function fire(particleRatio: number, opts: any) {
+  function fire(
+    particleRatio: number,
+    opts: NonNullable<Parameters<typeof confetti>[0]>,
+  ) {
     confetti({
       ...defaults,
       ...opts,
