@@ -128,12 +128,6 @@ export function ATSPDF({ data, language = 'es' }: ATSPDFProps) {
       <Page size="A4" style={styles.page} wrap={false}>
         {/* Name */}
         <Text style={styles.name}>{data.personalInfo.fullName.toUpperCase()}</Text>
-        {data.personalInfo.photo && (
-          <Image
-            src={data.personalInfo.photo}
-            style={{ width: spacingScale * 50, height: spacingScale * 50, borderRadius: spacingScale * 25, alignSelf: 'center', marginBottom: spacingScale * 6 }}
-          />
-        )}
 
         {/* Contact Info */}
         <View style={styles.contactInfo}>

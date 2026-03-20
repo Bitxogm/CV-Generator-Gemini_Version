@@ -22,7 +22,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('i18nextLng', lang);
   };
 
-  const language = (i18n.language as Language) || 'es';
+  // Normalizamos el idioma (es-ES -> es, en-US -> en) para evitar undefined references en traducciones locales
+  const language = (i18n.language?.startsWith('en') ? 'en' : 'es') as Language;
 
   // ✅ CORREGIDO: Ejecutar SOLO UNA VEZ al montar
   useEffect(() => {

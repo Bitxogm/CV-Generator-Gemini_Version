@@ -85,42 +85,35 @@ const victorData: CVData = {
     email: 'vmmoreno1999@gmail.com',
     phone: '+34 622 696 266',
     location: 'Barakaldo, Vizcaya',
-    linkedin: 'https://www.linkedin.com/in/victor-manuel-gonzalez-moreno/',
-    github: 'https://github.com/Bitxogm',
-    website: 'https://bitxo-dev.com',
+    linkedin: 'linkedin.com/in/victor-manuel-gonzalez-moreno',
+    github: 'github.com/Bitxogm',
+    website: 'bitxo-dev.com',
     photo: '', // pega aquí el base64 de tu foto si quieres tenerla por defecto en local
   },
 
   // Resumen: quién eres y qué aportas. Sin repetir el listado de tecnologías.
-  summary: `• Desarrollador Web Full-Stack con background de 8+ años en liderazgo técnico de equipos internacionales.
-• Sólidas habilidades técnicas (React, Next.js, Node.js, PostgreSQL, Docker, AWS) y capacidad demostrada para gestionar proyectos complejos bajo presión.
-• Nivel de inglés B2.
+  summary: `• Desarrollador Web Full-Stack (React, Next.js, Node.js, AWS) que aporta más de 8 años de experiencia previa en liderazgo técnico y gestión de equipos internacionales en el sector de la matricería industrial.
+• Capacidad demostrada para gestionar proyectos de alta complejidad bajo presión, trasladando sólidas prácticas de optimización de procesos y resolución de problemas al desarrollo de software.
+• Nivel de inglés B2 (Competencia profesional para equipos multiculturales).
 • Disponible para incorporación inmediata.`,
 
   // Experiencia: solo trabajo real. KeepCoding va en Educación.
   experience: [
     {
       id: '1',
-      company: 'Gestamp Try Out',
-      position: 'Team Leader / Responsable de Turno y Sección',
+      company: 'Gestamp',
+      position: 'Team Leader / Gestor de Proyectos Internacionales',
       location: 'Barakaldo',
       startDate: '2016',
-      endDate: 'Diciembre 2024',
+      endDate: '2024',
       current: false,
-      description: `Team Leader en try-out de troqueles de automoción con gestión de equipos técnicos (10-15 personas) en proyectos internacionales para OEMs premium.
+      description: `Liderazgo de equipos técnicos (+15 personas) en proyectos de alta exigencia para OEMs premium (Mercedes-Benz, BMW, Audi, VW) a nivel internacional.
 
-Proyectos destacados:
-- Try-out de piezas Clase A (body-side, fender, roof, doors) para Mercedes-Benz, BMW, Audi y Volkswagen
-- Campañas en plantas de España, Alemania e India
-- Coordinación con ingeniería de cliente bajo deadlines críticos
-- Gestión de líneas de producción con cero margen de error
-
-Responsabilidades clave:
-- Liderazgo de equipos multidisciplinares bajo presión extrema
-- Resolución de problemas técnicos complejos en tiempo real
-- Comunicación directa con stakeholders de OEMs premium
-- Optimización de procesos y mejora continua
-- Coordinación internacional en plantas de cliente`,
+Logros y responsabilidades clave:
+• Gestión de Proyectos Críticos: Coordinación de ciclos de entrega en España, Alemania e India asegurando el cumplimiento de deadlines inamovibles.
+• Resolución y Liderazgo: Dirección de equipos multidisciplinares bajo presión, resolviendo bloqueos técnicos en tiempo real.
+• Comunicación Client-Facing: Interlocución directa y negociación técnica con ingeniería de clientes premium.
+• Mejora Continua: Diseño e implementación de procesos de optimización para lograr márgenes de error cero en producción.`,
     },
   ],
 
@@ -138,10 +131,10 @@ Responsabilidades clave:
     {
       id: '2',
       institution: 'Instituto Nicolás Larburu',
-      degree: 'Grado Superior — Matricería y Moldes',
-      field: 'Fabricación y ajuste de matricería · Barakaldo',
-      startDate: '1990',
-      endDate: '1995',
+      degree: 'Grado Superior — Fabricación y Ajuste de Matricería',
+      field: 'Estudios Técnicos · Barakaldo',
+      startDate: '',
+      endDate: '',
       current: false,
     },
   ],
@@ -168,10 +161,10 @@ Responsabilidades clave:
 
   softSkills: [
     'Liderazgo de equipos',
-    'Comunicación efectiva',
-    'Gestión de proyectos',
-    'Resolución de problemas',
-    'Trabajo en equipo',
+    'Comunicación efectiva (Client-Facing)',
+    'Gestión de proyectos complejos',
+    'Resolución de problemas críticos',
+    'Mentoring técnico',
     'Agile / Scrum',
   ],
 
@@ -179,28 +172,28 @@ Responsabilidades clave:
     {
       id: '1',
       name: 'TestLab AI — Generador y Ejecutor de Tests con IA',
-      description: 'Monorepo full-stack que genera y ejecuta tests automáticamente mediante IA. Frontend en Next.js 14, backend Express con arquitectura hexagonal, sandboxes Docker aislados por ejecución, comunicación en tiempo real con Socket.io y almacenamiento dual PostgreSQL/Prisma + MongoDB/Mongoose.',
+      description: 'Monorepo full-stack para generación y ejecución automática de tests.\\n• Arquitectura hexagonal en backend (Express) con sandboxes Docker aislados.\\n• Almacenamiento dual PostgreSQL/Prisma + MongoDB/Mongoose y WS en tiempo real.',
       technologies: ['Next.js', 'Express', 'Gemini API', 'Docker', 'Socket.io', 'PostgreSQL', 'Prisma', 'MongoDB'],
       link: '',
     },
     {
       id: '2',
       name: 'AgentLogic AI — Tutor Inteligente de Programación',
-      description: 'Plataforma educativa full-stack con múltiples módulos: generación automática de código con IA, chat interactivo para tutorías personalizadas, visualización de algoritmos con diagramas de flujo y sistema de gestión de ejercicios.',
+      description: 'Plataforma educativa interactiva con chat tutor personalizado.\\n• Módulos de generación de código IA y visualización algorítmica.\\n• Gestión de múltiples usuarios y seguimiento de métricas bajo Firebase / Atlas.',
       technologies: ['Firebase', 'MongoDB Atlas', 'Gemini AI', 'TypeScript'],
       link: 'https://new-logic-agent-git-dev-bitxejos-projects.vercel.app/',
     },
     {
       id: '3',
       name: 'Asistente de Refactorización con IA',
-      description: 'Herramienta que analiza código multilenguaje y sugiere mejoras utilizando la API de Gemini, ayudando a los desarrolladores a escribir código más limpio y mantenible.',
+      description: 'Aplicación orientada a clean-code.\\n• Analiza código multilenguaje para sugerir refactorizaciones eficientes.\\n• Integración profunda con Gemini API y arquitecturas REST.',
       technologies: ['Node.js', 'React', 'TypeScript', 'Gemini API', 'REST'],
       link: 'https://new-code-ai-assistant.vercel.app/',
     },
     {
       id: '4',
-      name: 'CV Crafter — Generador de CVs con IA',
-      description: 'Aplicación web para crear y exportar CVs profesionales en múltiples plantillas. Incluye análisis ATS con Gemini, asistente IA integrado, historial de versiones en localStorage y exportación a PDF con react-pdf.',
+      name: 'CV Crafter — Generador de CVs Profesionales',
+      description: 'SaaS Frontend (El actual generador de currículums).\\n• Incluye análisis ATS (Applicant Tracking Systems) potenciado por IA.\\n• Manejo complejo de estados (React) y renderizado PDF en el lado del cliente.',
       technologies: ['React', 'TypeScript', 'Vite', 'Gemini API', 'TailwindCSS'],
       link: '',
     },
