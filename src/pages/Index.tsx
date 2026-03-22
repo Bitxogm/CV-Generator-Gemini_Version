@@ -24,7 +24,6 @@ type SavedCV = ReturnType<typeof StorageService.loadCVHistory>[number];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PLANTILLA VACÍA — se usa en producción para nuevos visitantes.
-// Nunca expone datos personales del autor.
 // ─────────────────────────────────────────────────────────────────────────────
 const initialCVData: CVData = {
   personalInfo: {
@@ -87,17 +86,16 @@ const victorData: CVData = {
     location: 'Barakaldo, Vizcaya',
     linkedin: 'linkedin.com/in/victor-manuel-gonzalez-moreno',
     github: 'github.com/Bitxogm',
-    website: 'bitxo-dev.com',
-    photo: '', // pega aquí el base64 de tu foto si quieres tenerla por defecto en local
+    website: 'https://bitxodev.com',
+    photo: '',
   },
 
-  // Resumen: quién eres y qué aportas. Sin repetir el listado de tecnologías.
-  summary: `• Desarrollador Web Full-Stack (React, Next.js, Node.js, AWS) que aporta más de 8 años de experiencia previa en liderazgo técnico y gestión de equipos internacionales en el sector de la matricería industrial.
-• Capacidad demostrada para gestionar proyectos de alta complejidad bajo presión, trasladando sólidas prácticas de optimización de procesos y resolución de problemas al desarrollo de software.
-• Nivel de inglés B2 (Competencia profesional para equipos multiculturales).
-• Disponible para incorporación inmediata.`,
+  summary:
+    '• Desarrollador Web Full-Stack con proyectos reales en producción integrando IA (Claude API, Gemini, RAG)\n' +
+    '• Graduado KeepCoding 2025 · Stack: React, Next.js, Node.js, PostgreSQL, Docker y AWS\n' +
+    '• Background de 8+ años en gestión de proyectos industriales internacionales — madurez, rigor y trabajo bajo presión\n' +
+    '• Inglés B2 · Incorporación inmediata',
 
-  // Experiencia: solo trabajo real. KeepCoding va en Educación.
   experience: [
     {
       id: '1',
@@ -107,17 +105,16 @@ const victorData: CVData = {
       startDate: '2016',
       endDate: '2024',
       current: false,
-      description: `Liderazgo de equipos técnicos (+15 personas) en proyectos de alta exigencia para OEMs premium (Mercedes-Benz, BMW, Audi, VW) a nivel internacional.
-
-Logros y responsabilidades clave:
-• Gestión de Proyectos Críticos: Coordinación de ciclos de entrega en España, Alemania e India asegurando el cumplimiento de deadlines inamovibles.
-• Resolución y Liderazgo: Dirección de equipos multidisciplinares bajo presión, resolviendo bloqueos técnicos en tiempo real.
-• Comunicación Client-Facing: Interlocución directa y negociación técnica con ingeniería de clientes premium.
-• Mejora Continua: Diseño e implementación de procesos de optimización para lograr márgenes de error cero en producción.`,
+      description:
+        'Gestión de proyectos de alta exigencia para OEMs premium (Mercedes-Benz, BMW, Audi, VW) ' +
+        'con equipos técnicos de +15 personas a nivel internacional.\n\n' +
+        '• Coordinación de ciclos de entrega en España, Alemania e India con deadlines inamovibles.\n' +
+        '• Resolución de bloqueos técnicos críticos en tiempo real bajo presión extrema.\n' +
+        '• Interlocución directa con ingeniería de clientes premium (client-facing).\n' +
+        '• Diseño e implementación de procesos de mejora continua con margen de error cero.',
     },
   ],
 
-  // Educación: bootcamp + formación previa
   education: [
     {
       id: '1',
@@ -160,11 +157,12 @@ Logros y responsabilidades clave:
   ],
 
   softSkills: [
-    'Liderazgo de equipos',
-    'Comunicación efectiva (Client-Facing)',
     'Gestión de proyectos complejos',
     'Resolución de problemas críticos',
-    'Mentoring técnico',
+    'Comunicación efectiva (client-facing)',
+    'Trabajo en equipo',
+    'Atención al detalle',
+    'Autonomía y autoaprendizaje',
     'Agile / Scrum',
   ],
 
@@ -172,30 +170,42 @@ Logros y responsabilidades clave:
     {
       id: '1',
       name: 'TestLab AI — Generador y Ejecutor de Tests con IA',
-      description: 'Monorepo full-stack para generación y ejecución automática de tests.\\n• Arquitectura hexagonal en backend (Express) con sandboxes Docker aislados.\\n• Almacenamiento dual PostgreSQL/Prisma + MongoDB/Mongoose y WS en tiempo real.',
+      description:
+        'Monorepo full-stack para generación y ejecución automática de tests.\n' +
+        '• Arquitectura hexagonal en backend (Express) con sandboxes Docker aislados.\n' +
+        '• Almacenamiento dual PostgreSQL/Prisma + MongoDB y WebSockets en tiempo real.',
       technologies: ['Next.js', 'Express', 'Gemini API', 'Docker', 'Socket.io', 'PostgreSQL', 'Prisma', 'MongoDB'],
       link: '',
     },
     {
       id: '2',
       name: 'AgentLogic AI — Tutor Inteligente de Programación',
-      description: 'Plataforma educativa interactiva con chat tutor personalizado.\\n• Módulos de generación de código IA y visualización algorítmica.\\n• Gestión de múltiples usuarios y seguimiento de métricas bajo Firebase / Atlas.',
+      description:
+        'Plataforma educativa interactiva con chat tutor personalizado.\n' +
+        '• Módulos de generación de código IA y visualización algorítmica.\n' +
+        '• Gestión de usuarios y métricas bajo Firebase / MongoDB Atlas.',
       technologies: ['Firebase', 'MongoDB Atlas', 'Gemini AI', 'TypeScript'],
-      link: 'https://new-logic-agent-git-dev-bitxejos-projects.vercel.app/',
+      link: 'https://agentlogic.bitxodev.com/',
     },
     {
       id: '3',
       name: 'Asistente de Refactorización con IA',
-      description: 'Aplicación orientada a clean-code.\\n• Analiza código multilenguaje para sugerir refactorizaciones eficientes.\\n• Integración profunda con Gemini API y arquitecturas REST.',
+      description:
+        'Herramienta orientada a clean-code y calidad de software.\n' +
+        '• Analiza código multilenguaje y sugiere refactorizaciones con Gemini API.\n' +
+        '• Arquitectura REST desacoplada con frontend React y backend Node.js.',
       technologies: ['Node.js', 'React', 'TypeScript', 'Gemini API', 'REST'],
-      link: 'https://new-code-ai-assistant.vercel.app/',
+      link: 'https://codeai.bitxodev.com/',
     },
     {
       id: '4',
       name: 'CV Crafter — Generador de CVs Profesionales',
-      description: 'SaaS Frontend (El actual generador de currículums).\\n• Incluye análisis ATS (Applicant Tracking Systems) potenciado por IA.\\n• Manejo complejo de estados (React) y renderizado PDF en el lado del cliente.',
+      description:
+        'SaaS frontend para creación de CVs con plantillas múltiples.\n' +
+        '• Análisis ATS potenciado por IA (Gemini) con puntuación y sugerencias.\n' +
+        '• Manejo avanzado de estado en React y renderizado de PDF en cliente.',
       technologies: ['React', 'TypeScript', 'Vite', 'Gemini API', 'TailwindCSS'],
-      link: '',
+      link: 'https://cvgenerator.bitxodev.com/',
     },
   ],
 
@@ -206,10 +216,6 @@ Logros y responsabilidades clave:
 export default function Index() {
   const { t, language } = useLanguage();
 
-  // Prioridad de carga:
-  // 1. localStorage (siempre, si existe)
-  // 2. victorData (solo en DEV y si localStorage está vacío)
-  // 3. initialCVData vacío (producción, usuario nuevo)
   const [cvData, setCvData] = useState<CVData>(() => {
     const saved = StorageService.loadCVData();
     if (saved) return saved;
@@ -223,7 +229,6 @@ export default function Index() {
   const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Auto-guardado con debounce
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const previousCVDataRef = useRef<string>();
 
@@ -235,15 +240,12 @@ export default function Index() {
   useEffect(() => {
     const currentCVData = JSON.stringify(cvData);
     if (previousCVDataRef.current === currentCVData) return;
-
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
     timeoutRef.current = setTimeout(() => {
       StorageService.saveCVData(cvData);
       previousCVDataRef.current = currentCVData;
       console.log('💾 CV auto-guardado');
     }, 2000);
-
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
@@ -262,7 +264,6 @@ export default function Index() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       toast.error('El archivo debe ser una imagen (JPG, PNG, WebP...)');
       return;
@@ -271,15 +272,11 @@ export default function Index() {
       toast.error('La imagen no debe superar 2MB');
       return;
     }
-
     const reader = new FileReader();
     reader.onload = () => {
       setCvData(prev => ({
         ...prev,
-        personalInfo: {
-          ...prev.personalInfo,
-          photo: reader.result as string,
-        },
+        personalInfo: { ...prev.personalInfo, photo: reader.result as string },
       }));
       toast.success('Foto cargada correctamente');
     };
@@ -294,7 +291,6 @@ export default function Index() {
     }));
     toast.success('Foto eliminada');
   };
-  // ──────────────────────────────────────────────────────────────────────────
 
   const handleSave = () => {
     try {
@@ -318,22 +314,16 @@ export default function Index() {
     selectedTemplate: TemplateType = templateType,
   ) => {
     try {
-      const getVisualPdf = (selectedTemplate: TemplateType) => {
-        switch (selectedTemplate) {
-          case 'professional':
-            return <ProfessionalPDF data={cvData} language={language} />;
-          case 'creative':
-            return <CreativePDF data={cvData} language={language} />;
-          case 'modern':
-          default:
-            return <ModernPDF data={cvData} language={language} />;
+      const getVisualPdf = (t: TemplateType) => {
+        switch (t) {
+          case 'professional': return <ProfessionalPDF data={cvData} language={language} />;
+          case 'creative':     return <CreativePDF data={cvData} language={language} />;
+          default:             return <ModernPDF data={cvData} language={language} />;
         }
       };
-
       const pdfDoc = format === 'ats'
         ? <ATSPDF data={cvData} language={language} />
         : getVisualPdf(selectedTemplate);
-
       const blob = await pdf(pdfDoc).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -355,36 +345,23 @@ export default function Index() {
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
       const prompt = `
 Eres un experto en sistemas ATS (Applicant Tracking Systems). Analiza este CV y proporciona un análisis detallado.
 
 **CV:**
 ${JSON.stringify(cvData, null, 2)}
 
-**Instrucciones:**
-1. Asigna una puntuación de compatibilidad ATS (0-100)
-2. Identifica palabras clave encontradas
-3. Identifica palabras clave faltantes comunes en CVs técnicos
-4. Proporciona sugerencias específicas de mejora
-5. Lista fortalezas del CV actual
-6. Lista debilidades a mejorar
-
 Devuelve ÚNICAMENTE un JSON válido con esta estructura:
 {
   "score": número entre 0 y 100,
-  "keywords": {
-    "matched": ["palabra1", "palabra2"],
-    "missing": ["palabra1", "palabra2"]
-  },
-  "suggestions": ["sugerencia 1", "sugerencia 2"],
-  "strengths": ["fortaleza 1", "fortaleza 2"],
-  "weaknesses": ["debilidad 1", "debilidad 2"]
+  "keywords": { "matched": ["palabra1"], "missing": ["palabra1"] },
+  "suggestions": ["sugerencia 1"],
+  "strengths": ["fortaleza 1"],
+  "weaknesses": ["debilidad 1"]
 }
 
 NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
       `.trim();
-
       const result = await model.generateContent(prompt);
       const text = result.response.text().trim().replace(/```json\n?/g, '').replace(/```\n?/g, '');
       const analysis: ATSAnalysis = JSON.parse(text);
@@ -460,11 +437,8 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-full border-2 border-dashed border-muted-foreground/30 overflow-hidden flex items-center justify-center bg-muted flex-shrink-0">
                 {cvData.personalInfo.photo ? (
-                  <img
-                    src={cvData.personalInfo.photo}
-                    alt="Foto de perfil"
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={cvData.personalInfo.photo} alt="Foto de perfil"
+                    className="w-full h-full object-cover" />
                 ) : (
                   <User className="w-8 h-8 text-muted-foreground/40" />
                 )}
@@ -477,21 +451,13 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                       {cvData.personalInfo.photo ? 'Cambiar foto' : 'Subir foto'}
                     </span>
                   </Button>
-                  <input
-                    id="photo-upload"
-                    type="file"
+                  <input id="photo-upload" type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={handlePhotoUpload}
-                  />
+                    className="hidden" onChange={handlePhotoUpload} />
                 </label>
                 {cvData.personalInfo.photo && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRemovePhoto}
-                    className="text-destructive hover:text-destructive"
-                  >
+                  <Button variant="ghost" size="sm" onClick={handleRemovePhoto}
+                    className="text-destructive hover:text-destructive">
                     <Trash2 className="w-3 h-3 mr-2" />
                     Eliminar foto
                   </Button>
@@ -619,10 +585,8 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
               </p>
             ) : (
               savedCVs.map((cv) => (
-                <div
-                  key={cv.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/5 transition-colors"
-                >
+                <div key={cv.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/5 transition-colors">
                   <div className="flex-1">
                     <p className="font-medium">{cv.name}</p>
                     <p className="text-sm text-muted-foreground">
