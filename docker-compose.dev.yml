@@ -1,0 +1,89 @@
+
+
+services:
+  # ============================================
+  # PostgreSQL - Base de datos local
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: talenthub-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: talenthub_dev
+      POSTGRES_PASSWORD: dev_password_123
+      POSTGRES_DB: talenthub_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talenthub_dev -d talenthub_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - talenthub-dev
+
+  # ============================================
+  # Backend - API Node.js
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: talenthub-backend-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override DATABASE_URL para apuntar al contenedor postgres
+      DATABASE_URL: postgresql://talenthub_dev:dev_password_123@postgres:5432/talenthub_dev
+      NODE_ENV: development
+      PORT: 3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - talenthub-dev
+
+  # ============================================
+  # Frontend - React/Vite
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: talenthub-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - ./frontend/.env
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - talenthub-dev
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  talenthub-dev:
+    driver: bridge
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,14 @@
+packages:
+  - backend
+  - frontend
+
+ignoredBuiltDependencies:
+  - '@prisma/engines'
+  - '@swc/core'
+  - bcrypt
+  - core-js
+  - esbuild
+  - prisma
+
+onlyBuiltDependencies:
+  - '@prisma/client'
