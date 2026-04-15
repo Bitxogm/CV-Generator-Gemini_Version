@@ -7,96 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// ENUMS
-// ============================================
-
-enum Role {
-  MEMBER
-  ADMIN
-}
-
-// ============================================
-// MODELS - MVP SIMPLIFICADO
-// ============================================
-
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  username  String   @unique
-  password  String   // bcrypt hash
-  role      Role     @default(MEMBER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relaciones
-  profile              Profile?
-  cvs                  CV[]
-  
-  // Password reset
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  username             String    @unique
+  password             String
+  role                 Role      @default(MEMBER)
+  isActive             Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
   passwordResetToken   String?
   passwordResetExpires DateTime?
+  cvs                  CV[]
+  profile              Profile?
 
   @@map("users")
 }
 
 model Profile {
-  id       String @id @default(uuid())
-  userId   String @unique
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Datos básicos
-  fullName String
-  title    String   // "Full Stack Developer"
-  summary  String?  // Bio corta
-  
-  // Contacto
-  phone    String?
-  website  String?
-  linkedin String?
-  github   String?
-  
-  // Habilidades
-  skills   String[]  // ["React", "TypeScript", "Node.js"]
-  
-  // Visibility
-  isPublic Boolean @default(true)
-  views    Int     @default(0)
-  
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  fullName  String
+  title     String
+  summary   String?
+  phone     String?
+  website   String?
+  linkedin  String?
+  github    String?
+  skills    String[]
+  isPublic  Boolean  @default(true)
+  views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
 }
 
 model CV {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Metadata
-  title     String   // "CV Frontend Developer 2025"
-  
-  // Datos completos del CV (JSON)
-  cvData    Json     // { personalInfo: {}, experience: [], education: [], ... }
-  
-  // PDF generado
-  pdfUrl    String?
-  
-  // Oferta de trabajo asociada
-  jobOffer  Json?    // { title: "", company: "", description: "", ... }
-  
-  // Carta de presentación generada
-  coverLetter String?  @db.Text
-  
-  // Sugerencias de IA
-  suggestions Json[]  // [{ type: "improve", text: "...", ... }]
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  cvData      Json
+  pdfUrl      String?
+  jobOffer    Json?
+  coverLetter String?
+  suggestions Json[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("cvs")
+}
+
+enum Role {
+  MEMBER
+  ADMIN
 }

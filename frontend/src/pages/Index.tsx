@@ -19,6 +19,8 @@ import { celebrateDownload } from '@/lib/confetti';
 import { pdf } from '@react-pdf/renderer';
 import StorageService from '@/services/storageService';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 type SavedCV = ReturnType<typeof StorageService.loadCVHistory>[number];
 
@@ -390,7 +392,8 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
+      <Navbar />
 
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
@@ -420,7 +423,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-grow">
 
         {/* ── Foto de perfil ──────────────────────────────────────────────── */}
         <Card className="mb-6">
@@ -608,6 +611,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
         </DialogContent>
       </Dialog>
 
+      <Footer />
     </div>
   );
 }
