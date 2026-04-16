@@ -27,36 +27,38 @@ export class PrismaCVRepository implements ICVRepository {
     return prismaCV ? this.toDomain(prismaCV) : null;
   }
 
-  async findByUserId(userId: string, filters?: CVFilters): Promise<CV[]> {
-    const where: any = { userId };
+async findByUserId(userId: string, filters?: CVFilters): Promise<CV[]> {
+  const where: any = { userId };
 
-    if (filters?.hasJobOffer !== undefined) {
-      where.jobOffer = filters.hasJobOffer ? { not: null } : null;
-    }
-
-    if (filters?.search) {
-      where.title = {
-        contains: filters.search,
-        mode: 'insensitive',
-      };
-    }
-
-    const orderBy: any = {};
-    if (filters?.sortBy) {
-      orderBy[filters.sortBy] = filters.sortOrder || 'desc';
-    } else {
-      orderBy.updatedAt = 'desc';
-    }
-
-    const prismaCVs = await this.prisma.cV.findMany({
-      where,
-      take: filters?.limit || 20,
-      skip: filters?.offset || 0,
-      orderBy,
-    });
-
-    return prismaCVs.map((cv) => this.toDomain(cv));
+  // Solo filtrar por jobOffer si se especifica explícitamente
+  if (filters?.hasJobOffer === true) {
+    where.jobOffer = { not: null };
   }
+  // Si es false o undefined, simplemente no filtramos
+
+  if (filters?.search) {
+    where.title = {
+      contains: filters.search,
+      mode: 'insensitive',
+    };
+  }
+
+  const orderBy: any = {};
+  if (filters?.sortBy) {
+    orderBy[filters.sortBy] = filters.sortOrder || 'desc';
+  } else {
+    orderBy.updatedAt = 'desc';
+  }
+
+  const prismaCVs = await this.prisma.cV.findMany({
+    where,
+    take: filters?.limit || 20,
+    skip: filters?.offset || 0,
+    orderBy,
+  });
+
+  return prismaCVs.map((cv) => this.toDomain(cv));
+}
 
   async save(cv: CV): Promise<CV> {
     const prismaCV = await this.prisma.cV.upsert({

@@ -18,11 +18,14 @@ import { AIAssistant } from '@/components/cv/AIAssistant';
 import { celebrateDownload } from '@/lib/confetti';
 import { pdf } from '@react-pdf/renderer';
 import StorageService from '@/services/storageService';
+import cvService, { SavedCVBackend } from '@/services/cvService';
+import { useAuthStore } from '@/store/authStore';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-type SavedCV = ReturnType<typeof StorageService.loadCVHistory>[number];
+// type SavedCV = ReturnType<typeof StorageService.loadCVHistory>[number];
+type SavedCV = SavedCVBackend;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PLANTILLA VACÍA — se usa en producción para nuevos visitantes.
@@ -257,10 +260,15 @@ export default function Index() {
     loadSavedCVs();
   }, []);
 
-  const loadSavedCVs = () => {
-    const history = StorageService.loadCVHistory();
-    setSavedCVs(history);
-  };
+const loadSavedCVs = async () => {
+  try {
+    const cvs = await cvService.getMyCVs();
+    setSavedCVs(cvs);
+  } catch (error) {
+    console.error('Error cargando CVs:', error);
+    toast.error('Error al cargar tus CVs');
+  }
+};
 
   // ─── Foto de perfil ────────────────────────────────────────────────────────
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,22 +302,24 @@ export default function Index() {
     toast.success('Foto eliminada');
   };
 
-  const handleSave = () => {
-    try {
-      const cvName = prompt(t('notifications.cvNamePrompt'));
-      if (!cvName) return;
-      const success = StorageService.saveCVVersion(cvData, cvName);
-      if (success) {
-        toast.success(t('notifications.cvSaved'));
-        loadSavedCVs();
-      } else {
-        toast.error(t('notifications.errorSaving'));
-      }
-    } catch (error: unknown) {
-      toast.error(t('notifications.errorSaving'));
-      console.error(error);
-    }
-  };
+const handleSave = async () => {
+  try {
+    const cvName = prompt(t('notifications.cvNamePrompt'));
+    if (!cvName) return;
+    
+    await cvService.create({
+      title: cvName,
+      cvData: cvData,
+    });
+    
+    toast.success(t('notifications.cvSaved'));
+    loadSavedCVs();
+  } catch (error: any) {
+    console.error('Error guardando CV:', error);
+    const errorMessage = error.response?.data?.message || t('notifications.errorSaving');
+    toast.error(errorMessage);
+  }
+};
 
   const handleDownload = async (
     format: 'visual' | 'ats' = 'visual',
@@ -377,19 +387,24 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
     }
   };
 
-  const loadCV = (cv: SavedCV) => {
-    setCvData(cv.data);
-    setShowHistory(false);
-    toast.success(t('notifications.cvLoaded', { name: cv.name }));
-  };
+const loadCV = (cv: SavedCV) => {
+  setCvData(cv.cvData);
+  setShowHistory(false);
+  toast.success(t('notifications.cvLoaded', { name: cv.title }));
+};
 
-  const deleteCV = (id: string, name: string) => {
-    if (window.confirm(`¿Eliminar "${name}"?`)) {
-      StorageService.deleteCVVersion(id);
+const deleteCV = async (id: string, title: string) => {
+  if (window.confirm(`¿Eliminar "${title}"?`)) {
+    try {
+      await cvService.delete(id);
       loadSavedCVs();
       toast.success('CV eliminado');
+    } catch (error) {
+      console.error('Error eliminando CV:', error);
+      toast.error('Error al eliminar CV');
     }
-  };
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
@@ -591,7 +606,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                 <div key={cv.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/5 transition-colors">
                   <div className="flex-1">
-                    <p className="font-medium">{cv.name}</p>
+                    <p className="font-medium">{cv.title}</p>
                     <p className="text-sm text-muted-foreground">
                       {new Date(cv.createdAt).toLocaleDateString()}
                     </p>
@@ -600,7 +615,7 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
                     <Button size="sm" onClick={() => loadCV(cv)}>
                       {t('common.load')}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => deleteCV(cv.id, cv.name)}>
+                    <Button size="sm" variant="outline" onClick={() => deleteCV(cv.id, cv.title)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
