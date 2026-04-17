@@ -12,6 +12,7 @@ import { SoftSkillsSection } from './sections/SoftSkillsSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import { LanguagesSection } from './sections/LanguagesSection';
 import { FileText, Eye, Save, Layout } from 'lucide-react';
+import { t } from 'i18next';
 
 interface CVFormProps {
   cvData: CVData;
@@ -20,15 +21,17 @@ interface CVFormProps {
   onSave: () => void;
   templateType: TemplateType;
   setTemplateType: (type: TemplateType) => void;
+  currentCVId?: string | null;
 }
 
-export function CVForm({ 
-  cvData, 
-  setCvData, 
-  onPreview, 
+export function CVForm({
+  cvData,
+  setCvData,
+  onPreview,
   onSave,
   templateType,
-  setTemplateType 
+  setTemplateType,
+  currentCVId
 }: CVFormProps) {
   const [activeTab, setActiveTab] = useState('personal');
 
@@ -46,11 +49,11 @@ export function CVForm({
             </p>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onSave}>
+          <Button onClick={onSave}>
             <Save className="w-4 h-4 mr-2" />
-            Guardar
+            {currentCVId ? 'Actualizar CV' : t('cv.save')}
           </Button>
           <Button onClick={onPreview}>
             <Eye className="w-4 h-4 mr-2" />
@@ -70,11 +73,10 @@ export function CVForm({
             <button
               key={type}
               onClick={() => setTemplateType(type)}
-              className={`p-4 border-2 rounded-lg text-center transition-all ${
-                templateType === type
-                  ? 'border-primary bg-primary/5 shadow-sm'
-                  : 'border-border hover:border-primary/50'
-              }`}
+              className={`p-4 border-2 rounded-lg text-center transition-all ${templateType === type
+                ? 'border-primary bg-primary/5 shadow-sm'
+                : 'border-border hover:border-primary/50'
+                }`}
             >
               <p className="font-medium capitalize">{type}</p>
             </button>

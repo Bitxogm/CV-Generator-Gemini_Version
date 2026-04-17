@@ -2,6 +2,23 @@ import axios from '@/lib/axios';
 import { ApiResponse, getResponseData } from '@/lib/axios';
 import { CVData } from '@/types/cv';
 
+export interface JobOfferData {
+  title: string;
+  company: string;
+  description: string;
+  requirements: string[];
+  location?: string;
+  salary?: string;
+}
+
+export interface Suggestion {
+  id: string;
+  type: 'improve' | 'add' | 'remove';
+  section: string;
+  text: string;
+  priority: 'high' | 'medium' | 'low';
+}
+
 // Tipos para el backend
 export interface SavedCVBackend {
   id: string;
@@ -9,9 +26,9 @@ export interface SavedCVBackend {
   title: string;
   cvData: CVData;
   pdfUrl?: string;
-  jobOffer?: any;
+  jobOffer?: JobOfferData;
   coverLetter?: string;
-  suggestions?: any[];
+  suggestions?: Suggestion[];
   createdAt: string;
   updatedAt: string;
 }
@@ -84,8 +101,8 @@ class CVService {
   /**
    * Generar sugerencias (IA)
    */
-  async generateSuggestions(id: string): Promise<any> {
-    const response = await axios.post<ApiResponse<any>>(`/cvs/${id}/suggestions`);
+  async generateSuggestions(id: string): Promise<Suggestion[]> {
+    const response = await axios.post<ApiResponse<Suggestion[]>>(`/cvs/${id}/suggestions`);
     return getResponseData(response);
   }
 

@@ -227,6 +227,9 @@ export default function Index() {
     return import.meta.env.DEV ? victorData : initialCVData;
   });
 
+  // ID del CV actual (null = nuevo CV, string = CV existente)
+  const [currentCVId, setCurrentCVId] = useState<string | null>(null);
+
   const [templateType, setTemplateType] = useState<TemplateType>('modern');
   const [showPreview, setShowPreview] = useState(false);
   const [savedCVs, setSavedCVs] = useState<SavedCV[]>([]);
@@ -260,15 +263,15 @@ export default function Index() {
     loadSavedCVs();
   }, []);
 
-const loadSavedCVs = async () => {
-  try {
-    const cvs = await cvService.getMyCVs();
-    setSavedCVs(cvs);
-  } catch (error) {
-    console.error('Error cargando CVs:', error);
-    toast.error('Error al cargar tus CVs');
-  }
-};
+  const loadSavedCVs = async () => {
+    try {
+      const cvs = await cvService.getMyCVs();
+      setSavedCVs(cvs);
+    } catch (error) {
+      console.error('Error cargando CVs:', error);
+      toast.error('Error al cargar tus CVs');
+    }
+  };
 
   // ─── Foto de perfil ────────────────────────────────────────────────────────
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -302,24 +305,41 @@ const loadSavedCVs = async () => {
     toast.success('Foto eliminada');
   };
 
-const handleSave = async () => {
-  try {
-    const cvName = prompt(t('notifications.cvNamePrompt'));
-    if (!cvName) return;
-    
-    await cvService.create({
-      title: cvName,
-      cvData: cvData,
-    });
-    
-    toast.success(t('notifications.cvSaved'));
-    loadSavedCVs();
-  } catch (error: any) {
-    console.error('Error guardando CV:', error);
-    const errorMessage = error.response?.data?.message || t('notifications.errorSaving');
-    toast.error(errorMessage);
-  }
-};
+  const handleSave = async () => {
+    try {
+      if (currentCVId) {
+        // ACTUALIZAR CV existente
+        const confirmUpdate = window.confirm('¿Actualizar el CV actual?');
+        if (!confirmUpdate) return;
+
+        await cvService.update(currentCVId, {
+          cvData: cvData,
+        });
+
+        toast.success('CV actualizado correctamente');
+        loadSavedCVs();
+      } else {
+        // CREAR CV nuevo
+        const cvName = prompt(t('notifications.cvNamePrompt'));
+        if (!cvName) return;
+
+        const newCV = await cvService.create({
+          title: cvName,
+          cvData: cvData,
+        });
+
+        setCurrentCVId(newCV.id); // Ahora es un CV guardado
+        toast.success(t('notifications.cvSaved'));
+        loadSavedCVs();
+      }
+    } catch (error: unknown) {
+      console.error('Error guardando CV:', error);
+      const errorMessage = (error instanceof Error && 'response' in error)
+        ? (error as unknown as { response?: { data?: { message?: string } } }).response?.data?.message || t('notifications.errorSaving')
+        : t('notifications.errorSaving');
+      toast.error(errorMessage);
+    }
+  };
 
   const handleDownload = async (
     format: 'visual' | 'ats' = 'visual',
@@ -329,8 +349,8 @@ const handleSave = async () => {
       const getVisualPdf = (t: TemplateType) => {
         switch (t) {
           case 'professional': return <ProfessionalPDF data={cvData} language={language} />;
-          case 'creative':     return <CreativePDF data={cvData} language={language} />;
-          default:             return <ModernPDF data={cvData} language={language} />;
+          case 'creative': return <CreativePDF data={cvData} language={language} />;
+          default: return <ModernPDF data={cvData} language={language} />;
         }
       };
       const pdfDoc = format === 'ats'
@@ -387,24 +407,36 @@ NO incluyas markdown, explicaciones ni texto adicional. SOLO el JSON.
     }
   };
 
-const loadCV = (cv: SavedCV) => {
-  setCvData(cv.cvData);
-  setShowHistory(false);
-  toast.success(t('notifications.cvLoaded', { name: cv.title }));
-};
+  const loadCV = (cv: SavedCV) => {
+    setCvData(cv.cvData);
+    setCurrentCVId(cv.id); // Trackear qué CV está cargado
+    setShowHistory(false);
+    toast.success(t('notifications.cvLoaded', { name: cv.title }));
+  };
 
-const deleteCV = async (id: string, title: string) => {
-  if (window.confirm(`¿Eliminar "${title}"?`)) {
-    try {
-      await cvService.delete(id);
-      loadSavedCVs();
-      toast.success('CV eliminado');
-    } catch (error) {
-      console.error('Error eliminando CV:', error);
-      toast.error('Error al eliminar CV');
+  const handleNewCV = () => {
+    if (currentCVId) {
+      const confirmNew = window.confirm('¿Crear un nuevo CV? Los cambios no guardados se perderán.');
+      if (!confirmNew) return;
     }
-  }
-};
+
+    setCvData(initialCVData);
+    setCurrentCVId(null);
+    toast.success('Nuevo CV iniciado');
+  };
+
+  const deleteCV = async (id: string, title: string) => {
+    if (window.confirm(`¿Eliminar "${title}"?`)) {
+      try {
+        await cvService.delete(id);
+        loadSavedCVs();
+        toast.success('CV eliminado');
+      } catch (error) {
+        console.error('Error eliminando CV:', error);
+        toast.error('Error al eliminar CV');
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
@@ -427,13 +459,23 @@ const deleteCV = async (id: string, title: string) => {
                 </p>
               </div>
             </div>
+
             <div className="flex gap-2 items-center">
               <LanguageSelector />
+
+              {currentCVId && (
+                <Button variant="outline" onClick={handleNewCV}>
+                  <FileDown className="w-4 h-4 mr-2" />
+                  Nuevo CV
+                </Button>
+              )}
+
               <Button variant="outline" onClick={() => setShowHistory(true)}>
                 <History className="w-4 h-4 mr-2" />
                 {t('tabs.history')}
               </Button>
             </div>
+
           </div>
         </div>
       </header>
@@ -506,6 +548,7 @@ const deleteCV = async (id: string, title: string) => {
               onSave={handleSave}
               templateType={templateType}
               setTemplateType={setTemplateType}
+              currentCVId={currentCVId}
             />
           </TabsContent>
 
