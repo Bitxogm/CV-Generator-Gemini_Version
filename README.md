@@ -1,148 +1,110 @@
-# CV Crafter
+# TalentHub
 
-Generador de CV profesional con React + TypeScript + Vite, con asistencia de IA (Google Gemini), plantillas visuales y exportación a PDF.
+Marketplace de perfiles profesionales con IA. Permite crear, editar y publicar CVs con asistencia de Gemini AI, autenticación de usuarios y gestión completa desde un panel privado.
 
 ## Qué hace este proyecto
 
-- Editor completo de CV por secciones (datos personales, resumen, experiencia, educación, skills técnicas/blandas, proyectos e idiomas).
-- Selector de plantilla visual: `modern`, `professional`, `creative`.
-- Vista previa del CV y descarga en PDF:
-  - PDF visual por plantilla (`@react-pdf/renderer`)
-  - PDF ATS optimizado (`ATSPDF`)
-- Asistente IA (Gemini 2.5 Flash):
-  - Adaptación de CV a una oferta
-  - Puntuación de compatibilidad
-  - Generación de carta de presentación
-  - Análisis ATS con score y sugerencias
-- Carta de presentación en PDF (`minimal` o `formal`) con vista previa (`jsPDF`).
-- Persistencia local en navegador (`localStorage`):
-  - autoguardado de CV
-  - historial de versiones
-  - almacenamiento de cartas
+- Registro y autenticación con JWT (email/password).
+- Editor de CV por secciones: datos personales, resumen, experiencia, educación, skills, proyectos, idiomas.
+- Plantillas visuales: `modern`, `professional`, `creative`.
+- Exportación a PDF: visual por plantilla (`@react-pdf/renderer`) y optimizado ATS (`jsPDF`).
+- Asistente IA (Gemini 2.5 Flash): adaptación a oferta, scoring ATS, carta de presentación.
 - Internacionalización ES/EN (`react-i18next`).
+- API REST con arquitectura hexagonal (backend Node.js/Express + Prisma + PostgreSQL).
 
 ## Stack técnico
 
-- `React 18` + `TypeScript`
-- `Vite 5` (puerto `8080`)
-- `Tailwind CSS` + `shadcn/ui` + `Radix UI`
+**Backend**
+- Node.js 20 + TypeScript + Express
+- Prisma ORM + PostgreSQL 16
+- JWT auth + bcrypt
+- Nodemailer (SMTP)
+- Vitest (tests)
+
+**Frontend**
+- React 18 + TypeScript + Vite 5
+- Tailwind CSS + shadcn/ui + Radix UI
+- Zustand (estado global)
+- TanStack Query
 - `@google/generative-ai`
-- `@react-pdf/renderer` y `jspdf`
-- `react-router-dom`, `@tanstack/react-query`, `sonner`
+- `@react-pdf/renderer` + `jsPDF`
 
 ## Requisitos
 
-- `Node.js 18+`
-- `npm` (recomendado en este proyecto)
-- API key de Google Gemini
+- Node.js `>=20`
+- pnpm `>=9`
+- Docker + Docker Compose
 
-## Variables de entorno
-
-Este proyecto usa variables `VITE_` (se inyectan en frontend en build time):
-
-- `VITE_GEMINI_API_KEY`: API key de Gemini para funcionalidades de IA.
-
-### Configuración rápida
-
-1. Copia el ejemplo:
+## Instalación rápida
 
 ```bash
-cp .env.example .env
+git clone <repo-url>
+cd CV-Generator
+
+# Copiar variables de entorno
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+
+# Editar backend/.env: añadir GEMINI_API_KEY, JWT_SECRET, SMTP_*
+# Editar frontend/.env: añadir VITE_GEMINI_API_KEY
+
+# Instalar dependencias
+pnpm install
+
+# Levantar todo con Docker
+pnpm docker:dev
 ```
 
-2. Edita `.env` y añade tu key:
+Ver [INSTALL.md](INSTALL.md) para instrucciones completas y opciones de arranque.
 
-```env
-VITE_GEMINI_API_KEY=tu_api_key_aqui
+## Scripts principales
+
+| Comando | Descripción |
+|---------|-------------|
+| `pnpm docker:dev` | Levanta postgres + backend + frontend en Docker |
+| `pnpm dev` | Postgres en Docker, backend y frontend en local |
+| `pnpm stop` | Para los contenedores |
+| `pnpm clean` | Para y borra volúmenes |
+| `pnpm build` | Build de todos los packages |
+| `pnpm test` | Tests en todos los packages |
+| `pnpm prisma:migrate` | Ejecuta migraciones de BD |
+| `pnpm prisma:studio` | Abre Prisma Studio |
+
+## URLs en desarrollo
+
+| Servicio | URL |
+|---------|-----|
+| Frontend | http://localhost:8080 |
+| Backend API | http://localhost:3001 |
+| PostgreSQL | localhost:5432 |
+
+## Estructura del monorepo
+
+```
+CV-Generator/
+├── backend/          # API Node.js (arquitectura hexagonal)
+│   ├── src/
+│   │   ├── domain/       # Entidades, repositorios, casos de uso
+│   │   ├── application/  # Controladores, rutas, middlewares
+│   │   └── infrastructure/ # BD, servicios externos
+│   └── prisma/       # Schema y migraciones
+├── frontend/         # SPA React + Vite
+│   └── src/
+│       ├── components/   # UI, CV editor, auth
+│       ├── pages/
+│       ├── services/
+│       ├── store/        # Zustand
+│       └── i18n/         # Traducciones ES/EN
+├── docker-compose.dev.yml
+├── scripts/
+└── docs/
 ```
 
-> Importante: al ser una app frontend, la key queda expuesta al cliente. Para producción real, considera mover llamadas IA a un backend propio.
-
-## Instalación y ejecución
-
-```bash
-npm install
-npm run dev
-```
-
-App disponible en: `http://localhost:8080`
-
-## Scripts
-
-- `npm run dev` → servidor de desarrollo.
-- `npm run build` → build de producción en `dist/`.
-- `npm run build:dev` → build modo desarrollo.
-- `npm run preview` → previsualiza el build.
-- `npm run lint` → lint con ESLint.
-
-## Docker
-
-Hay `Dockerfile` multi-stage (`node:20-alpine` + `nginx:alpine`).
-
-Build con API key:
-
-```bash
-docker build \
-  --build-arg VITE_GEMINI_API_KEY="tu_api_key" \
-  -t cv-crafter:latest .
-```
-
-Run:
-
-```bash
-docker run --rm -p 8080:80 cv-crafter:latest
-```
-
-## Estructura principal
-
-```text
-src/
-  components/
-    cv/
-      sections/        # Formulario por secciones
-      preview/         # Plantillas visuales de preview
-      pdf/             # Plantillas PDF del CV
-      AIAssistant.tsx  # IA: adaptación, compatibilidad, carta, ATS
-      CVForm.tsx       # Editor principal del CV
-  contexts/
-    LanguageContext.tsx
-  hooks/
-    useGeminiCV.ts
-  i18n/
-    config.ts
-    locales/
-      es.json
-      en.json
-  pages/
-    Index.tsx          # Pantalla principal (editor + modales)
-  services/
-    geminiService.ts   # Integración Gemini
-    storageService.ts  # localStorage
-  utils/
-    pdfGenerator.ts    # PDF carta de presentación
-```
-
-## Flujo funcional (resumen)
-
-1. Usuario edita datos del CV en `CVForm`.
-2. `Index.tsx` mantiene estado global y autoguarda en `StorageService`.
-3. En preview se renderiza plantilla y se exporta PDF visual/ATS.
-4. En `AIAssistant` se llama a `geminiService` para análisis/adaptación/carta.
-5. Cartas se pueden previsualizar y descargar como PDF desde `pdfGenerator.ts`.
-
-## Seguridad y buenas prácticas
+## Seguridad
 
 - `.env` está ignorado en `.gitignore`.
-- Se incluye script de pre-commit para escaneo básico de secretos:
-  - `setup-hooks.sh`
-  - `scripts/check-secrets.sh`
-- No subas tu API key real al repositorio.
-
-## Estado actual
-
-- App SPA sin backend dedicado.
-- Datos persistidos localmente en el navegador del usuario.
-- Integración Gemini directa desde cliente.
+- Pre-commit hook con escaneo de secretos (`scripts/check-secrets.sh`).
+- No subas API keys reales al repositorio.
 
 ## Licencia
 
