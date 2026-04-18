@@ -43,3 +43,4 @@ backend/prisma/migrations/
 secrets/
 *.pem
 *.key
+backend/.env.production
