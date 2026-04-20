@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
+import { EmailService } from '../../infrastructure/services/EmailService';
+import { PrismaClient } from '@prisma/client';
 import { CreateCVUseCase } from '../../domain/use-cases/cv/CreateCVUseCase';
 import { GetCVUseCase } from '../../domain/use-cases/cv/GetCVUseCase';
 import { GetMyCVsUseCase } from '../../domain/use-cases/cv/GetMyCVsUseCase';
@@ -8,8 +10,12 @@ import { AdaptToJobOfferUseCase } from '../../domain/use-cases/cv/AdaptToJobOffe
 import { GenerateSuggestionsUseCase } from '../../domain/use-cases/cv/GenerateSuggestionsUseCase';
 import { GenerateCoverLetterUseCase } from '../../domain/use-cases/cv/GenerateCoverLetterUseCase';
 import { BadRequestError, UnauthorizedError } from '../../domain/errors/AppError';
+import { prisma } from '../../infrastructure/database/prisma/PrismaClient';
 
 export class CVController {
+    private emailService: EmailService;
+    private prisma: PrismaClient;
+
   constructor(
     private readonly createCVUseCase: CreateCVUseCase,
     private readonly getCVUseCase: GetCVUseCase,
@@ -19,7 +25,10 @@ export class CVController {
     private readonly adaptToJobOfferUseCase: AdaptToJobOfferUseCase,
     private readonly generateSuggestionsUseCase: GenerateSuggestionsUseCase,
     private readonly generateCoverLetterUseCase: GenerateCoverLetterUseCase
-  ) {}
+  ) {
+    this.emailService = new EmailService();
+    this.prisma = new PrismaClient();
+  }
 
   // POST /api/cvs
   create = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,6 +48,23 @@ export class CVController {
         title,
         cvData,
       });
+
+      // 🔥 ENVIAR EMAIL DE CONFIRMACIÓN
+      try {
+        // Obtener datos del usuario
+        const user = await this.prisma.user.findUnique({
+          where: { id: req.userId },
+          select: { email: true, username: true },
+        });
+
+        if (user) {
+          await this.emailService.sendCVCreatedEmail(user.email, user.username, title);
+          console.log(`✅ Email de CV creado enviado a: ${user.email}`);
+        }
+      } catch (emailError) {
+        console.error('⚠️ Error enviando email de CV creado:', emailError);
+        // No fallar la creación del CV si el email falla
+      }
 
       res.status(201).json({
         success: true,

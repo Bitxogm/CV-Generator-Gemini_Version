@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/authService';
@@ -22,6 +22,30 @@ export default function Navbar() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.prompt(
+      '⚠️ ¿Estás seguro de que quieres eliminar tu cuenta?\n\n' +
+      'Esta acción es IRREVERSIBLE y eliminará:\n' +
+      '• Todos tus CVs guardados\n' +
+      '• Tu información de perfil\n' +
+      '• Todo tu historial\n\n' +
+      'Escribe "ELIMINAR" para confirmar:'
+    );
+
+    if (confirmDelete !== 'ELIMINAR') {
+      return;
+    }
+
+    try {
+      await authService.deleteAccount();
+      logout();
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error eliminando cuenta:', error);
+      alert('Error al eliminar la cuenta. Inténtalo de nuevo.');
+    }
+  };
+
   if (!isAuthenticated || !user) {
     return null; // No mostrar navbar si no está autenticado
   }
@@ -38,6 +62,16 @@ export default function Navbar() {
             <User className="h-4 w-4" />
             <span className="font-medium">{user.username}</span>
           </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDeleteAccount}
+            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Eliminar Cuenta
+          </Button>
 
           <Button
             variant="ghost"

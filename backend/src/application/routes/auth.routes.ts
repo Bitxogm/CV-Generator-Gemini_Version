@@ -6,6 +6,7 @@ import { RecoverPasswordUseCase } from '../../domain/use-cases/auth/RecoverPassw
 import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
 import { JWTService } from '../../infrastructure/services/JWTService';
 import { prisma } from '../../infrastructure/database/prisma/PrismaClient';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.post('/signup', authController.signup);
 router.post('/signin', authController.signin);
 router.post('/request-reset', authController.requestPasswordReset);
 router.post('/reset-password', authController.resetPassword);
+router.delete('/account', authMiddleware, authController.deleteAccount);
 
 export default router;

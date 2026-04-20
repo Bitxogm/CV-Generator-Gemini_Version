@@ -44,6 +44,15 @@ class AuthService {
     const response = await axios.get<ApiResponse<User>>('/auth/me');
     return getResponseData(response);
   }
+
+   async deleteAccount(): Promise<void> {
+    const response = await axios.delete('/auth/account');
+    
+    // Limpiar localStorage
+    localStorage.removeItem('auth-storage');
+    
+    return response.data;
+  }
 }
 
 export const authService = new AuthService();

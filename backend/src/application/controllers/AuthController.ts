@@ -5,8 +5,11 @@ import { RecoverPasswordUseCase } from '../../domain/use-cases/auth/RecoverPassw
 import { BadRequestError } from '../../domain/errors/AppError';
 import { EmailService } from '../../infrastructure/services/EmailService';
 
+import { PrismaClient } from '@prisma/client';
+
 export class AuthController {
   private emailService: EmailService;
+  private prisma: PrismaClient;
 
   constructor(
     private readonly signUpUseCase: SignUpUseCase,
@@ -14,6 +17,7 @@ export class AuthController {
     private readonly recoverPasswordUseCase: RecoverPasswordUseCase
   ) {
     this.emailService = new EmailService();
+    this.prisma = new PrismaClient();
   }
 
   // POST /api/auth/signup
@@ -105,4 +109,47 @@ signup = async (req: Request, res: Response, next: NextFunction) => {
       next(error);
     }
   };
+
+  // DELETE /api/auth/account
+  deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req as any).userId; // Del middleware de autenticación
+
+      if (!userId) {
+        throw new BadRequestError('Usuario no autenticado');
+      }
+
+      // Obtener datos del usuario antes de eliminar
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { email: true, username: true },
+      });
+
+      if (!user) {
+        throw new BadRequestError('Usuario no encontrado');
+      }
+
+      // Eliminar usuario (CASCADE eliminará CVs automáticamente)
+      await this.prisma.user.delete({
+        where: { id: userId },
+      });
+
+      // 🔥 ENVIAR EMAIL DE CONFIRMACIÓN
+      try {
+        await this.emailService.sendAccountDeletedEmail(user.email, user.username);
+        console.log(`✅ Email de cuenta eliminada enviado a: ${user.email}`);
+      } catch (emailError) {
+        console.error('⚠️ Error enviando email de cuenta eliminada:', emailError);
+        // No fallar la eliminación si el email falla
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Cuenta eliminada correctamente',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }

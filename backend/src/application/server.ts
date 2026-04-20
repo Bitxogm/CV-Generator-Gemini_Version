@@ -1,16 +1,16 @@
-import express, { Application } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
+import express, { Application } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import dotenv from "dotenv";
 
 // Routes
-import authRoutes from './routes/auth.routes';
-import profileRoutes from './routes/profile.routes';
-import cvRoutes from './routes/cv.routes';
+import authRoutes from "./routes/auth.routes";
+import profileRoutes from "./routes/profile.routes";
+import cvRoutes from "./routes/cv.routes";
 
 // Middlewares
-import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
+import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -28,27 +28,27 @@ app.use(helmet());
 // CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+    origin: process.env.FRONTEND_URL || "http://localhost:8080",
     credentials: true,
-  })
+  }),
 );
 
 // Body parser
-app.use(express.json({ limit: '10mb' })); // Para base64 de fotos
+app.use(express.json({ limit: "10mb" })); // Para base64 de fotos
 app.use(express.urlencoded({ extended: true }));
 
 // Logging (solo en desarrollo)
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
 }
 
 // ============================================
 // HEALTH CHECK
 // ============================================
 
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'ok',
+    status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   });
@@ -58,9 +58,9 @@ app.get('/health', (req, res) => {
 // RUTAS API
 // ============================================
 
-app.use('/api/auth', authRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/cvs', cvRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/cvs", cvRoutes);
 
 // ============================================
 // ERROR HANDLERS
@@ -79,41 +79,52 @@ app.use(errorHandler);
 const startServer = () => {
   try {
     app.listen(PORT, () => {
-      console.log('╔══════════════════════════════════════════╗');
-      console.log('║                                          ║');
-      console.log('║       🚀 TalentHub API Server 🚀        ║');
-      console.log('║                                          ║');
-      console.log('╚══════════════════════════════════════════╝');
-      console.log('');
+      console.log("╔══════════════════════════════════════════╗");
+      console.log("║                                          ║");
+      console.log("║       🚀 TalentHub API Server 🚀        ║");
+      console.log("║                                          ║");
+      console.log("╚══════════════════════════════════════════╝");
+      console.log("");
       console.log(`📡 Server running on port: ${PORT}`);
-      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:8080'}`);
-      console.log('');
-      console.log('📋 Available routes:');
-      console.log('   - GET  /health');
-      console.log('   - POST /api/auth/signup');
-      console.log('   - POST /api/auth/signin');
-      console.log('   - POST /api/profile');
-      console.log('   - GET  /api/cvs');
-      console.log('   - POST /api/cvs/:id/adapt');
-      console.log('');
-      console.log('✨ Ready to receive requests!');
-      console.log('');
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+      console.log(
+        `🔗 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:8080"}`,
+      );
+      console.log("");
+      console.log("📋 Available routes:");
+      console.log("   - GET    /health");
+      console.log("");
+      console.log("   Auth:");
+      console.log("   - POST   /api/auth/signup");
+      console.log("   - POST   /api/auth/signin");
+      console.log("   - POST   /api/auth/request-reset");
+      console.log("   - POST   /api/auth/reset-password");
+      console.log("   - DELETE /api/auth/account");
+      console.log("");
+      console.log("   CVs:");
+      console.log("   - POST   /api/cvs");
+      console.log("   - GET    /api/cvs");
+      console.log("   - GET    /api/cvs/:id");
+      console.log("   - PUT    /api/cvs/:id");
+      console.log("   - DELETE /api/cvs/:id");
+      console.log("   - POST   /api/cvs/:id/adapt");
+      console.log("   - POST   /api/cvs/:id/suggestions");
+      console.log("   - POST   /api/cvs/:id/cover-letter");
     });
   } catch (error) {
-    console.error('❌ Error starting server:', error);
+    console.error("❌ Error starting server:", error);
     process.exit(1);
   }
 };
 
 // Manejo de errores no capturados
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
   process.exit(1);
 });
 
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught Exception:', error);
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error);
   process.exit(1);
 });
 
