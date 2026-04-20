@@ -23,7 +23,7 @@ const registerSchema = z.object({
     .string()
     .min(1, 'El nombre de usuario es requerido')
     .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Solo letras, números y guiones bajos'),
+    .max(30, 'El nombre de usuario no puede superar los 30 caracteres'),
   email: z
     .string()
     .min(1, 'El email es requerido')
@@ -77,10 +77,11 @@ export default function RegisterForm() {
 
       // Redirigir al generador de CV
       navigate('/');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error en registro:', error);
       
-      const errorMessage = error.response?.data?.message || 'Error al crear cuenta';
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      const errorMessage = axiosError.response?.data?.message || 'Error al crear cuenta';
       toast.error('Error al registrarse', {
         description: errorMessage,
       });
