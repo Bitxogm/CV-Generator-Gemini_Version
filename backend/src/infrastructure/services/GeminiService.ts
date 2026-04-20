@@ -3,7 +3,7 @@ import { CVData, JobOfferData, Suggestion } from '../../domain/entities/CV';
 
 export class GeminiService {
   private readonly genAI: GoogleGenerativeAI;
-  private readonly model: string = 'gemini-2.0-flash-exp';
+  private readonly model: string = 'gemini-1.5-flash';
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
