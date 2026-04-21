@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Sparkles, Loader2, FileText, CheckCircle2, Download, Copy, Eye, Edit2 } from 'lucide-react';
+import { Sparkles, Loader2, FileText, CheckCircle2, Download, Copy, Eye, Edit2, Link } from 'lucide-react';
 import { CVData } from '@/types/cv';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -66,6 +66,8 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [isEditingLetter, setIsEditingLetter] = useState(false);
   const [isEditingSummary, setIsEditingSummary] = useState(false);
   const [editedSummary, setEditedSummary] = useState('');
+  const [jobUrl, setJobUrl] = useState('');
+  const [isExtractingUrl, setIsExtractingUrl] = useState(false);
 
   // ✅ NUEVA FUNCIÓN: Adaptar CV usando Gemini directo
   const handleAdaptCV = async () => {
@@ -112,6 +114,59 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       toast.error(t('aiAssistant.errorAnalyzing'));
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleExtractFromUrl = async () => {
+    if (!jobUrl.trim()) {
+      toast.error('Por favor ingresa una URL');
+      return;
+    }
+
+    setIsExtractingUrl(true);
+    try {
+      console.log('🔗 Extrayendo información de URL:', jobUrl);
+
+      const response = await fetch(`http://localhost:3000/api/jobs/extract-from-url`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ url: jobUrl }),
+      });
+
+      let data: { success: boolean; message?: string; data?: { title: string; company: string; description: string; requirements: string[] } };
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error(`Error del servidor (${response.status}) — reinicia el backend`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al extraer información');
+      }
+
+      if (data.success) {
+        const formattedDescription = `
+Título: ${data.data.title}
+Empresa: ${data.data.company}
+
+Descripción:
+${data.data.description}
+
+Requisitos:
+${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
+        `.trim();
+
+        setJobDescription(formattedDescription);
+        toast.success('✅ Información extraída correctamente');
+      }
+    } catch (error) {
+      console.error('❌ Error extrayendo URL:', error);
+      toast.error(error instanceof Error ? error.message : 'Error al extraer información de la URL');
+    } finally {
+      setIsExtractingUrl(false);
     }
   };
 
@@ -347,6 +402,42 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2 p-4 border rounded-lg bg-muted/10">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              URL de la oferta (opcional)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                placeholder="https://infojobs.net/oferta/12345 o https://linkedin.com/jobs/..."
+                value={jobUrl}
+                onChange={(e) => setJobUrl(e.target.value)}
+                className="flex-1 px-3 py-2 border rounded-md"
+              />
+              <Button
+                onClick={handleExtractFromUrl}
+                disabled={isExtractingUrl || !jobUrl.trim()}
+                variant="secondary"
+              >
+                {isExtractingUrl ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Extrayendo...
+                  </>
+                ) : (
+                  <>
+                    <Link className="w-4 h-4 mr-2" />
+                    Extraer
+                  </>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Pega la URL de la oferta y la IA extraerá automáticamente el título, empresa, descripción y requisitos
+            </p>
+          </div>
+
           <div>
             <label className="text-sm font-medium mb-2 block">
               {t('aiAssistant.jobDescription')}

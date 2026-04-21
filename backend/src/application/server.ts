@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import profileRoutes from "./routes/profile.routes";
 import cvRoutes from "./routes/cv.routes";
+import jobRoutes from "./routes/job.routes";
 
 // Middlewares
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
@@ -62,7 +63,7 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/cvs", cvRoutes);
-
+app.use("/api/jobs", jobRoutes);
 // ============================================
 // ERROR HANDLERS
 // ============================================
