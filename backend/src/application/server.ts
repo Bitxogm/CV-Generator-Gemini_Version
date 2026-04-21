@@ -1,3 +1,4 @@
+import { CronService } from "../infrastructure/services/CronService";
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -110,6 +111,11 @@ const startServer = () => {
       console.log("   - POST   /api/cvs/:id/adapt");
       console.log("   - POST   /api/cvs/:id/suggestions");
       console.log("   - POST   /api/cvs/:id/cover-letter");
+      console.log(""); 
+
+      // Iniciar cron jobs
+      const cronService = new CronService();
+      cronService.start();
     });
   } catch (error) {
     console.error("❌ Error starting server:", error);

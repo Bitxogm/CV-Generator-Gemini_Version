@@ -1,4 +1,4 @@
-import sgMail from '@sendgrid/mail';
+import sgMail from "@sendgrid/mail";
 
 export interface EmailOptions {
   to: string;
@@ -10,7 +10,7 @@ export class EmailService {
   constructor() {
     const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey) {
-      throw new Error('SENDGRID_API_KEY no está configurada');
+      throw new Error("SENDGRID_API_KEY no está configurada");
     }
     sgMail.setApiKey(apiKey);
   }
@@ -20,8 +20,8 @@ export class EmailService {
       const msg = {
         to,
         from: {
-          email: process.env.EMAIL_FROM || 'talenthub@bitxodev.com',
-          name: process.env.EMAIL_FROM_NAME || 'TalentHub',
+          email: process.env.EMAIL_FROM || "talenthub@bitxodev.com",
+          name: process.env.EMAIL_FROM_NAME || "TalentHub",
         },
         subject,
         html,
@@ -30,7 +30,7 @@ export class EmailService {
       await sgMail.send(msg);
       console.log(`✅ Email enviado a: ${to}`);
     } catch (error: any) {
-      console.error('❌ Error enviando email:', error.response?.body || error);
+      console.error("❌ Error enviando email:", error.response?.body || error);
       throw error;
     }
   }
@@ -73,12 +73,16 @@ export class EmailService {
 
     await this.sendEmail({
       to,
-      subject: '🎉 ¡Bienvenido a TalentHub!',
+      subject: "🎉 ¡Bienvenido a TalentHub!",
       html,
     });
   }
 
-  async sendCVCreatedEmail(to: string, username: string, cvTitle: string): Promise<void> {
+  async sendCVCreatedEmail(
+    to: string,
+    username: string,
+    cvTitle: string,
+  ): Promise<void> {
     const html = `
       <!DOCTYPE html>
       <html>
@@ -102,12 +106,12 @@ export class EmailService {
               <p>Tu CV ha sido guardado exitosamente en TalentHub.</p>
               <div class="cv-box">
                 <h3>📄 ${cvTitle}</h3>
-                <p>Guardado: ${new Date().toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                <p>Guardado: ${new Date().toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}</p>
               </div>
             </div>
@@ -160,7 +164,71 @@ export class EmailService {
 
     await this.sendEmail({
       to,
-      subject: '👋 Tu cuenta de TalentHub ha sido eliminada',
+      subject: "👋 Tu cuenta de TalentHub ha sido eliminada",
+      html,
+    });
+  }
+
+  /**
+   * Enviar recordatorio de actualización de CV
+   */
+  async sendCVUpdateReminder(
+    to: string,
+    userName: string,
+    cvTitle: string,
+  ): Promise<void> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0;">⏰ ¡Actualiza tu CV!</h1>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+          <p style="font-size: 16px;">Hola <strong>${userName}</strong>,</p>
+          
+          <p>Han pasado 90 días desde la última actualización de tu CV <strong>"${cvTitle}"</strong>.</p>
+          
+          <p>💡 <strong>¿Por qué es importante actualizarlo?</strong></p>
+          <ul style="line-height: 1.8;">
+            <li>Nuevas habilidades adquiridas</li>
+            <li>Proyectos recientes completados</li>
+            <li>Certificaciones obtenidas</li>
+            <li>Mantener tu perfil competitivo</li>
+          </ul>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://talent.bitxodev.com" 
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                      color: white; 
+                      padding: 15px 40px; 
+                      text-decoration: none; 
+                      border-radius: 5px; 
+                      font-weight: bold;
+                      display: inline-block;">
+              Actualizar mi CV
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            Este es un recordatorio automático de TalentHub. Si ya actualizaste tu CV, puedes ignorar este mensaje.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
+          <p>TalentHub - Tu CV profesional, siempre actualizado</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await this.sendEmail({
+      to,
+      subject: "⏰ Es momento de actualizar tu CV - TalentHub",
       html,
     });
   }
