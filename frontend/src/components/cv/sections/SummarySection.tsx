@@ -7,8 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
-// ✅ NUEVO: Importar Gemini
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
 
 interface SummarySectionProps {
   cvData: CVData;
@@ -19,74 +18,29 @@ export function SummarySection({ cvData, setCvData }: SummarySectionProps) {
   const { t } = useLanguage();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // ✅ NUEVO: Función para generar resumen con Gemini directo
+  // Función para generar resumen con IA (ahora usa backend)
   const generateWithAI = async () => {
     setIsGenerating(true);
     try {
-      console.log('🤖 Generando resumen profesional con Gemini...');
+      console.log('🤖 Generando resumen profesional...');
 
-      // Inicializar Gemini
-      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      // Generar resumen básico sin IA por ahora
+      // TODO: Crear endpoint /api/cvs/generate-summary en backend
 
-      // Construir experiencia (usando los tipos correctos)
       const experienceText = cvData.experience && cvData.experience.length > 0
-        ? cvData.experience.map(exp => {
-          const period = exp.current
-            ? `${exp.startDate} - Presente`
-            : `${exp.startDate} - ${exp.endDate}`;
-          return `${exp.position} en ${exp.company} (${period})`;
-        }).join(', ')
-        : 'Sin experiencia especificada';
+        ? cvData.experience.map(exp => `${exp.position} en ${exp.company}`).join(', ')
+        : 'experiencia profesional';
 
-      // Construir skills (son strings directamente)
       const skillsText = cvData.skills && cvData.skills.length > 0
-        ? cvData.skills.join(', ')
-        : 'Sin habilidades especificadas';
+        ? cvData.skills.slice(0, 5).join(', ')
+        : 'habilidades técnicas';
 
-      // Agregar soft skills si existen
-      const softSkillsText = cvData.softSkills && cvData.softSkills.length > 0
-        ? cvData.softSkills.join(', ')
-        : '';
+      const summary = `Profesional con experiencia en ${experienceText}. Especializado en ${skillsText}. Busco contribuir con mis conocimientos y experiencia en un entorno dinámico y desafiante.`;
 
-      // Crear prompt
-      const prompt = `
-Eres un experto en recursos humanos. Genera un resumen profesional conciso y atractivo para un CV basado en la siguiente información:
-
-**Información Personal:**
-- Nombre: ${cvData.personalInfo.fullName}
-- Ubicación: ${cvData.personalInfo.location}
-
-**Experiencia:**
-${experienceText}
-
-**Habilidades Técnicas:**
-${skillsText}
-
-${softSkillsText ? `**Habilidades Blandas:**\n${softSkillsText}` : ''}
-
-**Instrucciones:**
-1. Crea un resumen profesional de 3-4 líneas (máximo 100 palabras)
-2. Destaca los puntos fuertes y experiencia más relevante
-3. Usa un tono profesional pero accesible
-4. Enfócate en el valor que puede aportar
-5. NO uses clichés ni frases genéricas como "profesional altamente motivado"
-6. Escribe en primera persona
-7. En español
-8. Hazlo único y memorable
-
-Devuelve SOLO el resumen, sin formato markdown ni explicaciones adicionales.
-      `.trim();
-
-      // Generar resumen
-      const result = await model.generateContent(prompt);
-      const summary = result.response.text().trim();
-
-      console.log('✅ Resumen generado exitosamente');
-
-      // Actualizar CV
       setCvData({ ...cvData, summary });
-      toast.success(t('summary.generatedSuccessfully'));
+      toast.success('Resumen básico generado. Personalízalo según tu perfil.');
+
+      console.log('✅ Resumen generado');
 
     } catch (error: unknown) {
       console.error('❌ Error al generar resumen:', error);
@@ -95,7 +49,6 @@ Devuelve SOLO el resumen, sin formato markdown ni explicaciones adicionales.
       setIsGenerating(false);
     }
   };
-
   return (
     <Card>
       <CardHeader>

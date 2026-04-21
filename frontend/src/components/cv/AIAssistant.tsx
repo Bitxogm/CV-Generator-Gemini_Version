@@ -76,7 +76,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
 
     setIsAnalyzing(true);
     try {
-      console.log('🤖 Analizando CV con Gemini 2.5 Flash...');
+      console.log('🤖 Analizando CV con Gemini 1.5 Flash...');
 
       // ✅ Llamar a Gemini directo para análisis de compatibilidad
       const compatibilityResult = await analyzeCVCompatibility(cvData, jobDescription);
