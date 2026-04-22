@@ -127,7 +127,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
     try {
       console.log('🔗 Extrayendo información de URL:', jobUrl);
 
-      const response = await fetch(`http://localhost:3000/api/jobs/extract-from-url`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/jobs/extract-from-url`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
