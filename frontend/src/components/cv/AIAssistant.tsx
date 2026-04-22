@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
-// ✅ NUEVO: Importar funciones de Gemini directo
 import { adaptCVWithGemini, generateCoverLetter, analyzeCVCompatibility } from '@/services/geminiService';
 
 interface AISuggestions {
@@ -69,7 +68,81 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const [jobUrl, setJobUrl] = useState('');
   const [isExtractingUrl, setIsExtractingUrl] = useState(false);
 
-  // ✅ NUEVA FUNCIÓN: Adaptar CV usando Gemini directo
+  const extractMatchedSkills = (cv: CVData, jobDesc: string): string[] => {
+    const jobDescLower = jobDesc.toLowerCase();
+    const matched: string[] = [];
+
+    cv.skills?.forEach(skill => {
+      if (jobDescLower.includes(skill.toLowerCase())) {
+        matched.push(skill);
+      }
+    });
+
+    return matched.slice(0, 10);
+  };
+
+  const generateRecommendations = (compatibility: CompatibilityResult): string[] => {
+    const recommendations: string[] = [];
+
+    if (compatibility.score < 50) {
+      recommendations.push('Considera añadir más habilidades relevantes al puesto');
+    }
+    if (compatibility.missing?.length > 0) {
+      recommendations.push(`Desarrolla conocimientos en: ${compatibility.missing.slice(0, 3).join(', ')}`);
+    }
+    if (compatibility.score >= 70) {
+      recommendations.push('Tu perfil es muy compatible con este puesto');
+    }
+
+    return recommendations;
+  };
+
+  const extractCompanyName = (description: string): string | null => {
+    const patterns = [
+      /empresa[:\s]+([^\n.,]+)/i,
+      /company[:\s]+([^\n.,]+)/i,
+      /organización[:\s]+([^\n.,]+)/i,
+      /organization[:\s]+([^\n.,]+)/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = description.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+
+    const lines = description.split('\n');
+    for (const line of lines.slice(0, 5)) {
+      const capitalized = line.match(/^([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)/);
+      if (capitalized && capitalized[1] && capitalized[1].split(' ').length <= 3) {
+        return capitalized[1];
+      }
+    }
+
+    return null;
+  };
+
+  const extractPosition = (description: string): string => {
+    const patterns = [
+      /puesto[:\s]+([^\n.]+)/i,
+      /posición[:\s]+([^\n.]+)/i,
+      /cargo[:\s]+([^\n.]+)/i,
+      /vacante[:\s]+([^\n.]+)/i,
+      /position[:\s]+([^\n.]+)/i,
+      /role[:\s]+([^\n.]+)/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = description.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim().substring(0, 50);
+      }
+    }
+
+    return t('aiAssistant.jobOffer');
+  };
+
   const handleAdaptCV = async () => {
     if (!jobDescription.trim()) {
       toast.error(t('aiAssistant.pleaseJobDescription'));
@@ -80,13 +153,9 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
     try {
       console.log('🤖 Analizando CV con Gemini 1.5 Flash...');
 
-      // ✅ Llamar a Gemini directo para análisis de compatibilidad
       const compatibilityResult = await analyzeCVCompatibility(cvData, jobDescription);
-
-      // ✅ Adaptar el CV
       const adaptedCV = await adaptCVWithGemini(cvData, jobDescription);
 
-      // Construir el objeto de adaptación con la estructura esperada
       const adaptationData: AdaptationData = {
         compatibilityScore: compatibilityResult.score,
         matchedSkills: extractMatchedSkills(cvData, jobDescription),
@@ -109,9 +178,10 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
       console.log('✅ Análisis completado con Gemini');
       toast.success(t('aiAssistant.analysisCompleted'));
 
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('❌ Error al adaptar CV con Gemini:', error);
-      toast.error(t('aiAssistant.errorAnalyzing'));
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || t('aiAssistant.errorAnalyzing');
+      toast.error(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -170,7 +240,6 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
     }
   };
 
-  // ✅ NUEVA FUNCIÓN: Generar carta usando Gemini directo
   const handleGenerateCoverLetter = async () => {
     if (!jobDescription.trim()) {
       toast.error(t('aiAssistant.pleaseJobDescription'));
@@ -181,10 +250,8 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
     try {
       console.log('✉️ Generando carta de presentación con Gemini 2.5 Flash...');
 
-      // Extraer nombre de la empresa de la descripción
       const companyName = extractCompanyName(jobDescription) || 'la empresa';
 
-      // ✅ Llamar a Gemini directo
       const generatedLetter = await generateCoverLetter(
         cvData,
         jobDescription,
@@ -204,70 +271,13 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
         toast.success(`${t('aiAssistant.coverLetterGeneratedWithCount', { count: wordCount })} ✓`);
       }
 
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('❌ Error al generar carta con Gemini:', error);
-      toast.error(t('aiAssistant.coverLetterError'));
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || t('aiAssistant.coverLetterError');
+      toast.error(errorMessage);
     } finally {
       setIsGeneratingLetter(false);
     }
-  };
-
-  // Funciones auxiliares
-  const extractMatchedSkills = (cv: CVData, jobDesc: string): string[] => {
-    const jobDescLower = jobDesc.toLowerCase();
-    const matched: string[] = [];
-
-    // Buscar skills del CV en la descripción
-    cv.skills?.forEach(skill => {
-      if (jobDescLower.includes(skill.toLowerCase())) {
-        matched.push(skill);
-      }
-    });
-
-    return matched.slice(0, 10); // Limitar a 10
-  };
-
-  const generateRecommendations = (compatibility: CompatibilityResult): string[] => {
-    const recommendations: string[] = [];
-
-    if (compatibility.score < 50) {
-      recommendations.push('Considera añadir más habilidades relevantes al puesto');
-    }
-    if (compatibility.missing?.length > 0) {
-      recommendations.push(`Desarrolla conocimientos en: ${compatibility.missing.slice(0, 3).join(', ')}`);
-    }
-    if (compatibility.score >= 70) {
-      recommendations.push('Tu perfil es muy compatible con este puesto');
-    }
-
-    return recommendations;
-  };
-
-  const extractCompanyName = (description: string): string | null => {
-    const patterns = [
-      /empresa[:\s]+([^\n.,]+)/i,
-      /company[:\s]+([^\n.,]+)/i,
-      /organización[:\s]+([^\n.,]+)/i,
-      /organization[:\s]+([^\n.,]+)/i,
-    ];
-
-    for (const pattern of patterns) {
-      const match = description.match(pattern);
-      if (match && match[1]) {
-        return match[1].trim();
-      }
-    }
-
-    // Buscar nombres propios en mayúsculas al inicio de líneas
-    const lines = description.split('\n');
-    for (const line of lines.slice(0, 5)) {
-      const capitalized = line.match(/^([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)/);
-      if (capitalized && capitalized[1] && capitalized[1].split(' ').length <= 3) {
-        return capitalized[1];
-      }
-    }
-
-    return null;
   };
 
   const copyCoverLetter = () => {
@@ -325,26 +335,6 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
     } finally {
       setIsDownloadingPDF(false);
     }
-  };
-
-  const extractPosition = (description: string): string => {
-    const patterns = [
-      /puesto[:\s]+([^\n.]+)/i,
-      /posición[:\s]+([^\n.]+)/i,
-      /cargo[:\s]+([^\n.]+)/i,
-      /vacante[:\s]+([^\n.]+)/i,
-      /position[:\s]+([^\n.]+)/i,
-      /role[:\s]+([^\n.]+)/i,
-    ];
-
-    for (const pattern of patterns) {
-      const match = description.match(pattern);
-      if (match && match[1]) {
-        return match[1].trim().substring(0, 50);
-      }
-    }
-
-    return t('aiAssistant.jobOffer');
   };
 
   const applyAdaptation = () => {
