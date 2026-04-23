@@ -5,6 +5,8 @@ import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/authService';
 import { toast } from 'sonner';
 
+import ThemeToggle from './ThemeToggle';
+
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -62,6 +64,8 @@ export default function Navbar() {
             <User className="h-4 w-4" />
             <span className="font-medium">{user.username}</span>
           </div>
+
+          <ThemeToggle />
 
           <Button
             variant="ghost"
