@@ -12,7 +12,6 @@ import { SoftSkillsSection } from './sections/SoftSkillsSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import { LanguagesSection } from './sections/LanguagesSection';
 import { FileText, Eye, Save, Layout } from 'lucide-react';
-import { t } from 'i18next';
 
 interface CVFormProps {
   cvData: CVData;
@@ -51,11 +50,11 @@ export function CVForm({
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={onSave}>
+          <Button className="w-36" onClick={onSave}>
             <Save className="w-4 h-4 mr-2" />
-            {currentCVId ? 'Actualizar CV' : t('cv.save')}
+            {currentCVId ? 'Actualizar CV' : 'Guardar CV'}
           </Button>
-          <Button onClick={onPreview}>
+          <Button className="w-36" variant="outline" onClick={onPreview}>
             <Eye className="w-4 h-4 mr-2" />
             Vista Previa
           </Button>
