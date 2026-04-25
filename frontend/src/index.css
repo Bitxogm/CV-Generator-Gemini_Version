@@ -21,10 +21,10 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
     --primary-glow: 221 83% 70%;
 
-    --secondary: 210 40% 96%;
+    --secondary: 220 15% 90%;
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 40% 96%;
+    --muted: 220 15% 90%;
     --muted-foreground: 215 16% 47%;
 
     --accent: 270 95% 75%;
@@ -163,12 +163,6 @@ select {
   border-width: 1.5px;
 }
 
-/* Dark mode input background — slightly distinct from page background */
-.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]),
-.dark textarea,
-.dark select {
-  background-color: hsl(222 47% 10%);
-}
 
 /* Stronger focus ring for accessibility and visual clarity */
 input:focus-visible,

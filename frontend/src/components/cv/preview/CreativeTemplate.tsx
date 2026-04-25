@@ -1,5 +1,5 @@
 import { CVData } from '@/types/cv';
-import { Mail, Phone, MapPin, Linkedin, Globe, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, LinkedinIcon, Globe, GithubIcon } from 'lucide-react';
 
 interface CreativeTemplateProps {
   data: CVData;
@@ -36,8 +36,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
   return (
     <div className="bg-background text-foreground max-w-4xl mx-auto">
       {/* Creative Header with Gradient */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-primary opacity-90" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-primary to-accent">
         <div className="relative p-8 text-white">
           <div className="flex items-start justify-between gap-6">
             <div className="flex-1 min-w-0">
@@ -59,7 +58,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
                 </div>
                 {data.personalInfo.linkedin && (
                   <div className="flex items-center gap-1">
-                    <Linkedin className="w-4 h-4" />
+                    <LinkedinIcon className="w-4 h-4" />
                     <span>{data.personalInfo.linkedin}</span>
                   </div>
                 )}
@@ -71,7 +70,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
                 )}
                 {data.personalInfo.github && (
                   <div className="flex items-center gap-1">
-                    <Github className="w-4 h-4" />
+                    <GithubIcon className="w-4 h-4" />
                     <span>{data.personalInfo.github}</span>
                   </div>
                 )}
@@ -91,14 +90,14 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
       <div className="p-8">
         {/* Summary with Accent */}
         {data.summary && (
-          <div className="mb-8 p-6 bg-accent/10 rounded-lg border-l-4 border-accent">
-            <h2 className="text-2xl font-display font-bold text-accent mb-3">
+          <div className="mb-8 p-6 bg-primary/5 rounded-lg border-l-4 border-primary">
+            <h2 className="text-2xl font-display font-bold text-primary mb-3">
               {t.professionalSummary}
             </h2>
             <ul className="space-y-1 list-none pl-0">
               {data.summary.split('\n').filter(l => l.trim()).map((line, i) => (
                 <li key={i} className="flex gap-2 text-foreground leading-relaxed italic">
-                  <span className="text-accent flex-shrink-0">•</span>
+                  <span className="text-primary flex-shrink-0">•</span>
                   <span>{line.replace(/^[•]\s*/, '')}</span>
                 </li>
               ))}
@@ -187,7 +186,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
               {data.skills.map((skill, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-gradient-primary text-white rounded-full font-medium shadow-sm hover-scale"
+                  className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-full font-medium"
                 >
                   {skill}
                 </span>
@@ -206,7 +205,7 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
               {data.softSkills.map((skill, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-gradient-primary text-white rounded-full font-medium shadow-sm hover-scale"
+                  className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-full font-medium"
                 >
                   {skill}
                 </span>
@@ -223,14 +222,14 @@ export function CreativeTemplate({ data, language = 'es' }: CreativeTemplateProp
             </h2>
             <div className="grid gap-4">
               {data.projects.map((project) => (
-                <div key={project.id} className="bg-muted/50 p-4 rounded-lg border-l-4 border-accent">
+                <div key={project.id} className="bg-muted/50 p-4 rounded-lg border-l-4 border-primary">
                   <h3 className="font-bold text-lg text-foreground mb-2">{project.name}</h3>
                   <p className="text-foreground leading-relaxed mb-3">{project.description}</p>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {project.technologies.map((tech, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-accent/20 text-accent rounded text-sm font-medium"
+                        className="px-2 py-1 bg-primary/10 text-primary rounded text-sm font-medium"
                       >
                         {tech}
                       </span>
