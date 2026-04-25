@@ -1,13 +1,12 @@
 import cron from 'node-cron';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../database/prisma/PrismaClient';
 import { EmailService } from './EmailService';
 
 export class CronService {
-  private prisma: PrismaClient;
+  private prisma = prisma;
   private emailService: EmailService;
 
   constructor() {
-    this.prisma = new PrismaClient();
     this.emailService = new EmailService();
   }
 

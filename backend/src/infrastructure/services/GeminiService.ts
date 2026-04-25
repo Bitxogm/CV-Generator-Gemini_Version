@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { CVData, JobOfferData, Suggestion } from '../../domain/entities/CV';
+import { parseGeminiResponse } from '../utils/parseGeminiResponse';
 
 export class GeminiService {
   private readonly genAI: GoogleGenerativeAI;
@@ -13,9 +14,6 @@ export class GeminiService {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  /**
-   * Adapta un CV según una oferta de trabajo
-   */
   async adaptCVToJobOffer(cvData: CVData, jobOffer: JobOfferData): Promise<CVData> {
     try {
       const model = this.genAI.getGenerativeModel({
@@ -52,7 +50,7 @@ NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      return this.parseJSONResponse(text);
+      return parseGeminiResponse<CVData>(text);
     } catch (error) {
       console.error('Error al adaptar CV con Gemini:', error);
       throw new Error(
@@ -61,9 +59,6 @@ NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
     }
   }
 
-  /**
-   * Genera sugerencias de mejora para un CV
-   */
   async generateSuggestions(cvData: CVData): Promise<Suggestion[]> {
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
@@ -88,16 +83,13 @@ SOLO devuelve el array JSON, sin texto adicional.
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      return this.parseJSONResponse(text);
+      return parseGeminiResponse<Suggestion[]>(text);
     } catch (error) {
       console.error('Error al generar sugerencias:', error);
       throw error;
     }
   }
 
-  /**
-   * Genera una carta de presentación personalizada
-   */
   async generateCoverLetter(cvData: CVData, jobOffer: JobOfferData): Promise<string> {
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
@@ -132,9 +124,6 @@ Devuelve SOLO el texto de la carta, sin formato markdown.
     }
   }
 
-  /**
-   * Analiza compatibilidad entre CV y oferta (0-100%)
-   */
   async analyzeCompatibility(
     cvData: CVData,
     jobOffer: JobOfferData
@@ -165,32 +154,10 @@ SOLO JSON, sin texto adicional.
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      return this.parseJSONResponse(text);
+      return parseGeminiResponse(text);
     } catch (error) {
       console.error('Error al analizar compatibilidad:', error);
       throw error;
     }
   }
-
-  /**
-   * Limpia y parsea respuestas JSON de Gemini
-   */
-  private parseJSONResponse<T = any>(text: string): T {
-    let cleanText = text.trim();
-
-    // Eliminar markdown si existe
-    cleanText = cleanText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-
-    try {
-      return JSON.parse(cleanText) as T;
-    } catch (parseError) {
-      // Intenta extraer JSON del texto
-      const jsonMatch = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]) as T;
-      }
-      throw new Error('No se pudo parsear la respuesta de Gemini');
-    }
-  }
 }
-1;
