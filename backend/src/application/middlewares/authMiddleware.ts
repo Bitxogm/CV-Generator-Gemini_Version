@@ -44,25 +44,3 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     next(new UnauthorizedError('Token inválido o expirado'));
   }
 };
-
-// Middleware opcional - solo verifica si hay token pero no falla si no hay
-export const optionalAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const authHeader = req.headers.authorization;
-
-    if (authHeader) {
-      const token = authHeader.split(' ')[1];
-      if (token) {
-        const payload = jwtService.verifyToken(token);
-        req.userId = payload.userId;
-        req.userEmail = payload.email;
-        req.userRole = payload.role;
-      }
-    }
-
-    next();
-  } catch (error) {
-    // Si hay error, simplemente continúa sin userId
-    next();
-  }
-};

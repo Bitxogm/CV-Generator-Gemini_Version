@@ -12,7 +12,7 @@ import cvRoutes from "./routes/cv.routes";
 import jobRoutes from "./routes/job.routes";
 
 // Middlewares
-import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
+import { errorHandler, notFoundHandler } from "./middlewares";
 
 // Cargar variables de entorno
 dotenv.config();

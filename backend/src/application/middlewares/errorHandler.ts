@@ -54,21 +54,3 @@ export const errorHandler = (
   res.status(statusCode).json(response);
 };
 
-/**
- * Middleware para capturar errores asíncronos
- * Wrapper para funciones async en routes
- */
-export const asyncHandler = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
-
-/**
- * Middleware para rutas no encontradas (404)
- * Debe ir ANTES del errorHandler
- */
-export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
-  const error = new AppError(`Ruta no encontrada: ${req.originalUrl}`, 404);
-  next(error);
-};
