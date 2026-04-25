@@ -112,7 +112,7 @@ const startServer = () => {
       console.log("   - POST   /api/cvs/:id/adapt");
       console.log("   - POST   /api/cvs/:id/suggestions");
       console.log("   - POST   /api/cvs/:id/cover-letter");
-      console.log(""); 
+      console.log("");
 
       // Iniciar cron jobs
       const cronService = new CronService();
@@ -136,6 +136,9 @@ process.on("uncaughtException", (error) => {
 });
 
 // Iniciar servidor
-startServer();
+// Solo arrancar si se ejecuta directamente (no en tests)
+if (require.main === module) {
+  startServer();
+}
 
 export default app;

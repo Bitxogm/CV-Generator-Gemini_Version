@@ -5,9 +5,16 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['./src/__tests__/setup.ts'], // ← AGREGAR ESTO
     coverage: {
-      provider: 'v8',
+      provider: 'v8', // ← Tu versión (v8 o c8, ambos funcionan)
       reporter: ['text', 'json', 'html'],
+      exclude: [  // ← AGREGAR ESTO
+        'node_modules/',
+        'src/__tests__/',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+      ],
     },
   },
   resolve: {
