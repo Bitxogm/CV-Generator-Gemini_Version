@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { extractJobFromUrl } from '../controllers/JobController';
+import { extractJobFromUrl } from '../controllers/job';
 import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router: Router = Router();

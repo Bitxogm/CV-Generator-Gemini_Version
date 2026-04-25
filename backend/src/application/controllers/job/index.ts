@@ -1,0 +1,1 @@
+export { extractJobFromUrl } from './extractJobFromUrl';
