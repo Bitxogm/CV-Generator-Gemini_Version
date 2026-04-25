@@ -4,12 +4,12 @@ import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router: IRouter = Router();
 
-// Rutas públicas
-router.get('/:id', getById);
-
 // Rutas protegidas
 router.post('/', authMiddleware, createProfile);
 router.get('/me', authMiddleware, getMyProfile);
 router.put('/:id', authMiddleware, updateProfile);
+
+// Rutas públicas
+router.get('/:id', getById);
 
 export default router;
