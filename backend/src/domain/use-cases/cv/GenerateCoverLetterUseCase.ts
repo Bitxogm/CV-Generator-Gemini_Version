@@ -1,10 +1,11 @@
-import { CV, JobOfferData } from '../../entities/CV';
+import { JobOfferData } from '../../entities/CV';
 import { ICVRepository } from '../../repositories/ICVRepository';
 import { GeminiService } from '../../../infrastructure/services/GeminiService';
-import { NotFoundError, BadRequestError } from '../../errors/AppError';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../../errors/AppError';
 
 export interface GenerateCoverLetterDTO {
   cvId: string;
+  userId: string;
   jobOffer: JobOfferData;
 }
 
@@ -20,6 +21,10 @@ export class GenerateCoverLetterUseCase {
 
     if (!cv) {
       throw new NotFoundError('CV');
+    }
+
+    if (cv.userId !== dto.userId) {
+      throw new UnauthorizedError('No tienes permiso para modificar este CV');
     }
 
     if (!dto.jobOffer) {

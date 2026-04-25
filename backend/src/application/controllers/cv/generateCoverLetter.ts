@@ -20,6 +20,7 @@ export const generateCoverLetter = asyncHandler(async (req: Request, res: Respon
 
   const result = await generateCoverLetterUseCase.execute({
     cvId: id,
+    userId: req.userId!,
     jobOffer,
   });
 

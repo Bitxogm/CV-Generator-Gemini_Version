@@ -1,6 +1,7 @@
 import { IUserRepository } from '../../repositories/IUserRepository';
 import { JWTService } from '../../../infrastructure/services/JWTService';
 import { NotFoundError, BadRequestError } from '../../errors/AppError';
+import { ErrorMessages } from '../../errors/errorTypes';
 
 export interface RequestPasswordResetDTO {
   email: string;
@@ -41,8 +42,6 @@ export class RecoverPasswordUseCase {
       passwordResetExpires: resetExpires,
     });
 
-    // TODO: Enviar email con el token (EmailService)
-    // Por ahora, devolvemos el token (solo para desarrollo)
     return {
       message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña',
       token: process.env.NODE_ENV === 'development' ? resetToken : undefined,
@@ -56,16 +55,14 @@ export class RecoverPasswordUseCase {
     }
 
     if (dto.newPassword.length < 8) {
-      throw new BadRequestError('La contraseña debe tener al menos 8 caracteres');
+      throw new BadRequestError(ErrorMessages.INVALID_PASSWORD);
     }
 
-    // Buscar usuario por token
     const user = await this.userRepository.findByResetToken(dto.token);
     if (!user) {
       throw new NotFoundError('Token inválido o expirado');
     }
 
-    // Hash nueva password
     const hashedPassword = await this.jwtService.hashPassword(dto.newPassword);
 
     // Actualizar password y limpiar token

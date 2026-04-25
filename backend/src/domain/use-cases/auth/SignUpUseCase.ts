@@ -3,6 +3,7 @@ import { User, UserProps, UserRole } from '../../entities/User';
 import { IUserRepository } from '../../repositories/IUserRepository';
 import { JWTService } from '../../../infrastructure/services/JWTService';
 import { ConflictError, BadRequestError } from '../../errors/AppError';
+import { ErrorMessages } from '../../errors/errorTypes';
 
 export interface SignUpDTO {
   email: string;
@@ -28,7 +29,7 @@ export class SignUpUseCase {
     }
 
     if (dto.password.length < 8) {
-      throw new BadRequestError('La contraseña debe tener al menos 8 caracteres');
+      throw new BadRequestError(ErrorMessages.INVALID_PASSWORD);
     }
 
     // Verificar si el usuario ya existe
