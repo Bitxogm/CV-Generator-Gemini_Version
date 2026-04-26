@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { adaptCVWithGemini, generateCoverLetter, analyzeCVCompatibility } from '@/services/geminiService';
+import api from '@/lib/axios';
 
 interface AISuggestions {
   summary?: string;
@@ -197,25 +198,8 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
     try {
       console.log('🔗 Extrayendo información de URL:', jobUrl);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/jobs/extract-from-url`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ url: jobUrl }),
-      });
-
-      let data: { success: boolean; message?: string; data?: { title: string; company: string; description: string; requirements: string[] } };
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error(`Error del servidor (${response.status}) — reinicia el backend`);
-      }
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Error al extraer información');
-      }
+      const response = await api.post('/jobs/extract-from-url', { url: jobUrl });
+      const data = response.data;
 
       if (data.success) {
         const formattedDescription = `
@@ -280,25 +264,24 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
     }
   };
 
+  const buildPdfOptions = () => ({
+    candidateName: cvData.personalInfo.fullName,
+    position: extractPosition(jobDescription),
+    format: pdfFormat,
+    email: cvData.personalInfo.email,
+    phone: cvData.personalInfo.phone,
+    location: cvData.personalInfo.location,
+    linkedin: cvData.personalInfo.linkedin,
+    language,
+  });
+
   const copyCoverLetter = () => {
     navigator.clipboard.writeText(coverLetter);
     toast.success(t('aiAssistant.copiedToClipboard'));
   };
 
   const handlePreview = () => {
-    const position = extractPosition(jobDescription);
-    const options = {
-      candidateName: cvData.personalInfo.fullName,
-      position: position,
-      format: pdfFormat,
-      email: cvData.personalInfo.email,
-      phone: cvData.personalInfo.phone,
-      location: cvData.personalInfo.location,
-      linkedin: cvData.personalInfo.linkedin,
-      language: language,
-    };
-
-    const url = generateCoverLetterPreview(coverLetter, options);
+    const url = generateCoverLetterPreview(coverLetter, buildPdfOptions());
     if (url) {
       setPreviewUrl(url);
       setShowPreview(true);
@@ -310,19 +293,7 @@ ${data.data.requirements.map((req: string) => `- ${req}`).join('\n')}
   const downloadCoverLetterPDF = async () => {
     setIsDownloadingPDF(true);
     try {
-      const position = extractPosition(jobDescription);
-      const options = {
-        candidateName: cvData.personalInfo.fullName,
-        position: position,
-        format: pdfFormat,
-        email: cvData.personalInfo.email,
-        phone: cvData.personalInfo.phone,
-        location: cvData.personalInfo.location,
-        linkedin: cvData.personalInfo.linkedin,
-        language: language,
-      };
-
-      const success = generateCoverLetterPDF(coverLetter, options);
+      const success = generateCoverLetterPDF(coverLetter, buildPdfOptions());
 
       if (success) {
         toast.success(t('aiAssistant.pdfDownloaded'));

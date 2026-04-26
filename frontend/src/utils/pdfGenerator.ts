@@ -14,28 +14,32 @@ interface PDFOptions {
   language?: "es" | "en";
 }
 
+const buildCoverLetterPDF = (
+  coverLetterText: string,
+  options?: PDFOptions,
+): jsPDF => {
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  if (options?.format === "formal") {
+    generateFormalPDF(doc, coverLetterText, options);
+  } else {
+    generateMinimalPDF(doc, coverLetterText, options);
+  }
+
+  return doc;
+};
+
 export const generateCoverLetterPDF = (
   coverLetterText: string,
   options?: PDFOptions,
-) => {
+): boolean => {
   try {
-    const doc = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    const format = options?.format || "minimal";
-
-    if (format === "formal") {
-      generateFormalPDF(doc, coverLetterText, options);
-    } else {
-      generateMinimalPDF(doc, coverLetterText, options);
-    }
-
-    const fileName = generateFileName(options);
-    doc.save(fileName);
-
+    const doc = buildCoverLetterPDF(coverLetterText, options);
+    doc.save(generateFileName(options));
     return true;
   } catch (error) {
     console.error("Error al generar el PDF:", error);
@@ -43,27 +47,12 @@ export const generateCoverLetterPDF = (
   }
 };
 
-// Genera vista previa como data URL
 export const generateCoverLetterPreview = (
   coverLetterText: string,
   options?: PDFOptions,
 ): string => {
   try {
-    const doc = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    const format = options?.format || "minimal";
-
-    if (format === "formal") {
-      generateFormalPDF(doc, coverLetterText, options);
-    } else {
-      generateMinimalPDF(doc, coverLetterText, options);
-    }
-
-    return doc.output("dataurlstring");
+    return buildCoverLetterPDF(coverLetterText, options).output("dataurlstring");
   } catch (error) {
     console.error("Error al generar la vista previa:", error);
     return "";
@@ -113,7 +102,6 @@ const generateMinimalPDF = (
     startY,
     contentWidth,
     maxContentHeight,
-    marginTop,
   );
 };
 
@@ -207,7 +195,6 @@ const generateFormalPDF = (
     yPosition,
     contentWidth,
     maxContentHeight,
-    yPosition,
   );
 };
 
@@ -219,7 +206,6 @@ const renderContentInOnePage = (
   startY: number,
   contentWidth: number,
   maxHeight: number,
-  topMargin: number,
 ) => {
   // Intentar con diferentes tamaños de fuente hasta que quepa
   const fontSizes = [10.5, 10, 9.5, 9, 8.5, 8];
