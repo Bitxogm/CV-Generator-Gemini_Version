@@ -1,4 +1,4 @@
-FROM node:20-alpine AS deps
+FROM node:20.19-alpine AS deps
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN npm install -g pnpm
 COPY package.json ./
 RUN pnpm install
 
-FROM node:20-alpine AS builder
+FROM node:20.19-alpine AS builder
 
 WORKDIR /app
 

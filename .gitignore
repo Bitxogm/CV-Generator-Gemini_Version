@@ -44,3 +44,5 @@ secrets/
 *.pem
 *.key
 backend/.env.production
+local.env
+servidor.env
