@@ -1,0 +1,167 @@
+import { CVData, Education } from '@/entities/cv/model';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { Checkbox } from '@/shared/ui/checkbox';
+import { GraduationCap, Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/app/providers';
+
+interface EducationSectionProps {
+  cvData: CVData;
+  setCvData: (data: CVData) => void;
+}
+
+export function EducationSection({ cvData, setCvData }: EducationSectionProps) {
+  const { t } = useLanguage();
+  const addEducation = () => {
+    const newEducation: Education = {
+      id: Date.now().toString(),
+      institution: '',
+      degree: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      gpa: '',
+    };
+    setCvData({
+      ...cvData,
+      education: [...cvData.education, newEducation],
+    });
+  };
+
+  const updateEducation = (id: string, field: string, value: string | boolean) => {
+    setCvData({
+      ...cvData,
+      education: cvData.education.map((edu) =>
+        edu.id === id ? { ...edu, [field]: value } : edu
+      ),
+    });
+  };
+
+  const removeEducation = (id: string) => {
+    setCvData({
+      ...cvData,
+      education: cvData.education.filter((edu) => edu.id !== id),
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <GraduationCap className="w-5 h-5 text-primary" />
+          {t('sections.education')}
+        </h3>
+        <Button onClick={addEducation} size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          {t('common.add')}
+        </Button>
+      </div>
+
+      {cvData.education.map((edu, index) => (
+        <Card key={edu.id}>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base">
+              {t('education.title')} {index + 1}
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => removeEducation(edu.id)}
+            >
+              <Trash2 className="w-4 h-4 text-destructive" />
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('education.institution')} *</Label>
+                <Input
+                  value={edu.institution}
+                  onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
+                  placeholder={t('education.institutionPlaceholder')}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('education.degree')} *</Label>
+                <Input
+                  value={edu.degree}
+                  onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                  placeholder={t('education.degreePlaceholder')}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('education.field')} *</Label>
+                <Input
+                  value={edu.field}
+                  onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
+                  placeholder={t('education.fieldPlaceholder')}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('education.gpa')} ({t('common.optional')})</Label>
+                <Input
+                  value={edu.gpa || ''}
+                  onChange={(e) => updateEducation(edu.id, 'gpa', e.target.value)}
+                  placeholder={t('education.gpaPlaceholder')}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('education.startDate')} *</Label>
+                <Input
+                  type="month"
+                  value={edu.startDate}
+                  onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('education.endDate')}</Label>
+                <Input
+                  type="month"
+                  value={edu.endDate}
+                  onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
+                  disabled={edu.current}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`current-edu-${edu.id}`}
+                checked={edu.current}
+                onCheckedChange={(checked) =>
+                  updateEducation(edu.id, 'current', checked)
+                }
+              />
+              <Label htmlFor={`current-edu-${edu.id}`} className="text-sm font-normal">
+                {t('education.current')}
+              </Label>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+
+      {cvData.education.length === 0 && (
+        <Card className="p-8 text-center text-muted-foreground">
+          <p>{t('education.noEducation')}</p>
+          <Button onClick={addEducation} variant="outline" className="mt-4">
+            <Plus className="w-4 h-4 mr-2" />
+            {t('education.addEducation')}
+          </Button>
+        </Card>
+      )}
+    </div>
+  );
+}
