@@ -304,7 +304,7 @@
   },
   "notifications": {
     "cvSaved": "CV guardado exitosamente",
-    "cvLoaded": "CV \"{name}\" cargado",
+    "cvLoaded": "Editando CV: {{name}}",
     "cvDeleted": "CV eliminado exitosamente",
     "errorSaving": "Error al guardar el CV",
     "errorLoading": "Error al cargar el CV",

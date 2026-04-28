@@ -91,7 +91,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md shadow-xl backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-white/20">
       <CardHeader>
         <CardTitle>Crear Cuenta</CardTitle>
         <CardDescription>
