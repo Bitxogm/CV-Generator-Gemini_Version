@@ -76,7 +76,7 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-xl">
+    <Card className="w-full max-w-md shadow-xl backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-white/20">
       <CardHeader>
         <CardTitle>Iniciar Sesión</CardTitle>
         <CardDescription>
