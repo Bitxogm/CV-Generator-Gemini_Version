@@ -16,8 +16,8 @@ docker -v
 ## 1. Clonar el repositorio
 
 ```bash
-git clone <repo-url>
-cd CV-Generator
+git clone https://github.com/Bitxogm/CV-Generator-Gemini_Version.git
+cd CV-Generator-Gemini_Version
 ```
 
 ## 2. Configurar variables de entorno

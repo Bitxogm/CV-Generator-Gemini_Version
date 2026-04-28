@@ -360,42 +360,4 @@ Antes de hacer deploy a producción, verificar:
 
 ## 📄 Licencia
 
-Este proyecto es privado. Todos los derechos reservados.
-
-## Crear .gitignore
-
-Si no existe, crearlo en la raíz del proyecto:
-
-```bash
-code ~/Desktop/CV-Generator/.gitignore
-```
-
-Contenido:
-
-```gitignore
-# Environment variables
-.env
-.env.local
-.env.production
-.env.*.local
-backend/.env
-frontend/.env
-frontend/.env.production
-
-# Docker overrides
-docker-compose.override.yml
-
-# Security
-*.pem
-*.key
-*.crt
-
-# Logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-
-# Backups
-*.sql
-*.sql.gz
-```
+MIT — ver [LICENSE](LICENSE).
