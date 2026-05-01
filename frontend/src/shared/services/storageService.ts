@@ -24,7 +24,15 @@ interface CoverLetter {
 export class StorageService {
   static saveCVData(cvData: CVData): boolean {
     try {
-      const dataToSave = { ...cvData, lastModified: new Date().toISOString() };
+      // La foto base64 puede ocupar 2-3 MB — se excluye de localStorage
+      // para no rebasar la cuota de ~5 MB. Se mantiene solo en memoria (React state).
+      const { personalInfo, ...rest } = cvData;
+      const { photo: _photo, ...personalInfoWithoutPhoto } = personalInfo ?? {};
+      const dataToSave = {
+        ...rest,
+        personalInfo: personalInfoWithoutPhoto,
+        lastModified: new Date().toISOString(),
+      };
       localStorage.setItem(STORAGE_KEYS.CV_DATA, JSON.stringify(dataToSave));
       console.log('💾 CV guardado en localStorage');
       return true;

@@ -31,9 +31,12 @@ export const useCVDashboard = (t: TFn) => {
       await loadSavedCVs();
       return newCV.id;
     } catch (error: unknown) {
-      const msg =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        t('notifications.errorSaving');
+      const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+      if (axiosError.response?.status === 413) {
+        toast.error('CV demasiado grande para el servidor (413). Configura client_max_body_size 10M en Nginx.');
+        return null;
+      }
+      const msg = axiosError.response?.data?.message || t('notifications.errorSaving');
       toast.error(msg);
       return null;
     }
@@ -45,9 +48,12 @@ export const useCVDashboard = (t: TFn) => {
       toast.success('CV actualizado correctamente');
       await loadSavedCVs();
     } catch (error: unknown) {
-      const msg =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        t('notifications.errorSaving');
+      const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+      if (axiosError.response?.status === 413) {
+        toast.error('CV demasiado grande para el servidor (413). Configura client_max_body_size 10M en Nginx.');
+        return;
+      }
+      const msg = axiosError.response?.data?.message || t('notifications.errorSaving');
       toast.error(msg);
     }
   };
