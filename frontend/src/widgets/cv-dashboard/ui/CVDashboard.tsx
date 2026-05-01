@@ -72,8 +72,8 @@ export function CVDashboard() {
       toast.error('El archivo debe ser una imagen (JPG, PNG, WebP...)');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('La imagen no debe superar 2MB');
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('La imagen no debe superar 10MB');
       return;
     }
     const reader = new FileReader();
@@ -226,7 +226,7 @@ export function CVDashboard() {
                     Eliminar foto
                   </Button>
                 )}
-                <p className="text-xs text-muted-foreground">JPG, PNG o WebP · máx. 2MB · se guarda en local</p>
+                <p className="text-xs text-muted-foreground">JPG, PNG o WebP · máx. 10MB · se guarda en local</p>
               </div>
             </div>
           </CardContent>
