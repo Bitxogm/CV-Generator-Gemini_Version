@@ -1,4 +1,3 @@
-import { CronService } from "../infrastructure/services/CronService";
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -29,7 +28,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -39,7 +38,7 @@ if (process.env.NODE_ENV === "development") {
 // HEALTH CHECK
 // ============================================
 
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
