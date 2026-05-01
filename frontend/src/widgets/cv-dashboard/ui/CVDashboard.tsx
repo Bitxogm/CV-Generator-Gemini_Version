@@ -65,7 +65,24 @@ export function CVDashboard() {
     error instanceof Error ? error.message : 'Error desconocido';
 
   // ── Foto de perfil ─────────────────────────────────────────────────────────
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File, maxPx = 400, quality = 0.82): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(maxPx / img.width, maxPx / img.height, 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No se pudo leer la imagen')); };
+      img.src = url;
+    });
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -76,13 +93,13 @@ export function CVDashboard() {
       toast.error('La imagen no debe superar 10MB');
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCvData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, photo: reader.result as string } }));
+    try {
+      const compressed = await compressImage(file);
+      setCvData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, photo: compressed } }));
       toast.success('Foto cargada correctamente');
-    };
-    reader.onerror = () => toast.error('Error al leer la imagen');
-    reader.readAsDataURL(file);
+    } catch {
+      toast.error('Error al procesar la imagen');
+    }
   };
 
   const handleRemovePhoto = () => {
@@ -226,7 +243,7 @@ export function CVDashboard() {
                     Eliminar foto
                   </Button>
                 )}
-                <p className="text-xs text-muted-foreground">JPG, PNG o WebP · máx. 10MB · se guarda en local</p>
+                <p className="text-xs text-muted-foreground">JPG, PNG o WebP · máx. 10MB · se comprime automáticamente</p>
               </div>
             </div>
           </CardContent>
