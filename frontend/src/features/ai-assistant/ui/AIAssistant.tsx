@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -97,6 +98,7 @@ export function AIAssistant({ cvData, onApplySuggestions }: AIAssistantProps) {
   const applyAdaptation = () => {
     if (state.adaptation && onApplySuggestions) {
       onApplySuggestions({ ...state.adaptation.suggestions, summary: state.editedSummary });
+      toast.success('Sugerencias aplicadas al CV correctamente');
     }
   };
 
