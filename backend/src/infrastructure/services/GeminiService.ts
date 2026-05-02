@@ -24,11 +24,16 @@ export class GeminiService {
         },
       });
 
+      // Strip photo before sending — base64 bloats the prompt and truncates output
+      const { personalInfo, ...restCV } = cvData;
+      const { photo, ...personalInfoWithoutPhoto } = personalInfo ?? {};
+      const cvDataForPrompt = { ...restCV, personalInfo: personalInfoWithoutPhoto };
+
       const prompt = `
 Eres un experto en optimización de CVs. Adapta el siguiente CV para maximizar las posibilidades de conseguir este trabajo.
 
 **CV ORIGINAL:**
-${JSON.stringify(cvData, null, 2)}
+${JSON.stringify(cvDataForPrompt, null, 2)}
 
 **OFERTA DE TRABAJO:**
 Puesto: ${jobOffer.title}
@@ -50,7 +55,12 @@ NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      return parseGeminiResponse<CVData>(text);
+      const adapted = parseGeminiResponse<CVData>(text);
+      // Restore original photo — Gemini doesn't need to know about it
+      if (photo && adapted.personalInfo) {
+        adapted.personalInfo.photo = photo;
+      }
+      return adapted;
     } catch (error) {
       console.error('Error al adaptar CV con Gemini:', error);
       throw new Error(
@@ -63,10 +73,14 @@ NO incluyas texto adicional, markdown, ni explicaciones. SOLO el JSON.
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
 
+      const { personalInfo, ...restCV } = cvData;
+      const { photo: _photo, ...personalInfoWithoutPhoto } = personalInfo ?? {};
+      const cvDataForPrompt = { ...restCV, personalInfo: personalInfoWithoutPhoto };
+
       const prompt = `
 Analiza este CV y proporciona 5 sugerencias concretas de mejora:
 
-${JSON.stringify(cvData, null, 2)}
+${JSON.stringify(cvDataForPrompt, null, 2)}
 
 Devuelve un array JSON con 5 sugerencias. Cada sugerencia debe tener:
 {
@@ -94,11 +108,13 @@ SOLO devuelve el array JSON, sin texto adicional.
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
 
+      const { photo: _photo2, ...personalInfoForPrompt } = cvData.personalInfo ?? {};
+
       const prompt = `
 Genera una carta de presentación profesional y personalizada para:
 
 **CANDIDATO (del CV):**
-${JSON.stringify(cvData.personalInfo, null, 2)}
+${JSON.stringify(personalInfoForPrompt, null, 2)}
 Experiencia: ${JSON.stringify(cvData.experience?.[0], null, 2)}
 
 **EMPRESA:** ${jobOffer.company}
@@ -131,11 +147,15 @@ Devuelve SOLO el texto de la carta, sin formato markdown.
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
 
+      const { personalInfo: pi, ...restCV2 } = cvData;
+      const { photo: _p, ...piWithoutPhoto } = pi ?? {};
+      const cvDataForPrompt2 = { ...restCV2, personalInfo: piWithoutPhoto };
+
       const prompt = `
 Analiza la compatibilidad entre este CV y la oferta:
 
 **CV:**
-${JSON.stringify(cvData, null, 2)}
+${JSON.stringify(cvDataForPrompt2, null, 2)}
 
 **OFERTA:**
 Puesto: ${jobOffer.title}
