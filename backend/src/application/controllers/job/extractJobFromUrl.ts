@@ -18,10 +18,14 @@ export const extractJobFromUrl = asyncHandler(async (req: Request, res: Response
     throw new BadRequestError('URL inválida');
   }
 
-  const jobOffer = await jobScraperService.extractFromUrl(url);
+  if (url.includes('linkedin.com')) {
+    throw new BadRequestError('LinkedIn no permite extracción automática. Copia y pega la descripción manualmente.');
+  }
 
-  res.json({
-    success: true,
-    data: jobOffer,
-  });
+  try {
+    const jobOffer = await jobScraperService.extractFromUrl(url);
+    res.json({ success: true, data: jobOffer });
+  } catch (error) {
+    throw new BadRequestError(error instanceof Error ? error.message : 'No se pudo extraer la oferta de esa URL');
+  }
 });

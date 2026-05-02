@@ -24,12 +24,6 @@ export class JobScraperService {
     try {
       console.log(`🔍 Extrayendo información de: ${url}`);
 
-      if (url.includes('linkedin.com')) {
-        throw new Error(
-          'LinkedIn no permite extracción automática. Copia y pega la descripción de la oferta manualmente.'
-        );
-      }
-
       const response = await fetch(url, {
         headers: {
           'User-Agent':
