@@ -14,7 +14,7 @@ import { CVPreview, ModernPDF, ProfessionalPDF, CreativePDF, ATSPDF } from '@/fe
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { LanguageSelector } from '@/shared/ui';
 import { useCVDashboard } from '../model/useCVDashboard';
 import { useATSAnalysis } from '../model/useATSAnalysis';
@@ -285,6 +285,9 @@ export function CVDashboard() {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t('preview.title')}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Vista previa del CV con opciones de descarga en formato visual o ATS
+            </DialogDescription>
           </DialogHeader>
           <Tabs defaultValue="preview" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -347,6 +350,9 @@ export function CVDashboard() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{t('history.title')}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Lista de CVs guardados en tu cuenta
+            </DialogDescription>
           </DialogHeader>
           <CVList savedCVs={savedCVs} onLoad={handleLoadCV} onDelete={handleDeleteCV} />
         </DialogContent>
