@@ -34,7 +34,6 @@ export class StorageService {
         lastModified: new Date().toISOString(),
       };
       localStorage.setItem(STORAGE_KEYS.CV_DATA, JSON.stringify(dataToSave));
-      console.log('💾 CV guardado en localStorage');
       return true;
     } catch (error) {
       console.error('❌ Error al guardar CV:', error);
@@ -49,9 +48,7 @@ export class StorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.CV_DATA);
       if (!data) return null;
-      const parsed = JSON.parse(data);
-      console.log('✅ CV cargado desde localStorage');
-      return parsed;
+      return JSON.parse(data);
     } catch (error) {
       console.error('❌ Error al cargar CV:', error);
       return null;
@@ -61,7 +58,6 @@ export class StorageService {
   static deleteCVData(): boolean {
     try {
       localStorage.removeItem(STORAGE_KEYS.CV_DATA);
-      console.log('🗑️ CV eliminado de localStorage');
       return true;
     } catch (error) {
       console.error('❌ Error al eliminar CV:', error);
@@ -81,7 +77,6 @@ export class StorageService {
       history.unshift(newVersion);
       const limitedHistory = history.slice(0, 10);
       localStorage.setItem(STORAGE_KEYS.CV_HISTORY, JSON.stringify(limitedHistory));
-      console.log(`💾 Versión "${name}" guardada`);
       return true;
     } catch (error) {
       console.error('❌ Error al guardar versión:', error);
@@ -104,7 +99,6 @@ export class StorageService {
       const history = this.loadCVHistory();
       const filtered = history.filter((v) => v.id !== id);
       localStorage.setItem(STORAGE_KEYS.CV_HISTORY, JSON.stringify(filtered));
-      console.log(`🗑️ Versión ${id} eliminada`);
       return true;
     } catch (error) {
       console.error('❌ Error al eliminar versión:', error);
@@ -135,7 +129,6 @@ export class StorageService {
       letters.unshift(newLetter);
       const limitedLetters = letters.slice(0, 20);
       localStorage.setItem(STORAGE_KEYS.COVER_LETTERS, JSON.stringify(limitedLetters));
-      console.log(`💾 Carta para "${jobTitle}" guardada`);
       return true;
     } catch (error) {
       console.error('❌ Error al guardar carta:', error);
@@ -168,7 +161,6 @@ export class StorageService {
       const letters = this.loadCoverLetters();
       const filtered = letters.filter((l) => l.id !== id);
       localStorage.setItem(STORAGE_KEYS.COVER_LETTERS, JSON.stringify(filtered));
-      console.log(`🗑️ Carta ${id} eliminada`);
       return true;
     } catch (error) {
       console.error('❌ Error al eliminar carta:', error);
@@ -179,7 +171,6 @@ export class StorageService {
   static saveSettings(settings: Record<string, unknown>): boolean {
     try {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-      console.log('💾 Configuración guardada');
       return true;
     } catch (error) {
       console.error('❌ Error al guardar configuración:', error);
@@ -228,7 +219,6 @@ export class StorageService {
         localStorage.setItem(STORAGE_KEYS.COVER_LETTERS, JSON.stringify(data.coverLetters));
       }
       if (data.settings) this.saveSettings(data.settings);
-      console.log('✅ Datos importados correctamente');
       return true;
     } catch (error) {
       console.error('❌ Error al importar datos:', error);
@@ -248,7 +238,6 @@ export class StorageService {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      console.log('✅ Backup descargado');
     } catch (error) {
       console.error('❌ Error al descargar backup:', error);
     }
@@ -267,7 +256,6 @@ export class StorageService {
       );
       if (!confirmed) return false;
       Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
-      console.log('🗑️ Todos los datos eliminados');
       return true;
     } catch (error) {
       console.error('❌ Error al limpiar datos:', error);

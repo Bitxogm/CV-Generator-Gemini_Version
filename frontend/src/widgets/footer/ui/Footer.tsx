@@ -16,9 +16,7 @@ export default function Footer() {
     });
   }, []);
 
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log("🔥 Fuego activado");
-  };
+  const particlesLoaded = async (_container?: Container): Promise<void> => {};
 
   const options: ISourceOptions = useMemo(
     () => ({

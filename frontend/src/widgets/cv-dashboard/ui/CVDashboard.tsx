@@ -47,17 +47,12 @@ export function CVDashboard() {
   const [showHistory, setShowHistory] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
-  const previousCVDataRef = useRef<string>();
 
   useEffect(() => {
-    const current = JSON.stringify(cvData);
-    if (previousCVDataRef.current === current) return;
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       StorageService.saveCVData(cvData);
-      previousCVDataRef.current = current;
-      console.log('💾 CV auto-guardado');
-    }, 2000);
+    }, 30000);
     return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
   }, [cvData]);
 
