@@ -34,8 +34,10 @@ export const useJobExtraction = () => {
       }
       return null;
     } catch (error) {
-      console.error('❌ Error extrayendo URL:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al extraer información de la URL');
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      const serverMsg = axiosError.response?.data?.error?.message;
+      const msg = serverMsg ?? 'No fue posible extraer la oferta. Copia y pega el texto manualmente en el campo de abajo.';
+      toast.error(msg, { duration: 6000 });
       return null;
     } finally {
       setIsExtractingUrl(false);
