@@ -260,6 +260,24 @@ Ver [DEPLOYMENT.md](DEPLOYMENT.md) para la guía completa.
 
 ---
 
+## Seguridad
+
+Se realizó una auditoría de seguridad sobre la aplicación en producción (`talent.bitxodev.com`) el 2026-05-02.
+
+| Severidad | Hallazgos |
+|-----------|-----------|
+| CRÍTICO | 0 |
+| ALTO | 1 |
+| MEDIO | 2 |
+| INFO | 2 |
+| OK | 8 |
+
+Controles verificados: Cloudflare WAF, HTTPS/HTTP2, HSTS, X-Frame-Options, X-Content-Type-Options, cabeceras de seguridad, API keys no expuestas en bundle JS, rutas sensibles inaccesibles.
+
+Ver informe completo: [docs/security-audit.md](docs/security-audit.md)
+
+---
+
 ## Roadmap
 
 - [ ] Recuperación de contraseña por email
